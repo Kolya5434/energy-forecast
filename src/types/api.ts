@@ -26,17 +26,17 @@ export interface IEvaluationApiResponse {
     MAE: number;
     RMSE: number;
     R2: number;
+    'Explained Variance': number;
+    'MAPE (%)': number | null;
   };
   performance_metrics: {
     avg_latency_ms: number;
     memory_increment_mb: number;
   };
-}
-
-export interface IInterpretationApiResponse {
-  model_id: string;
-  feature_importance: {
-    [feature: string]: number;
+  interpretation?: {
+    feature_importance: {
+      [feature: string]: number;
+    };
   };
 }
 
