@@ -1,23 +1,23 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import { Box, Button, IconButton, Paper, useTheme } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Box, Button, ButtonGroup, IconButton, Paper, useTheme } from '@mui/material';
 
+import type { View } from '../types/shared';
 
-
-
-
-// Define the props the component expects to receive
 interface HeaderProps {
   toggleTheme: () => void;
   togglePanel: () => void;
-  isPanelOpen?: boolean;
+  isPanelOpen: boolean;
+  setActiveView: (view: View) => void;
+  activeView: View;
 }
 
-const Header = ({ toggleTheme, togglePanel, isPanelOpen }: HeaderProps) => {
+export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
-  
+
   return (
-    <Box component="header" sx={{ p: 2, flexShrink: 0 }}>
+    <Box component="header" sx={{ p: 2, flexShrink: 0, width: '100%' }}>
       <Paper
         elevation={0}
         sx={{
@@ -25,18 +25,40 @@ const Header = ({ toggleTheme, togglePanel, isPanelOpen }: HeaderProps) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           p: 1,
-          borderRadius: 3, // Rounded corners
-          backgroundColor: 'background.paper', // Uses theme's paper color
+          borderRadius: 3,
+          backgroundColor: 'background.paper'
         }}
       >
-        {/* Box for navigation links */}
-        <Box>
-          {!isPanelOpen ? <Button onClick={togglePanel}>Open filter</Button> : null}
-          <Button color="inherit">Link</Button>
-          <Button color="inherit">Link</Button>
-          <Button color="inherit">Link</Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {!isPanelOpen ? (
+            <IconButton
+              onClick={togglePanel}
+              color="inherit"
+              sx={{
+                mr: 1,
+                visibility: activeView === 'forecast' ? 'visible' : 'hidden'
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
+
+          <ButtonGroup variant="text" aria-label="view navigation">
+            <Button
+              onClick={() => setActiveView('forecast')}
+              variant={activeView === 'forecast' ? 'contained' : 'text'}
+            >
+              Графік прогнозів
+            </Button>
+            <Button
+              onClick={() => setActiveView('interpretation')}
+              variant={activeView === 'interpretation' ? 'contained' : 'text'}
+            >
+              Аналіз важливості ознак
+            </Button>
+          </ButtonGroup>
         </Box>
-        
+
         {/* Theme toggle button */}
         <IconButton onClick={toggleTheme} color="inherit">
           {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -45,5 +67,3 @@ const Header = ({ toggleTheme, togglePanel, isPanelOpen }: HeaderProps) => {
     </Box>
   );
 };
-
-export { Header };
