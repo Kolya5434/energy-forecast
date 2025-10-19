@@ -18,33 +18,20 @@ import {
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
-import type { IInterpretationApiResponse, IShapInterpretationResponse } from '../types/api';
-import type { ExportTypes } from '../types/shared.ts';
-
-const handleExport = (format: ExportTypes) => {
-  alert(`Експорт у формат ${format} буде реалізовано.`);
-};
-
-function isFeatureImportanceResponse(
-  data: IInterpretationApiResponse | IShapInterpretationResponse | undefined
-): data is IInterpretationApiResponse {
-  return (
-    !!data && typeof data === 'object' && 'feature_importance' in data && typeof data.feature_importance === 'object'
-  );
-}
+import { isFeatureImportanceResponse, handleExport } from '../helpers/utils.ts';
 
 export const InterpretContent = () => {
   const { models, isLoadingModels, getInterpretation, interpretations, isLoadingInterpretation, interpretationError } =
     useApi();
   const [selectedModel, setSelectedModel] = useState<string>('XGBoost_Tuned');
   const [topN, setTopN] = useState<number>(15);
-  
+
   useEffect(() => {
     if (selectedModel) {
       getInterpretation(selectedModel);
     }
   }, [selectedModel, getInterpretation]);
-  
+
   const chartData = useMemo(() => {
     const interpretationData = interpretations[selectedModel];
     if (isFeatureImportanceResponse(interpretationData)) {
@@ -56,15 +43,15 @@ export const InterpretContent = () => {
     }
     return [];
   }, [interpretations, selectedModel, topN]);
-  
+
   const handleModelChange = (event: SelectChangeEvent) => {
     setSelectedModel(event.target.value as string);
   };
-  
+
   const handleTopNChange = (event: SelectChangeEvent) => {
     setTopN(Number(event.target.value));
   };
-  
+
   const renderContent = () => {
     if (isLoadingInterpretation) {
       return <Skeleton variant="rectangular" width="100%" height={400} />;
@@ -90,34 +77,21 @@ export const InterpretContent = () => {
         </Typography>
       );
     }
-    
+
     return (
       <ResponsiveContainer width="100%" height={500}>
         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 50, bottom: 100 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            angle={-45}
-            textAnchor="end"
-            height={100}
-            interval={0}
-            tick={{ fontSize: 11 }}
-          />
-          <YAxis
-            label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }}
-            tick={{ fontSize: 12 }}
-          />
-          <Tooltip
-            cursor={{ fill: 'rgba(100, 100, 100, 0.1)' }}
-            contentStyle={{ fontSize: 12 }}
-          />
+          <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
+          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+          <Tooltip cursor={{ fill: 'rgba(100, 100, 100, 0.1)' }} contentStyle={{ fontSize: 12 }} />
           <Legend wrapperStyle={{ paddingTop: '10px' }} />
           <Bar dataKey="value" name="Важливість ознаки" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
     );
   };
-  
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflowY: 'auto' }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3, height: '100%', backgroundColor: 'background.paper' }}>
@@ -136,7 +110,7 @@ export const InterpretContent = () => {
           </Stack>
         </Box>
         <Divider sx={{ mb: 3 }} />
-        
+
         <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
           <FormControl size="small" sx={{ minWidth: 240 }}>
             <InputLabel id="model-select-label">Модель для аналізу</InputLabel>
@@ -157,7 +131,7 @@ export const InterpretContent = () => {
                   ))}
             </Select>
           </FormControl>
-          
+
           <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel id="topn-select-label">Кількість ознак</InputLabel>
             <Select
@@ -174,7 +148,7 @@ export const InterpretContent = () => {
             </Select>
           </FormControl>
         </Stack>
-        
+
         {renderContent()}
       </Paper>
     </Box>
