@@ -18,9 +18,14 @@ export interface IChartDataPoint {
 }
 export type View = 'forecast' | 'interpretation';
 
-export type ExportTypes = 'xlsx' | 'docx' | 'pdf'
+export type ExportTypes = 'xlsx' | 'docx' | 'pdf';
 
 export interface IChartTypes {
   value: ChartType;
+  label: string;
+}
+
+export interface ISelectOption {
+  value: number | string;
   label: string;
 }

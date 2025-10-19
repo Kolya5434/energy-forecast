@@ -18,7 +18,8 @@ import {
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
-import { isFeatureImportanceResponse, handleExport } from '../helpers/utils.ts';
+import { handleExport, isFeatureImportanceResponse } from '../helpers/utils.ts';
+import { TopSelect } from './TopSelect.tsx';
 
 export const InterpretContent = () => {
   const { models, isLoadingModels, getInterpretation, interpretations, isLoadingInterpretation, interpretationError } =
@@ -46,10 +47,6 @@ export const InterpretContent = () => {
 
   const handleModelChange = (event: SelectChangeEvent) => {
     setSelectedModel(event.target.value as string);
-  };
-
-  const handleTopNChange = (event: SelectChangeEvent) => {
-    setTopN(Number(event.target.value));
   };
 
   const renderContent = () => {
@@ -132,21 +129,7 @@ export const InterpretContent = () => {
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="topn-select-label">Кількість ознак</InputLabel>
-            <Select
-              labelId="topn-select-label"
-              value={topN.toString()}
-              label="Кількість ознак"
-              onChange={handleTopNChange}
-            >
-              <MenuItem value="10">Топ-10</MenuItem>
-              <MenuItem value="15">Топ-15</MenuItem>
-              <MenuItem value="20">Топ-20</MenuItem>
-              <MenuItem value="30">Топ-30</MenuItem>
-              <MenuItem value="999">Всі ознаки</MenuItem>
-            </Select>
-          </FormControl>
+          <TopSelect value={topN} onChange={setTopN} />
         </Stack>
 
         {renderContent()}

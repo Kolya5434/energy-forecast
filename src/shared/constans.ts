@@ -1,4 +1,4 @@
-import type { IChartTypes } from '../types/shared.ts';
+import type { IChartTypes, ISelectOption } from '../types/shared.ts';
 
 export const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
 export const CHART_MARGIN = { top: 5, right: 30, left: 20, bottom: 5 };
@@ -22,3 +22,11 @@ export const CHART_TYPES = [
   { value: 'radar', label: 'Радарна' },
   { value: 'heatmap', label: 'Теплова карта' }
 ] as IChartTypes[];
+
+export const DEFAULT_OPTIONS_SELECT = [
+  { value: 10, label: 'Топ-10' },
+  { value: 15, label: 'Топ-15' },
+  { value: 20, label: 'Топ-20' },
+  { value: 30, label: 'Топ-30' },
+  { value: 999, label: 'Всі' },
+] as ISelectOption[];
