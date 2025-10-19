@@ -55,7 +55,15 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
       try {
         setIsLoadingModels(true);
         const data = await fetchModels();
-        setModels(data);
+        // TODO: need change back-end side
+        const filteredModels = Object.entries(data)
+          .filter(([_, modelInfo]) => modelInfo.type !== 'dl')
+          .reduce((acc, [modelId, modelInfo]) => {
+            acc[modelId] = modelInfo;
+            return acc;
+          }, {} as ModelsApiResponse);
+        
+        setModels(filteredModels);
       } catch (err) {
         setModelsError('Не вдалося завантажити список моделей');
         console.error('Error fetching models:', err);
