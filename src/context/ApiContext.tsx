@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState, type ReactNode } from 
 
 import { fetchEvaluation, fetchInterpretation, fetchModels, postPredictions } from '../api';
 import type {
-  IEvaluationApiResponse,
+  IEvaluationApiResponse, IInterpretationApiResponse,
   IPredictionRequest,
   IPredictionResponse,
   IShapInterpretationResponse,
@@ -23,8 +23,8 @@ interface IApiContext {
   isLoadingEvaluation: boolean;
   evaluationError: string | null;
   getEvaluation: (modelId: string) => void;
-
-  interpretations: Record<string, IShapInterpretationResponse>;
+  
+  interpretations: Record<string, IInterpretationApiResponse | IShapInterpretationResponse>;
   isLoadingInterpretation: boolean;
   interpretationError: string | null;
   getInterpretation: (modelId: string) => void;
@@ -47,7 +47,7 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [isLoadingEvaluation, setIsLoadingEvaluation] = useState(false);
   const [evaluationError, setEvaluationError] = useState<string | null>(null);
 
-  const [interpretations, setInterpretations] = useState<Record<string, IShapInterpretationResponse>>({});
+  const [interpretations, setInterpretations] = useState<Record<string, IShapInterpretationResponse | IInterpretationApiResponse>>({});
   const [isLoadingInterpretation, setIsLoadingInterpretation] = useState(false);
   const [interpretationError, setInterpretationError] = useState<string | null>(null);
 
@@ -116,7 +116,7 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
         setIsLoadingInterpretation(true);
         setInterpretationError(null);
         const result = await fetchInterpretation(modelId);
-        if ('base_value' in result) {
+        if (result) {
           setInterpretations((prev) => ({ ...prev, [modelId]: result }));
         } else {
           throw new Error('Invalid interpretation response format');

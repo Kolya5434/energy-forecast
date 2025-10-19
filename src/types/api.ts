@@ -40,6 +40,12 @@ export interface IEvaluationApiResponse {
   };
 }
 
+export interface IInterpretationApiResponse {
+  feature_importance: {
+    [feature: string]: number;
+  };
+}
+
 export interface IShapInterpretationResponse {
   base_value: number;
   prediction_value: number;
