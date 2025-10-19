@@ -7,6 +7,7 @@ import { darkTheme, lightTheme } from '../theme';
 import { ApiProvider } from './context/ApiContext.tsx';
 import { Header } from './components/Header.tsx';
 import { SidePanel } from './components/SidePanel.tsx';
+import { MainContent } from './components/MainContent.tsx';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -24,7 +25,7 @@ function App() {
           <SidePanel isOpen={isPanelOpen} togglePanel={togglePanel} />
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <Header toggleTheme={() => setIsDarkMode(!isDarkMode)} isPanelOpen={isPanelOpen} togglePanel={togglePanel} />
-            {/*<MainContent />*/}
+            <MainContent />
           </Box>
           {/*<RightPanel />*/}
         </Box>

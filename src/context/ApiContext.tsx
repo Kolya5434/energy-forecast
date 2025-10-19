@@ -28,6 +28,7 @@ interface IApiContext {
   isLoadingInterpretation: boolean;
   interpretationError: string | null;
   getInterpretation: (modelId: string) => void;
+  clearPredictions: () => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -129,6 +130,10 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     },
     [interpretations]
   );
+  
+  const clearPredictions = () => {
+    setPredictions(null);
+  };
 
   const value = {
     models,
@@ -145,7 +150,8 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     interpretations,
     isLoadingInterpretation,
     interpretationError,
-    getInterpretation
+    getInterpretation,
+    clearPredictions,
   };
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

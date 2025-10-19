@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ApiContext } from './ApiContext'; // Імпортуємо контекст з файлу провайдера
+import { ApiContext } from './ApiContext';
 
 export const useApi = () => {
   const context = useContext(ApiContext);
