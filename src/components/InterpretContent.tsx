@@ -1,5 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import DownloadIcon from '@mui/icons-material/Download';
 import {
@@ -19,13 +37,18 @@ import {
 
 import { useApi } from '../context/useApi.tsx';
 import { handleExport, isFeatureImportanceResponse } from '../helpers/utils.ts';
+import type { ChartType } from '../types/shared.ts';
+import { ChartTypeSelector } from './ChartTypeSelector.tsx';
+import classes from './InterpretContent.module.scss';
 import { TopSelect } from './TopSelect.tsx';
+import {CHART_MARGIN, TOOLTIP_STYLE} from "../shared/constans.ts";
 
 export const InterpretContent = () => {
   const { models, isLoadingModels, getInterpretation, interpretations, isLoadingInterpretation, interpretationError } =
     useApi();
   const [selectedModel, setSelectedModel] = useState<string>('XGBoost_Tuned');
   const [topN, setTopN] = useState<number>(15);
+  const [chartType, setChartType] = useState<ChartType>('bar');
 
   useEffect(() => {
     if (selectedModel) {
@@ -48,6 +71,100 @@ export const InterpretContent = () => {
   const handleModelChange = (event: SelectChangeEvent) => {
     setSelectedModel(event.target.value as string);
   };
+
+  const renderBarChart = useCallback(
+    (layout: 'horizontal' | 'vertical' = 'horizontal') => {
+      const isVertical = layout === 'vertical';
+
+      return (
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={chartData} margin={CHART_MARGIN} layout={isVertical ? 'vertical' : undefined}>
+            <CartesianGrid strokeDasharray="3 3" />
+            {isVertical ? (
+              <>
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={150} interval={0} tick={{ fontSize: 11 }} />
+              </>
+            ) : (
+              <>
+                <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
+                <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+              </>
+            )}
+            <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(100, 100, 100, 0.1)' }} />
+            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+            <Bar dataKey="value" name="Важливість ознаки" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    },
+    [chartData]
+  );
+
+  const renderLineChart = useCallback(() => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <LineChart data={chartData} margin={CHART_MARGIN}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
+          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+          <Tooltip contentStyle={TOOLTIP_STYLE} />
+          <Legend wrapperStyle={{ paddingTop: '10px' }} />
+          <Line type="monotone" dataKey="value" name="Важливість ознаки" stroke="#8884d8" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }, [chartData]);
+
+  const renderScatterChart = useCallback(() => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <ScatterChart data={chartData} margin={CHART_MARGIN}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
+          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+          <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ strokeDasharray: '3 3' }} />
+          <Legend wrapperStyle={{ paddingTop: '10px' }} />
+          <Scatter name="Важливість ознаки" dataKey="value" fill="#8884d8" />
+        </ScatterChart>
+      </ResponsiveContainer>
+    );
+  }, [chartData]);
+
+  const renderRadarChart = useCallback(() => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <RadarChart data={chartData}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" tick={{ fontSize: 10 }} />
+          <PolarRadiusAxis angle={90} />
+          <Tooltip contentStyle={TOOLTIP_STYLE} />
+          <Legend wrapperStyle={{ paddingTop: '10px' }} />
+          <Radar name="Важливість ознаки" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+        </RadarChart>
+      </ResponsiveContainer>
+    );
+  }, [chartData]);
+
+  const renderChart = useMemo(() => {
+    if (chartData.length === 0) return null;
+
+    switch (chartType) {
+      case 'bar':
+        return renderBarChart('horizontal');
+      case 'vertical-bar':
+        return renderBarChart('vertical');
+      case 'line':
+      case 'smooth-line':
+        return renderLineChart();
+      case 'scatter':
+        return renderScatterChart();
+      case 'radar':
+        return renderRadarChart();
+      default:
+        return renderBarChart('horizontal');
+    }
+  }, [chartType, chartData, renderBarChart, renderLineChart, renderScatterChart, renderRadarChart]);
 
   const renderContent = () => {
     if (isLoadingInterpretation) {
@@ -75,18 +192,7 @@ export const InterpretContent = () => {
       );
     }
 
-    return (
-      <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 50, bottom: 100 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
-          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
-          <Tooltip cursor={{ fill: 'rgba(100, 100, 100, 0.1)' }} contentStyle={{ fontSize: 12 }} />
-          <Legend wrapperStyle={{ paddingTop: '10px' }} />
-          <Bar dataKey="value" name="Важливість ознаки" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
+    return renderChart;
   };
 
   return (
@@ -108,11 +214,11 @@ export const InterpretContent = () => {
         </Box>
         <Divider sx={{ mb: 3 }} />
 
-        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-          <FormControl size="small" sx={{ minWidth: 240 }}>
+        <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'space-between' }}>
+          <FormControl size="small" sx={{ maxWidth: 240, flexGrow: 1 }}>
             <InputLabel id="model-select-label">Модель для аналізу</InputLabel>
             <Select
-              labelId="model-select-label"
+              id="model-select-label"
               value={selectedModel}
               label="Модель для аналізу"
               onChange={handleModelChange}
@@ -129,7 +235,16 @@ export const InterpretContent = () => {
             </Select>
           </FormControl>
 
-          <TopSelect value={topN} onChange={setTopN} />
+          <div className={classes.interpretContentSelects}>
+            <TopSelect value={topN} onChange={setTopN} />
+
+            <ChartTypeSelector
+              value={chartType}
+              onChange={setChartType}
+              label="Тип візуалізації"
+              excludeTypes={['area', 'stacked-area', 'stacked-bar', 'step', 'composed', 'heatmap']}
+            />
+          </div>
         </Stack>
 
         {renderContent()}
