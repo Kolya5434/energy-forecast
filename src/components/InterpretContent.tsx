@@ -46,7 +46,8 @@ import {
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
-import { handleExport, isFeatureImportanceResponse } from '../helpers/utils.ts';
+import { exportChartData } from '../helpers/exportToFile.ts';
+import { isFeatureImportanceResponse } from '../helpers/utils.ts';
 import { CHART_MARGIN, TOOLTIP_STYLE } from '../shared/constans.ts';
 import type { ChartType, ViewMode } from '../types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
@@ -254,14 +255,26 @@ export const InterpretContent = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h5">Аналіз важливості ознак</Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="outlined" startIcon={<DownloadIcon />} onClick={() => handleExport('xlsx')}>
+            <Button
+              startIcon={<DownloadIcon />}
+              onClick={() => exportChartData('xlsx', chartData, selectedModel)}
+              disabled={chartData.length === 0}
+            >
               Excel
             </Button>
-            <Button variant="outlined" startIcon={<DownloadIcon />} onClick={() => handleExport('pdf')}>
-              PDF
-            </Button>
-            <Button variant="outlined" startIcon={<DownloadIcon />} onClick={() => handleExport('docx')}>
+            <Button
+              startIcon={<DownloadIcon />}
+              onClick={() => exportChartData('docx', chartData, selectedModel)}
+              disabled={chartData.length === 0}
+            >
               Word
+            </Button>
+            <Button
+              startIcon={<DownloadIcon />}
+              onClick={() => exportChartData('pdf', chartData, selectedModel)}
+              disabled={chartData.length === 0}
+            >
+              PDF
             </Button>
           </Stack>
         </Box>
