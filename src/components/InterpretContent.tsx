@@ -20,6 +20,8 @@ import {
 } from 'recharts';
 
 import DownloadIcon from '@mui/icons-material/Download';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import {
   Box,
   Button,
@@ -31,17 +33,25 @@ import {
   Select,
   Skeleton,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
 import { handleExport, isFeatureImportanceResponse } from '../helpers/utils.ts';
-import type { ChartType } from '../types/shared.ts';
+import { CHART_MARGIN, TOOLTIP_STYLE } from '../shared/constans.ts';
+import type { ChartType, ViewMode } from '../types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 import classes from './InterpretContent.module.scss';
 import { TopSelect } from './TopSelect.tsx';
-import {CHART_MARGIN, TOOLTIP_STYLE} from "../shared/constans.ts";
 
 export const InterpretContent = () => {
   const { models, isLoadingModels, getInterpretation, interpretations, isLoadingInterpretation, interpretationError } =
@@ -49,6 +59,7 @@ export const InterpretContent = () => {
   const [selectedModel, setSelectedModel] = useState<string>('XGBoost_Tuned');
   const [topN, setTopN] = useState<number>(15);
   const [chartType, setChartType] = useState<ChartType>('bar');
+  const [viewMode, setViewMode] = useState<ViewMode>('chart');
 
   useEffect(() => {
     if (selectedModel) {
@@ -70,6 +81,12 @@ export const InterpretContent = () => {
 
   const handleModelChange = (event: SelectChangeEvent) => {
     setSelectedModel(event.target.value as string);
+  };
+
+  const handleViewModeChange = (_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
+    if (newMode !== null) {
+      setViewMode(newMode);
+    }
   };
 
   const renderBarChart = useCallback(
@@ -166,6 +183,42 @@ export const InterpretContent = () => {
     }
   }, [chartType, chartData, renderBarChart, renderLineChart, renderScatterChart, renderRadarChart]);
 
+  const renderTable = useCallback(() => {
+    return (
+      <TableContainer sx={{ maxHeight: 500 }}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>№</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Назва ознаки</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                Важливість
+              </TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                Відносна важливість (%)
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {chartData.map((row, index) => {
+              const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+              const percentage = ((row.value / totalValue) * 100).toFixed(2);
+
+              return (
+                <TableRow key={row.name} hover>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell align="right">{row.value.toFixed(4)}</TableCell>
+                  <TableCell align="right">{percentage}%</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }, [chartData]);
+
   const renderContent = () => {
     if (isLoadingInterpretation) {
       return <Skeleton variant="rectangular" width="100%" height={400} />;
@@ -192,7 +245,7 @@ export const InterpretContent = () => {
       );
     }
 
-    return renderChart;
+    return viewMode === 'chart' ? renderChart : renderTable();
   };
 
   return (
@@ -218,7 +271,7 @@ export const InterpretContent = () => {
           <FormControl size="small" sx={{ maxWidth: 240, flexGrow: 1 }}>
             <InputLabel id="model-select-label">Модель для аналізу</InputLabel>
             <Select
-              id="model-select-label"
+              labelId="model-select-label"
               value={selectedModel}
               label="Модель для аналізу"
               onChange={handleModelChange}
@@ -238,12 +291,32 @@ export const InterpretContent = () => {
           <div className={classes.interpretContentSelects}>
             <TopSelect value={topN} onChange={setTopN} />
 
-            <ChartTypeSelector
-              value={chartType}
-              onChange={setChartType}
-              label="Тип візуалізації"
-              excludeTypes={['area', 'stacked-area', 'stacked-bar', 'step', 'composed', 'heatmap']}
-            />
+            {viewMode === 'chart' && (
+              <ChartTypeSelector
+                value={chartType}
+                onChange={setChartType}
+                label="Тип візуалізації"
+                minWidth={200}
+                excludeTypes={['area', 'stacked-area', 'stacked-bar', 'step', 'composed', 'heatmap']}
+              />
+            )}
+
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={handleViewModeChange}
+              size="small"
+              aria-label="view mode"
+            >
+              <ToggleButton value="chart" aria-label="chart view">
+                <ShowChartIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Графік
+              </ToggleButton>
+              <ToggleButton value="table" aria-label="table view">
+                <TableChartIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Таблиця
+              </ToggleButton>
+            </ToggleButtonGroup>
           </div>
         </Stack>
 

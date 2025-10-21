@@ -29,3 +29,5 @@ export interface ISelectOption {
   value: number | string;
   label: string;
 }
+
+export type ViewMode = 'chart' | 'table';
