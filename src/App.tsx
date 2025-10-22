@@ -10,6 +10,7 @@ import { ShapForcePlot } from './components/ShapForcePlot.tsx';
 import { SidePanel } from './components/SidePanel.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
+import { EvaluationContent } from './components/EvaluationContent.tsx';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -31,6 +32,8 @@ function App() {
         return <InterpretContent />;
       case 'shap_force_plot':
         return <ShapForcePlot />;
+      case 'evaluation':
+        return <EvaluationContent />;
       default:
         return null;
     }

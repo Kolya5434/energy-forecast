@@ -21,7 +21,8 @@ interface ViewConfig {
 const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'forecast', label: 'Графік прогнозів' },
   { id: 'interpretation', label: 'Аналіз важливості ознак' },
-  { id: 'shap_force_plot', label: 'Візуалізація SHAP Force Plot' }
+  { id: 'shap_force_plot', label: 'Візуалізація SHAP Force Plot' },
+  { id: 'evaluation', label: 'Evaluation' },
 ];
 
 export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {

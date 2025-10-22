@@ -16,7 +16,7 @@ export interface IChartDataPoint {
   date: string;
   [modelId: string]: string | number;
 }
-export type View = 'forecast' | 'interpretation' | 'shap_force_plot';
+export type View = 'forecast' | 'interpretation' | 'shap_force_plot' | 'evaluation';
 
 export type ExportTypes = 'xlsx' | 'docx' | 'pdf';
 
@@ -30,4 +30,4 @@ export interface ISelectOption {
   label: string;
 }
 
-export type ViewMode = 'chart' | 'table';
+export type ViewMode = 'chart' | 'table' | 'comparison';
