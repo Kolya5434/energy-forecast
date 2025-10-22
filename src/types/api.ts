@@ -33,11 +33,6 @@ export interface IEvaluationApiResponse {
     avg_latency_ms: number;
     memory_increment_mb: number;
   };
-  interpretation?: {
-    feature_importance: {
-      [feature: string]: number;
-    };
-  };
 }
 
 export interface IInterpretationApiResponse {
