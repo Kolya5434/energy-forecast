@@ -56,6 +56,12 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
             >
               Аналіз важливості ознак
             </Button>
+            <Button
+              onClick={() => setActiveView('shap_force_plot')}
+              variant={activeView === 'shap_force_plot' ? 'contained' : 'text'}
+            >
+              Візуалізація SHAP Force Plot
+            </Button>
           </ButtonGroup>
         </Box>
 

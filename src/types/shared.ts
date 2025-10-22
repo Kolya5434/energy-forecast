@@ -16,7 +16,7 @@ export interface IChartDataPoint {
   date: string;
   [modelId: string]: string | number;
 }
-export type View = 'forecast' | 'interpretation';
+export type View = 'forecast' | 'interpretation' | 'shap_force_plot';
 
 export type ExportTypes = 'xlsx' | 'docx' | 'pdf';
 

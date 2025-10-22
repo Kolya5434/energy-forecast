@@ -9,6 +9,7 @@ import { MainContent } from './components/MainContent.tsx';
 import { SidePanel } from './components/SidePanel.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
+import { ShapForcePlot } from './components/ShapForcePlot.tsx';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -35,6 +36,7 @@ function App() {
             />
             {activeView === 'forecast' ? <MainContent /> : null}
             {activeView === 'interpretation' ? <InterpretContent /> : null}
+            {activeView === 'shap_force_plot' ? <ShapForcePlot /> : null}
           </Box>
           {/*<RightPanel />*/}
         </Box>

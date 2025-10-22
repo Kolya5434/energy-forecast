@@ -46,10 +46,17 @@ export interface IInterpretationApiResponse {
   };
 }
 
+interface ShapData {
+  base_value: number;
+  prediction_value: number;
+  feature_contributions: Record<string, number>;
+}
+
 export interface IShapInterpretationResponse {
   base_value: number;
   prediction_value: number;
   feature_contributions: {
     [feature: string]: number;
   };
+  shap_values: ShapData
 }
