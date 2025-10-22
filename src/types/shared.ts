@@ -30,4 +30,4 @@ export interface ISelectOption {
   label: string;
 }
 
-export type ViewMode = 'chart' | 'table' | 'comparison';
+export type ViewMode = 'chart' | 'table' | 'comparison' | 'errors';

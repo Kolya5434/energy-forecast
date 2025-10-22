@@ -20,6 +20,25 @@ export interface IPredictionResponse {
   };
 }
 
+interface IResidualOverTime {
+  date: string;
+  residual: number;
+}
+
+interface IMonthlyErrorStats {
+  month: number;
+  min: number;
+  q1: number;
+  median: number;
+  q3: number;
+  max: number;
+}
+
+interface IScatterData {
+  actual: number;
+  predicted: number;
+}
+
 export interface IEvaluationApiResponse {
   model_id: string;
   accuracy_metrics: {
@@ -32,6 +51,11 @@ export interface IEvaluationApiResponse {
   performance_metrics: {
     avg_latency_ms: number;
     memory_increment_mb: number;
+  };
+  error_analysis?: {
+    residuals_over_time: IResidualOverTime[];
+    monthly_errors: IMonthlyErrorStats[];
+    scatter_data: IScatterData[];
   };
 }
 

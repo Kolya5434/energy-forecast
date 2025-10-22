@@ -1,4 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Activity, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
+
+import BarChartIcon from '@mui/icons-material/BarChart';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import {
   Box,
   Chip,
@@ -14,30 +35,14 @@ import {
   TableRow,
   ToggleButton,
   ToggleButtonGroup,
-  Typography,
+  Typography
 } from '@mui/material';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import BarChartIcon from '@mui/icons-material/BarChart';
 
 import { useApi } from '../context/useApi.tsx';
-import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 import { CHART_MARGIN, COLORS, TOOLTIP_STYLE } from '../shared/constans.ts';
-import type { ChartType, ViewMode } from '../types/shared.ts';
 import type { IEvaluationApiResponse } from '../types/api.ts';
+import type { ChartType, ViewMode } from '../types/shared.ts';
+import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 
 type MetricKey = keyof IEvaluationApiResponse['accuracy_metrics'] | keyof IEvaluationApiResponse['performance_metrics'];
 
@@ -46,7 +51,7 @@ const metrics: Array<{ key: MetricKey; label: string; format: (v: number | null)
   { key: 'RMSE', label: 'RMSE', format: (v) => v?.toFixed(4) ?? 'N/A' },
   { key: 'R2', label: 'R²', format: (v) => v?.toFixed(4) ?? 'N/A' },
   { key: 'avg_latency_ms', label: 'Latency (ms)', format: (v) => v?.toFixed(2) ?? 'N/A' },
-  { key: 'memory_increment_mb', label: 'Memory (MB)', format: (v) => v?.toFixed(2) ?? 'N/A' },
+  { key: 'memory_increment_mb', label: 'Memory (MB)', format: (v) => v?.toFixed(2) ?? 'N/A' }
 ];
 type SortableMetricKey = 'MAE' | 'RMSE' | 'R2' | 'avg_latency_ms' | 'memory_increment_mb';
 
@@ -57,7 +62,8 @@ export const EvaluationContent = () => {
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [sortBy, setSortBy] = useState<SortableMetricKey>('MAE');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  
+  const [selectionCache, setSelectionCache] = useState<string[]>([]);
+
   useEffect(() => {
     selectedModels.forEach((modelId) => {
       if (!evaluations[modelId]) {
@@ -65,14 +71,28 @@ export const EvaluationContent = () => {
       }
     });
   }, [selectedModels, getEvaluation, evaluations]);
-  
+
   useEffect(() => {
     if (models && selectedModels.length === 0) {
-      const mlModels = Object.keys(models).filter((id) => models[id].type === 'ml' || models[id].type === 'ensemble');
-      setSelectedModels(mlModels);
+      setSelectedModels(Object.keys(models));
     }
   }, [models, selectedModels.length]);
-  
+
+  useEffect(() => {
+    if (viewMode === 'errors') {
+      if (selectedModels.length > 1) {
+        setSelectionCache(selectedModels);
+        setSelectedModels([selectedModels[0]]);
+      }
+    } else {
+      if (selectionCache.length > 0) {
+        setSelectedModels(selectionCache);
+        setSelectionCache([]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode]);
+
   const handleModelToggle = (modelId: string) => {
     setSelectedModels((prev) => {
       if (prev.includes(modelId)) {
@@ -82,20 +102,20 @@ export const EvaluationContent = () => {
       return [...prev, modelId];
     });
   };
-  
+
   const handleSelectAll = () => {
     if (models) {
       const allModels = Object.keys(models).filter((id) => models[id].type === 'ml' || models[id].type === 'ensemble');
       setSelectedModels(allModels);
     }
   };
-  
+
   const handleViewModeChange = (_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
     if (newMode !== null) {
       setViewMode(newMode);
     }
   };
-  
+
   const combinedMetricsData = useMemo(() => {
     return selectedModels
       .map((modelId) => {
@@ -104,12 +124,12 @@ export const EvaluationContent = () => {
         return {
           modelId,
           ...evaluation.accuracy_metrics,
-          ...evaluation.performance_metrics,
+          ...evaluation.performance_metrics
         };
       })
       .filter((row): row is Exclude<typeof row, null> => row !== null);
   }, [selectedModels, evaluations]);
-  
+
   const sortedTableData = useMemo(() => {
     return combinedMetricsData.sort((a, b) => {
       const aValue = a[sortBy] ?? 0;
@@ -117,19 +137,22 @@ export const EvaluationContent = () => {
       return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
     });
   }, [combinedMetricsData, sortBy, sortOrder]);
-  
-  const getBestWorst = useCallback((metric: SortableMetricKey) => {
-    if (combinedMetricsData.length === 0) return { best: null, worst: null };
-    
-    const values = combinedMetricsData.map((row) => row[metric]).filter((v): v is number => v !== null);
-    if(values.length === 0) return { best: null, worst: null };
-    
-    if (metric === 'R2') {
-      return { best: Math.max(...values), worst: Math.min(...values) };
-    }
-    return { best: Math.min(...values), worst: Math.max(...values) };
-  }, [combinedMetricsData]);
-  
+
+  const getBestWorst = useCallback(
+    (metric: SortableMetricKey) => {
+      if (combinedMetricsData.length === 0) return { best: null, worst: null };
+
+      const values = combinedMetricsData.map((row) => row[metric]).filter((v): v is number => v !== null);
+      if (values.length === 0) return { best: null, worst: null };
+
+      if (metric === 'R2') {
+        return { best: Math.max(...values), worst: Math.min(...values) };
+      }
+      return { best: Math.min(...values), worst: Math.max(...values) };
+    },
+    [combinedMetricsData]
+  );
+
   const handleSort = (metric: SortableMetricKey) => {
     if (sortBy === metric) {
       setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -138,16 +161,18 @@ export const EvaluationContent = () => {
       setSortOrder(metric === 'R2' ? 'desc' : 'asc');
     }
   };
-  
+
   const renderMetricsTable = useCallback(() => {
     if (sortedTableData.length === 0) {
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          {isLoadingEvaluation ? 'Завантаження оцінок...' : 'Немає даних для відображення. Виберіть моделі для аналізу.'}
+          {isLoadingEvaluation
+            ? 'Завантаження оцінок...'
+            : 'Немає даних для відображення. Виберіть моделі для аналізу.'}
         </Typography>
       );
     }
-    
+
     return (
       <TableContainer>
         <Table stickyHeader size="small">
@@ -171,22 +196,33 @@ export const EvaluationContent = () => {
               const { best, worst } = getBestWorst(sortBy);
               const isBest = row[sortBy] === best;
               const isWorst = row[sortBy] === worst;
-              
+
               return (
                 <TableRow key={row.modelId} hover>
                   <TableCell sx={{ fontWeight: 500 }}>{row.modelId}</TableCell>
                   {metrics.map((metric) => {
                     const value = row[metric.key as SortableMetricKey];
                     const isSortedColumn = metric.key === sortBy;
-                    
+
                     return (
                       <TableCell
                         key={metric.key}
                         align="right"
                         sx={{
-                          backgroundColor: isSortedColumn ? (isBest ? 'rgba(102, 187, 106, 0.2)' : isWorst ? 'rgba(239, 83, 80, 0.2)' : 'transparent') : 'transparent',
+                          backgroundColor: isSortedColumn
+                            ? isBest
+                              ? 'rgba(102, 187, 106, 0.2)'
+                              : isWorst
+                                ? 'rgba(239, 83, 80, 0.2)'
+                                : 'transparent'
+                            : 'transparent',
                           fontWeight: isSortedColumn && isBest ? 'bold' : 'normal',
-                          color: isSortedColumn && isBest ? 'success.dark' : isSortedColumn && isWorst ? 'error.dark' : 'text.primary'
+                          color:
+                            isSortedColumn && isBest
+                              ? 'success.dark'
+                              : isSortedColumn && isWorst
+                                ? 'error.dark'
+                                : 'text.primary'
                         }}
                       >
                         {metric.format(value)}
@@ -201,7 +237,7 @@ export const EvaluationContent = () => {
       </TableContainer>
     );
   }, [sortedTableData, sortBy, sortOrder, isLoadingEvaluation, getBestWorst]);
-  
+
   const renderComparisonChart = useCallback(() => {
     if (combinedMetricsData.length === 0) {
       return (
@@ -210,11 +246,13 @@ export const EvaluationContent = () => {
         </Typography>
       );
     }
-    
-    const chartMetrics = metrics.filter(m => m.key !== 'avg_latency_ms' && m.key !== 'memory_increment_mb' && m.key !== 'R2');
-    
+
+    const chartMetrics = metrics.filter(
+      (m) => m.key !== 'avg_latency_ms' && m.key !== 'memory_increment_mb' && m.key !== 'R2'
+    );
+
     const ChartComponent = chartType === 'line' ? LineChart : chartType === 'area' ? AreaChart : BarChart;
-    
+
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ChartComponent data={combinedMetricsData} margin={CHART_MARGIN}>
@@ -227,10 +265,23 @@ export const EvaluationContent = () => {
             const key = metric.key as string;
             const color = COLORS[index % COLORS.length];
             if (chartType === 'line') {
-              return <Line key={key} type="monotone" dataKey={key} name={metric.label} stroke={color} strokeWidth={2} />;
+              return (
+                <Line key={key} type="monotone" dataKey={key} name={metric.label} stroke={color} strokeWidth={2} />
+              );
             }
             if (chartType === 'area') {
-              return <Area key={key} type="monotone" dataKey={key} name={metric.label} stroke={color} fill={color} fillOpacity={0.3} strokeWidth={2} />;
+              return (
+                <Area
+                  key={key}
+                  type="monotone"
+                  dataKey={key}
+                  name={metric.label}
+                  stroke={color}
+                  fill={color}
+                  fillOpacity={0.3}
+                  strokeWidth={2}
+                />
+              );
             }
             return <Bar key={key} dataKey={key} name={metric.label} fill={color} />;
           })}
@@ -238,12 +289,117 @@ export const EvaluationContent = () => {
       </ResponsiveContainer>
     );
   }, [combinedMetricsData, chartType, isLoadingEvaluation]);
-  
+
+  const renderErrorAnalysis = useCallback(() => {
+    const selectedModelId = selectedModels[0];
+    if (!selectedModelId) {
+      return (
+        <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
+          Будь ласка, виберіть одну модель для аналізу помилок.
+        </Typography>
+      );
+    }
+    if (selectedModels.length > 1) {
+      return (
+        <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
+          Будь ласка, виберіть **тільки одну** модель для аналізу помилок.
+        </Typography>
+      );
+    }
+
+    const evaluation = evaluations[selectedModelId];
+
+    if (!evaluation || !evaluation.error_analysis) {
+      if (isLoadingEvaluation) return <Skeleton variant="rectangular" width="100%" height={400} />;
+      return (
+        <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
+          Дані аналізу помилок недоступні для цієї моделі.
+        </Typography>
+      );
+    }
+
+    const { residuals_over_time, monthly_errors, scatter_data } = evaluation.error_analysis;
+
+    return (
+      <Activity mode={isLoadingEvaluation ? 'hidden' : 'visible'}>
+        <Stack spacing={4} sx={{ mt: 2 }}>
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Помилки (залишки) моделі у часі
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={residuals_over_time} margin={CHART_MARGIN}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Legend />
+                <Line type="monotone" dataKey="residual" name="Залишок" stroke="#ff8042" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Box>
+
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Розподіл помилок по місяцях (Box Plot)
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={monthly_errors} margin={CHART_MARGIN}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" name="Місяць" />
+                <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Legend />
+                <Bar dataKey="q1" fill="#90caf9" name="Q1" stackId="a" strokeWidth={0} />
+                <Bar
+                  dataKey={(entry) => entry.q3 - entry.q1}
+                  fill="#1976d2"
+                  name="IQR (Q1-Q3)"
+                  stackId="a"
+                  strokeWidth={0}
+                />
+                <Scatter dataKey="median" fill="#d32f2f" name="Median" shape="diamond" />
+                <Scatter dataKey="min" fill="#f44336" name="Min" shape="cross" />
+                <Scatter dataKey="max" fill="#f44336" name="Max" shape="cross" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </Box>
+
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Фактичні vs Прогнозовані значення
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <ScatterChart margin={CHART_MARGIN}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="actual"
+                  type="number"
+                  name="Фактичні"
+                  label={{ value: 'Фактичні', position: 'bottom' }}
+                />
+                <YAxis
+                  dataKey="predicted"
+                  type="number"
+                  name="Прогнозовані"
+                  label={{ value: 'Прогнозовані', angle: -90, position: 'insideLeft' }}
+                />
+                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ strokeDasharray: '3 3' }} />
+                <Legend />
+                <Scatter name="Прогноз" data={scatter_data} fill="#8884d8" opacity={0.5} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </Box>
+        </Stack>
+      </Activity>
+    );
+  }, [selectedModels, evaluations, isLoadingEvaluation]);
+
   const renderContent = () => {
     if (isLoadingEvaluation && combinedMetricsData.length === 0) {
       return <Skeleton variant="rectangular" width="100%" height={400} />;
     }
-    
+
     if (evaluationError && combinedMetricsData.length === 0) {
       return (
         <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
@@ -251,17 +407,19 @@ export const EvaluationContent = () => {
         </Typography>
       );
     }
-    
+
     switch (viewMode) {
       case 'table':
         return renderMetricsTable();
       case 'comparison':
         return renderComparisonChart();
+      case 'errors':
+        return renderErrorAnalysis();
       default:
         return renderMetricsTable();
     }
   };
-  
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflowY: 'auto' }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3, minHeight: '100%', backgroundColor: 'background.paper' }}>
@@ -280,7 +438,7 @@ export const EvaluationContent = () => {
         {/*  </Stack>*/}
         {/*</Box>*/}
         <Divider sx={{ mb: 3 }} />
-        
+
         {isLoadingModels ? (
           <Skeleton variant="text" width="100%" height={40} />
         ) : (
@@ -292,26 +450,25 @@ export const EvaluationContent = () => {
                 </Typography>
                 <Chip label="Всі (ML/Ensemble)" size="small" onClick={handleSelectAll} variant="outlined" />
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {Object.keys(models)
-                    .map((modelId) => {
-                      const isSelected = selectedModels.includes(modelId);
-                      return (
-                        <Chip
-                          key={modelId}
-                          label={modelId}
-                          onClick={() => handleModelToggle(modelId)}
-                          color={isSelected ? 'primary' : 'default'}
-                          variant={isSelected ? 'filled' : 'outlined'}
-                          size="small"
-                        />
-                      );
-                    })}
+                  {Object.keys(models).map((modelId) => {
+                    const isSelected = selectedModels.includes(modelId);
+                    return (
+                      <Chip
+                        key={modelId}
+                        label={modelId}
+                        onClick={() => handleModelToggle(modelId)}
+                        color={isSelected ? 'primary' : 'default'}
+                        variant={isSelected ? 'filled' : 'outlined'}
+                        size="small"
+                      />
+                    );
+                  })}
                 </Stack>
               </Box>
             </Box>
           )
         )}
-        
+
         <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'space-between', alignItems: 'center' }}>
           <ToggleButtonGroup value={viewMode} exclusive onChange={handleViewModeChange} size="small">
             <ToggleButton value="table">
@@ -322,24 +479,32 @@ export const EvaluationContent = () => {
               <BarChartIcon fontSize="small" sx={{ mr: 0.5 }} />
               Порівняння
             </ToggleButton>
-            {/* <ToggleButton value="errors" disabled>
+            <ToggleButton value="errors">
               <ErrorOutlineIcon fontSize="small" sx={{ mr: 0.5 }} />
               Помилки
             </ToggleButton>
-            */}
           </ToggleButtonGroup>
-          
+
           {viewMode === 'comparison' && (
             <ChartTypeSelector
               value={chartType}
               onChange={setChartType}
               label="Тип графіка"
               minWidth={200}
-              excludeTypes={['vertical-bar', 'stacked-bar', 'stacked-area', 'step', 'composed', 'scatter', 'radar', 'heatmap']}
+              excludeTypes={[
+                'vertical-bar',
+                'stacked-bar',
+                'stacked-area',
+                'step',
+                'composed',
+                'scatter',
+                'radar',
+                'heatmap'
+              ]}
             />
           )}
         </Stack>
-        
+
         {renderContent()}
       </Paper>
     </Box>
