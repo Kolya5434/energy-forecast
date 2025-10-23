@@ -94,13 +94,19 @@ export const EvaluationContent = () => {
   }, [viewMode]);
 
   const handleModelToggle = (modelId: string) => {
-    setSelectedModels((prev) => {
-      if (prev.includes(modelId)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((id) => id !== modelId);
-      }
-      return [...prev, modelId];
-    });
+    setSelectionCache([]);
+
+    if (viewMode === 'errors') {
+      setSelectedModels([modelId]);
+    } else {
+      setSelectedModels((prev) => {
+        if (prev.includes(modelId)) {
+          if (prev.length === 1) return prev;
+          return prev.filter((id) => id !== modelId);
+        }
+        return [...prev, modelId];
+      });
+    }
   };
 
   const handleSelectAll = () => {
@@ -446,9 +452,11 @@ export const EvaluationContent = () => {
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Моделі:
+                  {viewMode === 'errors' ? "Модель: " : 'Моделі: ' }
                 </Typography>
-                <Chip label="Всі (ML/Ensemble)" size="small" onClick={handleSelectAll} variant="outlined" />
+                {viewMode !== 'errors' ? (
+                  <Chip label="Всі (ML/Ensemble)" size="small" onClick={handleSelectAll} variant="outlined" />
+                ) : null}
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                   {Object.keys(models).map((modelId) => {
                     const isSelected = selectedModels.includes(modelId);
