@@ -15,6 +15,7 @@ import { SidePanel } from './components/SidePanel.tsx';
 import { SimulationContent } from './components/SimulationContent.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
+import './i18n';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);

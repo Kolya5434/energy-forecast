@@ -1,5 +1,8 @@
+import { useTranslation } from 'react-i18next';
+
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import LanguageIcon from '@mui/icons-material/Language';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Button, ButtonGroup, IconButton, Paper, useTheme } from '@mui/material';
 
@@ -24,12 +27,18 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'shap_force_plot', label: 'Візуалізація SHAP Force Plot' },
   { id: 'evaluation', label: 'Evaluation' },
   { id: 'simulation', label: 'Simulation' },
-  { id: 'help', label: 'FAQ' },
+  { id: 'help', label: 'FAQ' }
 ];
 
 export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
+  const { i18n, t } = useTranslation();
+
   const showMenuButton = !isPanelOpen && activeView === 'forecast';
+
+  const handleLanguageToggle = () => {
+    i18n.changeLanguage(i18n.language === 'uk' ? 'en' : 'uk');
+  };
 
   return (
     <Box component="header" sx={{ p: 2, flexShrink: 0, width: '100%' }}>
@@ -70,7 +79,7 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
                   whiteSpace: 'nowrap'
                 }}
               >
-                {label}
+                {t(label)}
               </Button>
             ))}
           </ButtonGroup>
@@ -79,6 +88,9 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton onClick={toggleTheme} color="inherit" aria-label="toggle theme">
             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+          <IconButton onClick={handleLanguageToggle} color="inherit" aria-label="toggle language">
+            <LanguageIcon />
           </IconButton>
         </Box>
       </Paper>
