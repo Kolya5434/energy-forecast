@@ -1,11 +1,11 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react';
 
-import { fetchEvaluation, fetchInterpretation, fetchModels, postPredictions } from '../api';
+import { fetchEvaluation, fetchInterpretation, fetchModels, postPredictions, postSimulation } from '../api';
 import type {
   IEvaluationApiResponse, IInterpretationApiResponse,
   IPredictionRequest,
   IPredictionResponse,
-  IShapInterpretationResponse,
+  IShapInterpretationResponse, ISimulationRequest,
   ModelsApiResponse
 } from '../types/api';
 
@@ -28,6 +28,13 @@ interface IApiContext {
   isLoadingInterpretation: boolean;
   interpretationError: string | null;
   getInterpretation: (modelId: string) => void;
+  
+  simulationResult: IPredictionResponse | null;
+  isLoadingSimulation: boolean;
+  simulationError: string | null;
+  runSimulation: (data: ISimulationRequest) => Promise<void>;
+  clearSimulation: () => void;
+  
   clearPredictions: () => void;
 }
 
@@ -50,6 +57,10 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [interpretations, setInterpretations] = useState<Record<string, IShapInterpretationResponse | IInterpretationApiResponse>>({});
   const [isLoadingInterpretation, setIsLoadingInterpretation] = useState(false);
   const [interpretationError, setInterpretationError] = useState<string | null>(null);
+  
+  const [isLoadingSimulation, setIsLoadingSimulation] = useState(false);
+  const [simulationError, setSimulationError] = useState<string | null>(null);
+  const [simulationResult, setSimulationResult] = useState<IPredictionResponse | null>(null);
 
   useEffect(() => {
     const fetchInitialModels = async () => {
@@ -131,6 +142,25 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     [interpretations]
   );
   
+  const runSimulation = useCallback(async (data: ISimulationRequest) => {
+    try {
+      setIsLoadingSimulation(true);
+      setSimulationError(null);
+      const result = await postSimulation(data);
+      setSimulationResult(result);
+    } catch (err) {
+      setSimulationError('Не вдалося запустити симуляцію');
+      console.error('Error running simulation:', err);
+    } finally {
+      setIsLoadingSimulation(false);
+    }
+  }, []);
+  
+  const clearSimulation = useCallback(() => {
+    setSimulationResult(null);
+    setSimulationError(null);
+  }, []);
+  
   const clearPredictions = () => {
     setPredictions(null);
   };
@@ -152,6 +182,11 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     interpretationError,
     getInterpretation,
     clearPredictions,
+    simulationResult,
+    isLoadingSimulation,
+    simulationError,
+    runSimulation,
+    clearSimulation,
   };
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

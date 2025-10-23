@@ -79,3 +79,16 @@ export interface IShapInterpretationResponse {
   };
   shap_values: ShapData
 }
+
+export interface IFeatureOverride {
+  date: string;
+  features: {
+    [featureName: string]: number;
+  };
+}
+
+export interface ISimulationRequest {
+  model_id: string;
+  forecast_horizon: number;
+  feature_overrides: IFeatureOverride[];
+}
