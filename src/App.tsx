@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { darkTheme, lightTheme } from '../theme';
 import { EvaluationContent } from './components/EvaluationContent.tsx';
 import { Header } from './components/Header.tsx';
+import { HelpContent } from './components/HelpContent.tsx';
 import { InterpretContent } from './components/InterpretContent.tsx';
 import { MainContent } from './components/MainContent.tsx';
 import { ShapForcePlot } from './components/ShapForcePlot.tsx';
@@ -39,6 +40,8 @@ function App() {
         return <EvaluationContent />;
       case 'simulation':
         return <SimulationContent />;
+      case 'help':
+        return <HelpContent />;
       default:
         return null;
     }
