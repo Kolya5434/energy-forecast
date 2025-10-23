@@ -2,6 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select, type SelectChangeEvent } fro
 
 import { DEFAULT_OPTIONS_SELECT } from '../shared/constans.ts';
 import type { ISelectOption } from '../types/shared.ts';
+import { useTranslation } from 'react-i18next';
 
 interface ITopSelectProps {
   value: number;
@@ -25,10 +26,12 @@ export const TopSelect = ({
   const handleChange = (event: SelectChangeEvent) => {
     onChange(Number(event.target.value));
   };
-
+  
+  const { t } = useTranslation();
+  
   return (
     <FormControl size={size} sx={{ minWidth }} disabled={disabled}>
-      <InputLabel id="topn-select-label">{label}</InputLabel>
+      <InputLabel id="topn-select-label">{t(label)}</InputLabel>
       <Select
         labelId="topn-select-label"
         id="topn-select"
@@ -38,7 +41,7 @@ export const TopSelect = ({
       >
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value.toString()}>
-            {option.label}
+            {t(option.label)}
           </MenuItem>
         ))}
       </Select>

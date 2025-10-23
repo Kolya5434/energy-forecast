@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { FormControl, InputLabel, MenuItem, Select, type SelectChangeEvent } from '@mui/material';
 
 import { CHART_TYPES } from '../shared/constans.ts';
@@ -22,6 +24,7 @@ export const ChartTypeSelector = ({
   disabled = false,
   excludeTypes = []
 }: ChartTypeSelectorProps) => {
+  const { t } = useTranslation();
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value as ChartType);
   };
@@ -30,11 +33,11 @@ export const ChartTypeSelector = ({
 
   return (
     <FormControl size={size} sx={{ minWidth }} disabled={disabled}>
-      <InputLabel id="chart-type-label">{label}</InputLabel>
+      <InputLabel id="chart-type-label">{t(label)}</InputLabel>
       <Select labelId="chart-type-label" id="chart-type-select" value={value} label={label} onChange={handleChange}>
         {availableTypes.map((type) => (
           <MenuItem key={type.value} value={type.value}>
-            {type.label}
+            {t(type.label)}
           </MenuItem>
         ))}
       </Select>
