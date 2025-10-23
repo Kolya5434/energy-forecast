@@ -40,3 +40,9 @@ export const TOOLTIP_STYLE_ERRORS = {
   fontSize: 12,
   boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
 }
+
+export const OPTIONS_SIMULATABLE_FEATURES = [
+  { value: 'day_of_week', label: 'День тижня' },
+  { value: 'month', label: 'Місяць' },
+  { value: 'day_of_year', label: 'День року' }
+];

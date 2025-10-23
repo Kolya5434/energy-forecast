@@ -92,3 +92,8 @@ export interface ISimulationRequest {
   forecast_horizon: number;
   feature_overrides: IFeatureOverride[];
 }
+export interface SimulationChartData {
+  date: string;
+  baseForecast?: number;
+  simulatedForecast?: number;
+}

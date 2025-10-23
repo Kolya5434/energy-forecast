@@ -23,6 +23,7 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'interpretation', label: 'Аналіз важливості ознак' },
   { id: 'shap_force_plot', label: 'Візуалізація SHAP Force Plot' },
   { id: 'evaluation', label: 'Evaluation' },
+  { id: 'simulation', label: 'Simulation' },
 ];
 
 export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
