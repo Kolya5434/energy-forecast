@@ -1,4 +1,4 @@
-import { Activity, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -9,6 +9,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -39,7 +40,7 @@ import {
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
-import { CHART_MARGIN, COLORS, TOOLTIP_STYLE } from '../shared/constans.ts';
+import { CHART_MARGIN, COLORS, TOOLTIP_STYLE_ERRORS } from '../shared/constans.ts';
 import type { IEvaluationApiResponse } from '../types/api.ts';
 import type { ChartType, ViewMode } from '../types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
@@ -74,7 +75,10 @@ export const EvaluationContent = () => {
 
   useEffect(() => {
     if (models && selectedModels.length === 0) {
-      setSelectedModels(Object.keys(models));
+      const firstMlModel = Object.keys(models).find((id) => models[id].type === 'ml');
+      if (firstMlModel) {
+        setSelectedModels([firstMlModel]);
+      }
     }
   }, [models, selectedModels.length]);
 
@@ -265,7 +269,7 @@ export const EvaluationContent = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="modelId" interval={0} tick={{ fontSize: 11 }} />
           <YAxis />
-          <Tooltip contentStyle={TOOLTIP_STYLE} />
+          <Tooltip contentStyle={TOOLTIP_STYLE_ERRORS} />
           <Legend />
           {chartMetrics.map((metric, index) => {
             const key = metric.key as string;
@@ -326,78 +330,99 @@ export const EvaluationContent = () => {
 
     const { residuals_over_time, monthly_errors, scatter_data } = evaluation.error_analysis;
 
+    const minValue = Math.min(...scatter_data.map((d) => Math.min(d.actual, d.predicted)));
+    const maxValue = Math.max(...scatter_data.map((d) => Math.max(d.actual, d.predicted)));
+
     return (
-      <Activity mode={isLoadingEvaluation ? 'hidden' : 'visible'}>
-        <Stack spacing={4} sx={{ mt: 2 }}>
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Помилки (залишки) моделі у часі
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={residuals_over_time} margin={CHART_MARGIN}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} />
-                <Legend />
-                <Line type="monotone" dataKey="residual" name="Залишок" stroke="#ff8042" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </Box>
+      <Stack spacing={4} sx={{ mt: 2 }}>
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Помилки (залишки) моделі у часі
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={residuals_over_time} margin={CHART_MARGIN}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+              <Tooltip contentStyle={TOOLTIP_STYLE_ERRORS} />
+              <Legend />
+              <Line type="monotone" dataKey="residual" name="Залишок" stroke="#ff8042" strokeWidth={2} dot={false} />
+              <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" label="Zero" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Box>
 
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Розподіл помилок по місяцях (Box Plot)
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={monthly_errors} margin={CHART_MARGIN}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" name="Місяць" />
-                <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} />
-                <Legend />
-                <Bar dataKey="q1" fill="#90caf9" name="Q1" stackId="a" strokeWidth={0} />
-                <Bar
-                  dataKey={(entry) => entry.q3 - entry.q1}
-                  fill="#1976d2"
-                  name="IQR (Q1-Q3)"
-                  stackId="a"
-                  strokeWidth={0}
-                />
-                <Scatter dataKey="median" fill="#d32f2f" name="Median" shape="diamond" />
-                <Scatter dataKey="min" fill="#f44336" name="Min" shape="cross" />
-                <Scatter dataKey="max" fill="#f44336" name="Max" shape="cross" />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </Box>
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Розподіл помилок по місяцях (Box Plot)
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={monthly_errors} margin={CHART_MARGIN}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" name="Місяць" />
+              <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+              <Tooltip contentStyle={TOOLTIP_STYLE_ERRORS} />
+              <Legend />
+              <Bar dataKey="q1" fill="#90caf9" name="Q1" stackId="a" strokeWidth={0} />
+              <Bar
+                dataKey={(entry) => entry.q3 - entry.q1}
+                fill="#1976d2"
+                name="IQR (Q1-Q3)"
+                stackId="a"
+                strokeWidth={0}
+              />
+              <Scatter dataKey="median" fill="#d32f2f" name="Median" shape="diamond" />
+              <Scatter dataKey="min" fill="#f44336" name="Min" shape="cross" />
+              <Scatter dataKey="max" fill="#f44336" name="Max" shape="cross" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </Box>
 
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Фактичні vs Прогнозовані значення
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart margin={CHART_MARGIN}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="actual"
-                  type="number"
-                  name="Фактичні"
-                  label={{ value: 'Фактичні', position: 'bottom' }}
-                />
-                <YAxis
-                  dataKey="predicted"
-                  type="number"
-                  name="Прогнозовані"
-                  label={{ value: 'Прогнозовані', angle: -90, position: 'insideLeft' }}
-                />
-                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ strokeDasharray: '3 3' }} />
-                <Legend />
-                <Scatter name="Прогноз" data={scatter_data} fill="#8884d8" opacity={0.5} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </Box>
-        </Stack>
-      </Activity>
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Фактичні vs Прогнозовані значення
+          </Typography>
+          <ResponsiveContainer width="100%" height={350}>
+            <ScatterChart margin={{ ...CHART_MARGIN, right: 50 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="actual"
+                type="number"
+                name="Фактичні"
+                label={{ value: 'Фактичні', position: 'bottom', offset: -5 }}
+                domain={[minValue, maxValue]}
+              />
+              <YAxis
+                dataKey="predicted"
+                type="number"
+                name="Прогнозовані"
+                label={{ value: 'Прогнозовані', angle: -90, position: 'insideLeft' }}
+                domain={[minValue, maxValue]}
+              />
+              <Tooltip
+                contentStyle={TOOLTIP_STYLE_ERRORS}
+                cursor={{ strokeDasharray: '3 3' }}
+                formatter={(value: number) => value.toFixed(2)}
+              />
+              <Legend verticalAlign="top" height={36} wrapperStyle={{ paddingBottom: '10px' }} />
+              <Scatter name="Точки даних" data={scatter_data} fill="#8884d8" fillOpacity={0.6} shape="circle" />
+              <ReferenceLine
+                segment={[
+                  { x: minValue, y: minValue },
+                  { x: maxValue, y: maxValue }
+                ]}
+                stroke="#ff5252"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                label={{ value: 'Ідеальна лінія', position: 'insideTopRight', fill: '#ff5252' }}
+              />
+            </ScatterChart>
+          </ResponsiveContainer>
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+            * Червона пунктирна лінія показує ідеальний прогноз (фактичні = прогнозовані)
+          </Typography>
+        </Box>
+      </Stack>
     );
   }, [selectedModels, evaluations, isLoadingEvaluation]);
 
@@ -452,7 +477,7 @@ export const EvaluationContent = () => {
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                 <Typography variant="body2" color="text.secondary">
-                  {viewMode === 'errors' ? "Модель: " : 'Моделі: ' }
+                  {viewMode === 'errors' ? 'Модель: ' : 'Моделі: '}
                 </Typography>
                 {viewMode !== 'errors' ? (
                   <Chip label="Всі (ML/Ensemble)" size="small" onClick={handleSelectAll} variant="outlined" />

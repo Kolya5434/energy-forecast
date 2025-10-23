@@ -28,5 +28,15 @@ export const DEFAULT_OPTIONS_SELECT = [
   { value: 15, label: 'Топ-15' },
   { value: 20, label: 'Топ-20' },
   { value: 30, label: 'Топ-30' },
-  { value: 999, label: 'Всі' },
+  { value: 999, label: 'Всі' }
 ] as ISelectOption[];
+
+export const TOOLTIP_STYLE_ERRORS = {
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  border: '1px solid #444',
+  borderRadius: '8px',
+  padding: '8px 12px',
+  color: '#000',
+  fontSize: 12,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+}
