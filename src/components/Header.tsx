@@ -121,7 +121,7 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
                 variant="outlined"
                 aria-label="open menu"
               >
-                Меню
+                {t('Меню')}
               </Button>
 
               <Drawer
