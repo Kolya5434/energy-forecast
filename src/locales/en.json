@@ -117,5 +117,22 @@
   "ознаки, що збільшують прогноз": "features that increase forecast",
   "Сині стрілки": "Blue arrows",
   "ознаки, що зменшують прогноз": "features that decrease forecast",
-  "Довжина стрілки показує силу впливу ознаки": "Arrow length shows the strength of feature impact"
+  "Довжина стрілки показує силу впливу ознаки": "Arrow length shows the strength of feature impact",
+  "Симуляція сценаріїв (What-If)": "Scenario Simulation (What-If)",
+  "Модель для симуляції": "Model for simulation",
+  "Горизонт (днів)": "Horizon (days)",
+  "Дата зміни": "Change date",
+  "Ознака для зміни": "Feature to modify",
+  "Нове значення": "New value",
+  "Запустити симуляцію": "Run simulation",
+  "Очистити": "Clear",
+  "Базовий Прогноз": "Base Prediction",
+  "Симульований Прогноз": "Simulated Prediction",
+  "Задайте параметри та запустіть симуляцію.": "Set the parameters and run the simulation.",
+  "Налаштування": "Settings",
+  "Вибір моделей:": "Model selection:",
+  "Горизонт прогнозу (днів)": "Forecast horizon (days)",
+  "Сформувати прогноз": "Generate forecast",
+  "День тижня": "Day of week",
+  "День року": "Day of year"
 }

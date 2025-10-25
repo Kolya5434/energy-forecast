@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Dayjs } from 'dayjs';
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import ClearIcon from '@mui/icons-material/Clear';
@@ -35,6 +36,7 @@ interface ISimulationFormInput {
 }
 
 export const SimulationContent = () => {
+  const { t } = useTranslation();
   const {
     models,
     isLoadingModels,
@@ -135,7 +137,7 @@ export const SimulationContent = () => {
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflowY: 'auto' }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3, minHeight: '100%', backgroundColor: 'background.paper' }}>
-        <Typography variant="h5">Симуляція сценаріїв (What-If)</Typography>
+        <Typography variant="h5">{t('Симуляція сценаріїв (What-If)')}</Typography>
         <Divider sx={{ my: 2 }} />
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -145,8 +147,8 @@ export const SimulationContent = () => {
               control={control}
               render={({ field }) => (
                 <FormControl size="small" sx={{ minWidth: 240 }} disabled={isLoadingModels}>
-                  <InputLabel>Модель для симуляції</InputLabel>
-                  <Select {...field} label="Модель для симуляції">
+                  <InputLabel>{t('Модель для симуляції')}</InputLabel>
+                  <Select {...field} label={t('Модель для симуляції')}>
                     {models &&
                       Object.keys(models)
                         .filter((id) => models[id].type === 'ml' || models[id].type === 'ensemble')
@@ -166,7 +168,7 @@ export const SimulationContent = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Горизонт (днів)"
+                  label={t('Горизонт (днів)')}
                   type="number"
                   size="small"
                   onChange={(e) => field.onChange(Math.max(1, parseInt(e.target.value, 10)))}
@@ -178,7 +180,7 @@ export const SimulationContent = () => {
               name="overrideDate"
               control={control}
               render={({ field }) => (
-                <DatePicker {...field} label="Дата зміни" slotProps={{ textField: { size: 'small' } }} />
+                <DatePicker {...field} label={t('Дата зміни')} slotProps={{ textField: { size: 'small' } }} />
               )}
             />
 
@@ -187,11 +189,11 @@ export const SimulationContent = () => {
               control={control}
               render={({ field }) => (
                 <FormControl size="small" sx={{ minWidth: 220 }}>
-                  <InputLabel>Ознака для зміни</InputLabel>
-                  <Select {...field} label="Ознака для зміни">
+                  <InputLabel>{t('Ознака для зміни')}</InputLabel>
+                  <Select {...field} label={t('Ознака для зміни')}>
                     {OPTIONS_SIMULATABLE_FEATURES.map((feature) => (
                       <MenuItem key={feature.value} value={feature.value}>
-                        {feature.label}
+                        {t(feature.label)}
                       </MenuItem>
                     ))}
                   </Select>
@@ -203,7 +205,7 @@ export const SimulationContent = () => {
               name="overrideValue"
               control={control}
               render={({ field }) => (
-                <TextField {...field} label="Нове значення" type="number" size="small" placeholder="6" />
+                <TextField {...field} label={t('Нове значення')} type="number" size="small" placeholder="6" />
               )}
             />
           </Stack>
@@ -216,10 +218,10 @@ export const SimulationContent = () => {
               startIcon={<PlayArrowIcon />}
               disabled={isLoadingPredictions || isLoadingSimulation}
             >
-              Запустити симуляцію
+              {t('Запустити симуляцію')}
             </Button>
             <Button variant="outlined" color="secondary" startIcon={<ClearIcon />} onClick={handleClear}>
-              Очистити
+              {t('Очистити')}
             </Button>
           </Stack>
         </form>
@@ -246,14 +248,14 @@ export const SimulationContent = () => {
                 <Line
                   type="monotone"
                   dataKey="baseForecast"
-                  name="Базовий Прогноз"
+                  name={t('Базовий Прогноз')}
                   stroke={COLORS[0]}
                   strokeWidth={2}
                 />
                 <Line
                   type="monotone"
                   dataKey="simulatedForecast"
-                  name="Симульований Прогноз"
+                  name={t('Симульований Прогноз')}
                   stroke={COLORS[1]}
                   strokeWidth={2}
                   strokeDasharray="5 5"
@@ -262,7 +264,7 @@ export const SimulationContent = () => {
             </ResponsiveContainer>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-              <Typography color="text.secondary">Задайте параметри та запустіть симуляцію.</Typography>
+              <Typography color="text.secondary">{t('Задайте параметри та запустіть симуляцію.')}</Typography>
             </Box>
           )}
         </Box>

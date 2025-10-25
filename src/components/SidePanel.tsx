@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import {
@@ -23,6 +24,7 @@ interface SidePanelProps {
 }
 
 const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
+  const { t } = useTranslation();
   const { models, isLoadingModels, getPredictions } = useApi();
 
   const [selectedModels, setSelectedModels] = useState<string[]>(['XGBoost_Tuned']);
@@ -54,14 +56,14 @@ const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Налаштування</Typography>
+          <Typography variant="h6">{t('Налаштування')}</Typography>
           <IconButton onClick={togglePanel}>
             <FirstPageIcon />
           </IconButton>
         </Box>
         <Divider sx={{ my: 2 }} />
 
-        <Typography gutterBottom>Вибір моделей:</Typography>
+        <Typography gutterBottom>{t('Вибір моделей:')}</Typography>
         <FormGroup sx={{ mb: 3, overflow: 'hidden' }}>
           {isLoadingModels
             ? Array.from(new Array(4)).map((_, index) => (
@@ -80,7 +82,7 @@ const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
         </FormGroup>
 
         <TextField
-          label="Горизонт прогнозу (днів)"
+          label={t('Горизонт прогнозу (днів)')}
           type="number"
           value={forecastHorizon}
           onChange={(e) => setForecastHorizon(Math.max(1, parseInt(e.target.value, 10)))}
@@ -92,7 +94,7 @@ const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
 
         <Box sx={{ mt: 'auto' }}>
           <Button variant="contained" color="primary" fullWidth onClick={handleForecast}>
-            Сформувати прогноз
+            {t('Сформувати прогноз')}
           </Button>
         </Box>
       </Paper>
