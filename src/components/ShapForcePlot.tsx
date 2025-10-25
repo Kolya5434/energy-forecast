@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -20,6 +21,7 @@ import {
 import { useApi } from '../context/useApi.tsx';
 
 export const ShapForcePlot = () => {
+  const { t } = useTranslation();
   const { models, isLoadingModels, interpretations, getInterpretation } = useApi();
   const [selectedModel, setSelectedModel] = useState<string>('XGBoost_Tuned');
 
@@ -62,15 +64,15 @@ export const ShapForcePlot = () => {
   const handleModelChange = (event: SelectChangeEvent) => {
     setSelectedModel(event.target.value as string);
   };
-  
+
   if (!shapData) {
     return (
       <Paper elevation={0} sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" gutterBottom>
-          SHAP Force Plot - Аналіз впливу ознак на прогноз
+          {t('SHAP Force Plot - Аналіз впливу ознак на прогноз')}
         </Typography>
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography color="text.secondary">Завантаження даних...</Typography>
+          <Typography color="text.secondary">{t('Завантаження даних...')}</Typography>
         </Box>
       </Paper>
     );
@@ -82,10 +84,10 @@ export const ShapForcePlot = () => {
     return (
       <Paper elevation={0} sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" gutterBottom>
-          SHAP Force Plot - Аналіз впливу ознак на прогноз
+          {t('SHAP Force Plot - Аналіз впливу ознак на прогноз')}
         </Typography>
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography color="text.secondary">Дані про внески ознак недоступні</Typography>
+          <Typography color="text.secondary">{t('Дані про внески ознак недоступні')}</Typography>
         </Box>
       </Paper>
     );
@@ -107,24 +109,24 @@ export const ShapForcePlot = () => {
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0 }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" gutterBottom>
-          SHAP Force Plot - Аналіз впливу ознак на прогноз
+          {t('SHAP Force Plot - Аналіз впливу ознак на прогноз')}
         </Typography>
 
         <Stack direction="row" spacing={2} sx={{ mb: 3, flexWrap: 'wrap', gap: 1 }}>
-          <Chip label={`Базове значення: ${formatNumber(base_value)}`} variant="outlined" size="small" />
-          <Chip label={`Прогноз: ${formatNumber(prediction_value)}`} color="primary" size="small" />
+          <Chip label={`${t('Базове значення')}: ${formatNumber(base_value)}`} variant="outlined" size="small" />
+          <Chip label={`${t('Прогноз')}: ${formatNumber(prediction_value)}`} color="primary" size="small" />
           <Chip
-            label={`Загальна зміна: ${formatNumber(totalChange)}`}
+            label={`${t('Загальна зміна')}: ${formatNumber(totalChange)}`}
             color={totalChange >= 0 ? 'success' : 'error'}
             size="small"
             icon={totalChange >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
           />
           <FormControl size="small" sx={{ maxWidth: 240, flexGrow: 1 }}>
-            <InputLabel id="model-select-label">Модель для аналізу</InputLabel>
+            <InputLabel id="model-select-label">{t('Модель для аналізу')}</InputLabel>
             <Select
               labelId="model-select-label"
               value={selectedModel}
-              label="Модель для аналізу"
+              label={t('Модель для аналізу')}
               onChange={handleModelChange}
               disabled={isLoadingModels}
             >
@@ -140,7 +142,9 @@ export const ShapForcePlot = () => {
           </FormControl>
         </Stack>
 
-        <Box sx={{ position: 'relative', maxHeight: 'calc(100vh - 400px)',  overflowY: 'auto', overflowX: 'hidden', mb: 3 }}>
+        <Box
+          sx={{ position: 'relative', maxHeight: 'calc(100vh - 400px)', overflowY: 'auto', overflowX: 'hidden', mb: 3 }}
+        >
           <Box
             sx={{
               display: 'flex',
@@ -172,7 +176,7 @@ export const ShapForcePlot = () => {
               }}
             >
               <Typography variant="caption" color="black">
-                Базове значення
+                {t('Базове значення')}
               </Typography>
               <Typography variant="h6" color="primary">
                 {formatNumber(base_value)}
@@ -193,7 +197,7 @@ export const ShapForcePlot = () => {
               }}
             >
               <Typography variant="caption" color="black">
-                Прогноз
+                {t('Прогноз')}
               </Typography>
               <Typography variant="h6" color={totalChange >= 0 ? 'success.main' : 'error.main'}>
                 {formatNumber(prediction_value)}
@@ -204,7 +208,7 @@ export const ShapForcePlot = () => {
           {sortedContributions.positive.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Typography variant="subtitle2" color="error" gutterBottom>
-                Позитивні внески (збільшують прогноз):
+                {t('Позитивні внески (збільшують прогноз):')}
               </Typography>
               <Stack spacing={1}>
                 {sortedContributions.positive.map((contrib) => (
@@ -263,7 +267,7 @@ export const ShapForcePlot = () => {
           {sortedContributions.negative.length > 0 && (
             <Box>
               <Typography variant="subtitle2" color="primary" gutterBottom>
-                Негативні внески (зменшують прогноз):
+                {t('Негативні внески (зменшують прогноз):')}
               </Typography>
               <Stack spacing={1}>
                 {sortedContributions.negative.map((contrib) => (
@@ -321,7 +325,7 @@ export const ShapForcePlot = () => {
 
           {sortedContributions.positive.length === 0 && sortedContributions.negative.length === 0 && (
             <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography color="text.secondary">Немає значущих внесків ознак у цей прогноз</Typography>
+              <Typography color="text.secondary">{t('Немає значущих внесків ознак у цей прогноз')}</Typography>
             </Box>
           )}
         </Box>
@@ -335,17 +339,17 @@ export const ShapForcePlot = () => {
           }}
         >
           <Typography variant="caption" color="text.secondary" gutterBottom>
-            <strong>Інтерпретація:</strong>
+            <strong>{t('Інтерпретація:')}</strong>
           </Typography>
           <Stack spacing={0.5}>
             <Typography variant="caption" color="text.secondary">
-              • <span style={{ color: '#ff5252' }}>Червоні стрілки</span> - ознаки, що збільшують прогноз
+              • <span style={{ color: '#ff5252' }}>{t('Червоні стрілки')}</span> - {t('ознаки, що збільшують прогноз')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              • <span style={{ color: '#2196f3' }}>Сині стрілки</span> - ознаки, що зменшують прогноз
+              • <span style={{ color: '#2196f3' }}>{t('Сині стрілки')}</span> - {t('ознаки, що зменшують прогноз')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              • Довжина стрілки показує силу впливу ознаки
+              • {t('Довжина стрілки показує силу впливу ознаки')}
             </Typography>
           </Stack>
         </Box>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Bar,
   BarChart,
@@ -55,6 +56,7 @@ import classes from './InterpretContent.module.scss';
 import { TopSelect } from './TopSelect.tsx';
 
 export const InterpretContent = () => {
+  const { t } = useTranslation();
   const { models, isLoadingModels, getInterpretation, interpretations, isLoadingInterpretation, interpretationError } =
     useApi();
   const [selectedModel, setSelectedModel] = useState<string>('XGBoost_Tuned');
@@ -106,12 +108,12 @@ export const InterpretContent = () => {
             ) : (
               <>
                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
-                <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+                <YAxis label={{ value: t('Важливість'), angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
               </>
             )}
             <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: 'rgba(100, 100, 100, 0.1)' }} />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
-            <Bar dataKey="value" name="Важливість ознаки" fill="#8884d8" />
+            <Bar dataKey="value" name={t('Важливість ознаки')} fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
       );
@@ -125,10 +127,10 @@ export const InterpretContent = () => {
         <LineChart data={chartData} margin={CHART_MARGIN}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
-          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+          <YAxis label={{ value: t('Важливість'), angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
           <Tooltip contentStyle={TOOLTIP_STYLE} />
           <Legend wrapperStyle={{ paddingTop: '10px' }} />
-          <Line type="monotone" dataKey="value" name="Важливість ознаки" stroke="#8884d8" strokeWidth={2} />
+          <Line type="monotone" dataKey="value" name={t('Важливість ознаки')} stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -140,10 +142,10 @@ export const InterpretContent = () => {
         <ScatterChart data={chartData} margin={CHART_MARGIN}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} interval={0} tick={{ fontSize: 11 }} />
-          <YAxis label={{ value: 'Важливість', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
+          <YAxis label={{ value: t('Важливість'), angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }} />
           <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ strokeDasharray: '3 3' }} />
           <Legend wrapperStyle={{ paddingTop: '10px' }} />
-          <Scatter name="Важливість ознаки" dataKey="value" fill="#8884d8" />
+          <Scatter name={t('Важливість ознаки')} dataKey="value" fill="#8884d8" />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -158,7 +160,7 @@ export const InterpretContent = () => {
           <PolarRadiusAxis angle={90} />
           <Tooltip contentStyle={TOOLTIP_STYLE} />
           <Legend wrapperStyle={{ paddingTop: '10px' }} />
-          <Radar name="Важливість ознаки" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+          <Radar name={t('Важливість ознаки')} dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
         </RadarChart>
       </ResponsiveContainer>
     );
@@ -191,12 +193,12 @@ export const InterpretContent = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontWeight: 'bold' }}>№</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Назва ознаки</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>{t('Назва ознаки')}</TableCell>
               <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                Важливість
+                {t('Важливість')}
               </TableCell>
               <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                Відносна важливість (%)
+                {t('Відносна важливість (%)')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -235,13 +237,13 @@ export const InterpretContent = () => {
       if (interpretations[selectedModel] && !isFeatureImportanceResponse(interpretations[selectedModel])) {
         return (
           <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-            Отримано дані інтерпретації в непідтримуваному форматі.
+            {t('Отримано дані інтерпретації в непідтримуваному форматі.')}
           </Typography>
         );
       }
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          Дані інтерпретації недоступні для цієї моделі.
+          {t('Дані інтерпретації недоступні для цієї моделі.')}
         </Typography>
       );
     }
@@ -253,7 +255,7 @@ export const InterpretContent = () => {
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflowY: 'auto' }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3, height: '100%', backgroundColor: 'background.paper' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5">Аналіз важливості ознак</Typography>
+          <Typography variant="h5">{t('Аналіз важливості ознак')}</Typography>
           <Stack direction="row" spacing={1}>
             <Button
               startIcon={<DownloadIcon />}
@@ -282,11 +284,11 @@ export const InterpretContent = () => {
 
         <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'space-between' }}>
           <FormControl size="small" sx={{ maxWidth: 240, flexGrow: 1 }}>
-            <InputLabel id="model-select-label">Модель для аналізу</InputLabel>
+            <InputLabel id="model-select-label">{t('Модель для аналізу')}</InputLabel>
             <Select
               labelId="model-select-label"
               value={selectedModel}
-              label="Модель для аналізу"
+              label={t('Модель для аналізу')}
               onChange={handleModelChange}
               disabled={isLoadingModels}
             >
@@ -308,7 +310,7 @@ export const InterpretContent = () => {
               <ChartTypeSelector
                 value={chartType}
                 onChange={setChartType}
-                label="Тип візуалізації"
+                label={t('Тип візуалізації')}
                 minWidth={200}
                 excludeTypes={['area', 'stacked-area', 'stacked-bar', 'step', 'composed', 'heatmap']}
               />
@@ -323,11 +325,11 @@ export const InterpretContent = () => {
             >
               <ToggleButton value="chart" aria-label="chart view">
                 <ShowChartIcon fontSize="small" sx={{ mr: 0.5 }} />
-                Графік
+                {t('Графік')}
               </ToggleButton>
               <ToggleButton value="table" aria-label="table view">
                 <TableChartIcon fontSize="small" sx={{ mr: 0.5 }} />
-                Таблиця
+                {t('Таблиця')}
               </ToggleButton>
             </ToggleButtonGroup>
           </div>

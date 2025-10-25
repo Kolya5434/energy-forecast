@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Area,
   AreaChart,
@@ -32,6 +33,7 @@ import type { ChartType, IChartDataPoint } from '../types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 
 export const MainContent = () => {
+  const { t } = useTranslation();
   const { predictions, isLoadingPredictions, clearPredictions } = useApi();
   const [chartType, setChartType] = useState<ChartType>('line');
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
@@ -334,9 +336,11 @@ export const MainContent = () => {
         </svg>
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', px: 2 }}>
           <Typography variant="caption">
-            Dates: {data[0]?.date} - {data[data.length - 1]?.date}
+            {t('Dates')}: {data[0]?.date} - {data[data.length - 1]?.date}
           </Typography>
-          <Typography variant="caption">Models: {modelIds.join(', ')}</Typography>
+          <Typography variant="caption">
+            {t('Models')}: {modelIds.join(', ')}
+          </Typography>
         </Box>
       </Box>
     );
@@ -395,7 +399,7 @@ export const MainContent = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5">Графік Прогнозів</Typography>
+          <Typography variant="h5">{t('Графік Прогнозів')}</Typography>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             {predictions && predictions.length > 0 && (
               <Button
@@ -405,7 +409,7 @@ export const MainContent = () => {
                 startIcon={<DeleteOutlineIcon />}
                 onClick={handleClearData}
               >
-                Очистити дані
+                {t('Очистити дані')}
               </Button>
             )}
             <ChartTypeSelector value={chartType} onChange={setChartType} />
@@ -416,10 +420,10 @@ export const MainContent = () => {
           <Box sx={{ mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Typography variant="body2" color="text.secondary">
-                Моделі:
+                {t('Моделі:')}
               </Typography>
               <Chip
-                label="Всі"
+                label={t('Всі')}
                 size="small"
                 onClick={handleSelectAll}
                 variant="outlined"
@@ -459,7 +463,7 @@ export const MainContent = () => {
           ) : !predictions || chartData.length === 0 ? (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
               <Typography color="text.secondary">
-                Виберіть моделі та натисніть "Сформувати прогноз", щоб побачити результат.
+                {t('Виберіть моделі та натисніть "Сформувати прогноз", щоб побачити результат.')}
               </Typography>
             </Box>
           ) : (
