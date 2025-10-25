@@ -83,7 +83,8 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
               transition: 'opacity 0.2s',
               display: 'flex',
               alignItems: 'center',
-              gap: 1
+              gap: 1,
+              ':hover': {backgroundColor: 'background.paper'}
             }}
             aria-label="toggle menu"
           >

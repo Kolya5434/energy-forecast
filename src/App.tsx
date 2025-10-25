@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { Box, CssBaseline, ThemeProvider } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -15,14 +15,16 @@ import { SidePanel } from './components/SidePanel.tsx';
 import { SimulationContent } from './components/SimulationContent.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
+
 import './i18n';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [activeView, setActiveView] = useState<View>('forecast');
 
   const theme = useMemo(() => (isDarkMode ? darkTheme : lightTheme), [isDarkMode]);
+  const isXlUp = useMediaQuery(theme.breakpoints.up('xl'), { noSsr: true });
+  const [isPanelOpen, setIsPanelOpen] = useState(isXlUp);
 
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
   const togglePanel = () => setIsPanelOpen((prev) => !prev);
