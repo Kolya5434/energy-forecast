@@ -54,7 +54,9 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
   const showMenuButton = !isPanelOpen && activeView === 'forecast';
 
   const handleLanguageToggle = () => {
-    i18n.changeLanguage(i18n.language === 'uk' ? 'en' : 'uk');
+    i18n.changeLanguage(i18n.language === 'uk' ? 'en' : 'uk').catch((err) => {
+      console.error('Failed to change language:', err);
+    });
   };
 
   return (
@@ -126,7 +128,7 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
                 anchor="right"
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
-                PaperProps={{ sx: { width: 280 } }}
+                slotProps={{ paper: { sx: { width: 300 } } }}
               >
                 <List>
                   {VIEW_CONFIGS.map(({ id, label }) => (
