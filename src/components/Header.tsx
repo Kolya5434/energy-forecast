@@ -1,10 +1,25 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import LanguageIcon from '@mui/icons-material/Language';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Button, ButtonGroup, IconButton, Paper, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Paper,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
 
 import type { View } from '../types/shared';
 
@@ -33,6 +48,8 @@ const VIEW_CONFIGS: ViewConfig[] = [
 export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
   const { i18n, t } = useTranslation();
+  const isSmall = useMediaQuery('(max-width:1920px)');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const showMenuButton = !isPanelOpen && activeView === 'forecast';
 
@@ -61,31 +78,75 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
             sx={{
               visibility: showMenuButton ? 'visible' : 'hidden',
               opacity: showMenuButton ? 1 : 0,
-              transition: 'opacity 0.2s'
+              transition: 'opacity 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
             }}
             aria-label="toggle menu"
           >
-            <MenuIcon />
+            <FilterListIcon />
+            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+              {t('Фільтри')}
+            </Box>
           </IconButton>
 
-          <ButtonGroup variant="text" aria-label="view navigation" sx={{ flexWrap: 'wrap' }}>
-            {VIEW_CONFIGS.map(({ id, label }) => (
-              <Button
-                key={id}
-                onClick={() => setActiveView(id)}
-                variant={activeView === id ? 'contained' : 'text'}
-                sx={{
-                  minWidth: 'fit-content',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {t(label)}
-              </Button>
-            ))}
-          </ButtonGroup>
+          {!isSmall ? (
+            <ButtonGroup variant="text" aria-label="view navigation" sx={{ flexWrap: 'wrap' }}>
+              {VIEW_CONFIGS.map(({ id, label }) => (
+                <Button
+                  key={id}
+                  onClick={() => setActiveView(id)}
+                  variant={activeView === id ? 'contained' : 'text'}
+                  sx={{
+                    minWidth: 'fit-content',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {t(label)}
+                </Button>
+              ))}
+            </ButtonGroup>
+          ) : null}
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {isSmall ? (
+            <>
+              <Button
+                startIcon={<MenuIcon />}
+                onClick={() => setDrawerOpen(true)}
+                variant="outlined"
+                aria-label="open menu"
+              >
+                Меню
+              </Button>
+
+              <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                PaperProps={{ sx: { width: 280 } }}
+              >
+                <List>
+                  {VIEW_CONFIGS.map(({ id, label }) => (
+                    <ListItem key={id} disablePadding>
+                      <ListItemButton
+                        selected={activeView === id}
+                        onClick={() => {
+                          setActiveView(id);
+                          setDrawerOpen(false);
+                        }}
+                        aria-label={`go to ${id}`}
+                      >
+                        <ListItemText primary={t(label)} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Drawer>
+            </>
+          ) : null}
           <IconButton onClick={toggleTheme} color="inherit" aria-label="toggle theme">
             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
