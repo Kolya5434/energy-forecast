@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Area,
   AreaChart,
@@ -57,6 +58,7 @@ const metrics: Array<{ key: MetricKey; label: string; format: (v: number | null)
 type SortableMetricKey = 'MAE' | 'RMSE' | 'R2' | 'avg_latency_ms' | 'memory_increment_mb';
 
 export const EvaluationContent = () => {
+  const { t } = useTranslation();
   const { models, isLoadingModels, getEvaluation, evaluations, isLoadingEvaluation, evaluationError } = useApi();
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('table');
@@ -177,8 +179,8 @@ export const EvaluationContent = () => {
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
           {isLoadingEvaluation
-            ? 'Завантаження оцінок...'
-            : 'Немає даних для відображення. Виберіть моделі для аналізу.'}
+            ? t('Завантаження оцінок...')
+            : t('Немає даних для відображення. Виберіть моделі для аналізу.')}
         </Typography>
       );
     }
@@ -188,7 +190,7 @@ export const EvaluationContent = () => {
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Модель</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>{t('Модель')}</TableCell>
               {metrics.map((metric) => (
                 <TableCell
                   key={metric.key}
@@ -252,7 +254,7 @@ export const EvaluationContent = () => {
     if (combinedMetricsData.length === 0) {
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          {isLoadingEvaluation ? 'Завантаження оцінок...' : 'Немає даних для відображення графіка.'}
+          {isLoadingEvaluation ? t('Завантаження оцінок...') : t('Немає даних для відображення графіка.')}
         </Typography>
       );
     }
@@ -305,14 +307,14 @@ export const EvaluationContent = () => {
     if (!selectedModelId) {
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          Будь ласка, виберіть одну модель для аналізу помилок.
+          {t('Будь ласка, виберіть одну модель для аналізу помилок.')}
         </Typography>
       );
     }
     if (selectedModels.length > 1) {
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          Будь ласка, виберіть **тільки одну** модель для аналізу помилок.
+          {t('Будь ласка, виберіть **тільки одну** модель для аналізу помилок.')}
         </Typography>
       );
     }
@@ -323,7 +325,7 @@ export const EvaluationContent = () => {
       if (isLoadingEvaluation) return <Skeleton variant="rectangular" width="100%" height={400} />;
       return (
         <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-          Дані аналізу помилок недоступні для цієї моделі.
+          {t('Дані аналізу помилок недоступні для цієї моделі.')}
         </Typography>
       );
     }
@@ -337,50 +339,57 @@ export const EvaluationContent = () => {
       <Stack spacing={4} sx={{ mt: 2 }}>
         <Box>
           <Typography variant="h6" gutterBottom>
-            Помилки (залишки) моделі у часі
+            {t('Помилки (залишки) моделі у часі')}
           </Typography>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={residuals_over_time} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+              <YAxis label={{ value: t('Помилка'), angle: -90, position: 'insideLeft' }} />
               <Tooltip contentStyle={TOOLTIP_STYLE_ERRORS} />
               <Legend />
-              <Line type="monotone" dataKey="residual" name="Залишок" stroke="#ff8042" strokeWidth={2} dot={false} />
-              <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" label="Zero" />
+              <Line
+                type="monotone"
+                dataKey="residual"
+                name={t('Залишок')}
+                stroke="#ff8042"
+                strokeWidth={2}
+                dot={false}
+              />
+              <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" label={t('Zero')} />
             </LineChart>
           </ResponsiveContainer>
         </Box>
 
         <Box>
           <Typography variant="h6" gutterBottom>
-            Розподіл помилок по місяцях (Box Plot)
+            {t('Розподіл помилок по місяцях (Box Plot)')}
           </Typography>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={monthly_errors} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" name="Місяць" />
-              <YAxis label={{ value: 'Помилка', angle: -90, position: 'insideLeft' }} />
+              <XAxis dataKey="month" name={t('Місяць')} />
+              <YAxis label={{ value: t('Помилка'), angle: -90, position: 'insideLeft' }} />
               <Tooltip contentStyle={TOOLTIP_STYLE_ERRORS} />
               <Legend />
               <Bar dataKey="q1" fill="#90caf9" name="Q1" stackId="a" strokeWidth={0} />
               <Bar
                 dataKey={(entry) => entry.q3 - entry.q1}
                 fill="#1976d2"
-                name="IQR (Q1-Q3)"
+                name={t('IQR (Q1-Q3)')}
                 stackId="a"
                 strokeWidth={0}
               />
-              <Scatter dataKey="median" fill="#d32f2f" name="Median" shape="diamond" />
-              <Scatter dataKey="min" fill="#f44336" name="Min" shape="cross" />
-              <Scatter dataKey="max" fill="#f44336" name="Max" shape="cross" />
+              <Scatter dataKey="median" fill="#d32f2f" name={t('Median')} shape="diamond" />
+              <Scatter dataKey="min" fill="#f44336" name={t('Min')} shape="cross" />
+              <Scatter dataKey="max" fill="#f44336" name={t('Max')} shape="cross" />
             </ComposedChart>
           </ResponsiveContainer>
         </Box>
 
         <Box>
           <Typography variant="h6" gutterBottom>
-            Фактичні vs Прогнозовані значення
+            {t('Фактичні vs Прогнозовані значення')}
           </Typography>
           <ResponsiveContainer width="100%" height={350}>
             <ScatterChart margin={{ ...CHART_MARGIN, right: 50 }}>
@@ -388,15 +397,15 @@ export const EvaluationContent = () => {
               <XAxis
                 dataKey="actual"
                 type="number"
-                name="Фактичні"
-                label={{ value: 'Фактичні', position: 'bottom', offset: -5 }}
+                name={t('Фактичні')}
+                label={{ value: t('Фактичні'), position: 'bottom', offset: -5 }}
                 domain={[minValue, maxValue]}
               />
               <YAxis
                 dataKey="predicted"
                 type="number"
-                name="Прогнозовані"
-                label={{ value: 'Прогнозовані', angle: -90, position: 'insideLeft' }}
+                name={t('Прогнозовані')}
+                label={{ value: t('Прогнозовані'), angle: -90, position: 'insideLeft' }}
                 domain={[minValue, maxValue]}
               />
               <Tooltip
@@ -405,7 +414,7 @@ export const EvaluationContent = () => {
                 formatter={(value: number) => value.toFixed(2)}
               />
               <Legend verticalAlign="top" height={36} wrapperStyle={{ paddingBottom: '10px' }} />
-              <Scatter name="Точки даних" data={scatter_data} fill="#8884d8" fillOpacity={0.6} shape="circle" />
+              <Scatter name={t('Точки даних')} data={scatter_data} fill="#8884d8" fillOpacity={0.6} shape="circle" />
               <ReferenceLine
                 segment={[
                   { x: minValue, y: minValue },
@@ -414,17 +423,17 @@ export const EvaluationContent = () => {
                 stroke="#ff5252"
                 strokeWidth={2}
                 strokeDasharray="5 5"
-                label={{ value: 'Ідеальна лінія', position: 'insideTopRight', fill: '#ff5252' }}
+                label={{ value: t('Ідеальна лінія'), position: 'insideTopRight', fill: '#ff5252' }}
               />
             </ScatterChart>
           </ResponsiveContainer>
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-            * Червона пунктирна лінія показує ідеальний прогноз (фактичні = прогнозовані)
+            {t('* Червона пунктирна лінія показує ідеальний прогноз (фактичні = прогнозовані)')}
           </Typography>
         </Box>
       </Stack>
     );
-  }, [selectedModels, evaluations, isLoadingEvaluation]);
+  }, [selectedModels, evaluations, isLoadingEvaluation, t]);
 
   const renderContent = () => {
     if (isLoadingEvaluation && combinedMetricsData.length === 0) {
@@ -477,10 +486,10 @@ export const EvaluationContent = () => {
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                 <Typography variant="body2" color="text.secondary">
-                  {viewMode === 'errors' ? 'Модель: ' : 'Моделі: '}
+                  {viewMode === 'errors' ? t('Модель: ') : t('Моделі: ')}
                 </Typography>
                 {viewMode !== 'errors' ? (
-                  <Chip label="Всі (ML/Ensemble)" size="small" onClick={handleSelectAll} variant="outlined" />
+                  <Chip label={t('Всі (ML/Ensemble)')} size="small" onClick={handleSelectAll} variant="outlined" />
                 ) : null}
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                   {Object.keys(models).map((modelId) => {
@@ -506,15 +515,15 @@ export const EvaluationContent = () => {
           <ToggleButtonGroup value={viewMode} exclusive onChange={handleViewModeChange} size="small">
             <ToggleButton value="table">
               <TableChartIcon fontSize="small" sx={{ mr: 0.5 }} />
-              Таблиця
+              {t('Таблиця')}
             </ToggleButton>
             <ToggleButton value="comparison">
               <BarChartIcon fontSize="small" sx={{ mr: 0.5 }} />
-              Порівняння
+              {t('Порівняння')}
             </ToggleButton>
             <ToggleButton value="errors">
               <ErrorOutlineIcon fontSize="small" sx={{ mr: 0.5 }} />
-              Помилки
+              {t('Помилки')}
             </ToggleButton>
           </ToggleButtonGroup>
 
@@ -522,7 +531,7 @@ export const EvaluationContent = () => {
             <ChartTypeSelector
               value={chartType}
               onChange={setChartType}
-              label="Тип графіка"
+              label={t('Тип графіка')}
               minWidth={200}
               excludeTypes={[
                 'vertical-bar',
