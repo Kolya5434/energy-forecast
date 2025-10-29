@@ -67,9 +67,7 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
       try {
         setIsLoadingModels(true);
         const data = await fetchModels();
-        // TODO: need change back-end side
         const filteredModels = Object.entries(data)
-          .filter(([_, modelInfo]) => modelInfo.type !== 'dl')
           .reduce((acc, [modelId, modelInfo]) => {
             acc[modelId] = modelInfo;
             return acc;
