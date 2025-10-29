@@ -20,6 +20,7 @@ import {
 } from 'recharts';
 
 import BarChartIcon from '@mui/icons-material/BarChart';
+import DownloadIcon from '@mui/icons-material/Download';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import {
@@ -37,10 +38,16 @@ import {
   TableRow,
   ToggleButton,
   ToggleButtonGroup,
-  Typography
+  Typography,
+  Button
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
+import {
+  exportEvaluationToDOCX,
+  exportEvaluationToPDF_Quick,
+  exportEvaluationToXLSX
+} from '../helpers/exportEvaluationUtils.ts';
 import { CHART_MARGIN, COLORS, TOOLTIP_STYLE_ERRORS } from '../shared/constans.ts';
 import type { IEvaluationApiResponse } from '../types/api.ts';
 import type { ChartType, ViewMode } from '../types/shared.ts';
@@ -98,6 +105,34 @@ export const EvaluationContent = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewMode]);
+
+  const prepareExportData = () => {
+    return combinedMetricsData.map((row) => ({
+      modelId: row.modelId,
+      MAE: row.MAE ?? null,
+      RMSE: row.RMSE ?? null,
+      'R²': row['R2'] ?? null,
+      'Explained Variance': row['Explained Variance'] ?? null,
+      'MAPE (%)': row['MAPE (%)'] ?? null,
+      avg_latency_ms: row.avg_latency_ms ?? null,
+      memory_increment_mb: row.memory_increment_mb ?? null
+    }));
+  };
+
+  const handleExportExcel = async () => {
+    const exportData = prepareExportData();
+    await exportEvaluationToXLSX(exportData, true);
+  };
+
+  const handleExportPDF = async () => {
+    const exportData = prepareExportData();
+    await exportEvaluationToPDF_Quick(exportData, true);
+  };
+
+  const handleExportWord = async () => {
+    const exportData = prepareExportData();
+    await exportEvaluationToDOCX(exportData, true);
+  };
 
   const handleModelToggle = (modelId: string) => {
     setSelectionCache([]);
@@ -463,21 +498,35 @@ export const EvaluationContent = () => {
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflowY: 'auto' }}>
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3, minHeight: '100%', backgroundColor: 'background.paper' }}>
-        {/*TODO: need to add export button for metrics_comparison.xlsx */}
-        {/*<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>*/}
-        {/*  <Typography variant="h5">Оцінка та порівняння моделей</Typography>*/}
-        {/*  <Stack direction="row" spacing={1}>*/}
-        {/*    <Button*/}
-        {/*      variant="outlined"*/}
-        {/*      startIcon={<DownloadIcon />}*/}
-        {/*      // onClick={() => exportChartData('xlsx', combinedMetricsData, 'metrics_comparison')}*/}
-        {/*      disabled={combinedMetricsData.length === 0}*/}
-        {/*    >*/}
-        {/*      Export*/}
-        {/*    </Button>*/}
-        {/*  </Stack>*/}
-        {/*</Box>*/}
-        <Divider sx={{ mb: 3 }} />
+        <Stack direction="row" spacing={1} justifyContent='flex-end'>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<DownloadIcon />}
+            onClick={handleExportExcel}
+            disabled={combinedMetricsData.length === 0}
+          >
+            Excel
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<DownloadIcon />}
+            onClick={handleExportWord}
+            disabled={combinedMetricsData.length === 0}
+          >
+            Word
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<DownloadIcon />}
+            onClick={handleExportPDF}
+            disabled={combinedMetricsData.length === 0}
+          >
+            PDF
+          </Button>
+        </Stack>
 
         {isLoadingModels ? (
           <Skeleton variant="text" width="100%" height={40} />
