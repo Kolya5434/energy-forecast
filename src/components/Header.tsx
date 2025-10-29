@@ -54,7 +54,11 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
   const showMenuButton = !isPanelOpen && activeView === 'forecast';
 
   const handleLanguageToggle = () => {
-    i18n.changeLanguage(i18n.language === 'uk' ? 'en' : 'uk').catch((err) => {
+    const languages = ['uk', 'en', 'de', 'it'];
+    const currentIndex = languages.indexOf(i18n.language);
+    const nextLang = languages[(currentIndex + 1) % languages.length];
+
+    i18n.changeLanguage(nextLang).catch((err) => {
       console.error('Failed to change language:', err);
     });
   };
@@ -84,7 +88,7 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
               display: 'flex',
               alignItems: 'center',
               gap: 1,
-              ':hover': {backgroundColor: 'background.paper'}
+              ':hover': { backgroundColor: 'background.paper' }
             }}
             aria-label="toggle menu"
           >
@@ -153,8 +157,16 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
           <IconButton onClick={toggleTheme} color="inherit" aria-label="toggle theme">
             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          <IconButton onClick={handleLanguageToggle} color="inherit" aria-label="toggle language">
+          <IconButton
+            onClick={handleLanguageToggle}
+            color="inherit"
+            aria-label={`current language: ${i18n.language}`}
+            sx={{ ':hover': { backgroundColor: 'background.paper' } }}
+          >
             <LanguageIcon />
+            <Box component="span" sx={{ ml: 1, fontSize: 14, ':focus-visible': { outline: 'none' } }}>
+              {i18n.language.toUpperCase()}
+            </Box>
           </IconButton>
         </Box>
       </Paper>
