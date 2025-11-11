@@ -1,0 +1,49 @@
+// Colors
+$primary-color: #1976d2;
+$secondary-color: #dc004e;
+$error-color: #f44336;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+
+// Chart colors
+$chart-colors: (
+  0: #8884d8,
+  1: #82ca9d,
+  2: #ffc658,
+  3: #ff8042,
+  4: #8dd1e1,
+  5: #d084d0,
+  6: #a4de6c
+);
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Border radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Z-index layers
+$z-index-base: 1;
+$z-index-dropdown: 10;
+$z-index-sticky: 100;
+$z-index-fixed: 1000;
+$z-index-modal: 10000;
+$z-index-tooltip: 100000;

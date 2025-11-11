@@ -1,0 +1,130 @@
+// Breakpoints
+$breakpoint-xs: 320px;
+$breakpoint-sm: 600px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;
+
+// Responsive mixins
+@mixin xs {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - 1px}) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: #{$breakpoint-xl}) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+// Flexbox mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Spacing
+@mixin responsive-padding($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+  padding: $mobile;
+
+  @include tablet {
+    padding: $tablet;
+  }
+
+  @include desktop {
+    padding: $desktop;
+  }
+}
+
+@mixin responsive-margin($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+  margin: $mobile;
+
+  @include tablet {
+    margin: $tablet;
+  }
+
+  @include desktop {
+    margin: $desktop;
+  }
+}
+
+// Typography
+@mixin responsive-font-size($mobile, $tablet: null, $desktop: null) {
+  font-size: $mobile;
+
+  @if $tablet {
+    @include tablet {
+      font-size: $tablet;
+    }
+  }
+
+  @if $desktop {
+    @include desktop {
+      font-size: $desktop;
+    }
+  }
+}
+
+// Grid
+@mixin responsive-grid($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3, $gap: 1rem) {
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat($mobile-cols, 1fr);
+
+  @include tablet {
+    grid-template-columns: repeat($tablet-cols, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat($desktop-cols, 1fr);
+  }
+}
