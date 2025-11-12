@@ -1,0 +1,92 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.header {
+  padding: 16px;
+  flex-shrink: 0;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
+}
+
+.paper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px;
+  border-radius: 24px;
+  background-color: var(--background-paper);
+
+  @media (max-width: 768px) {
+    padding: 6px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+
+  @media (max-width: 480px) {
+    gap: 4px;
+  }
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+}
+
+.buttonGroup {
+  flex-wrap: wrap;
+
+  @media (max-width: 1920px) {
+    display: none;
+  }
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 480px) {
+    gap: 4px;
+  }
+}
+
+.drawer {
+  width: 300px;
+
+  @media (max-width: 480px) {
+    width: 250px;
+  }
+}
+
+.languageButton {
+  display: flex;
+  align-items: center;
+
+  span {
+    margin-left: 4px;
+    font-size: 14px;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+}

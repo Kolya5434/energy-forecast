@@ -1,5 +1,27 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
 .interpretContentSelects {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: stretch;
+
+    > * {
+      flex: 1;
+      min-width: 150px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+
+    > * {
+      width: 100%;
+    }
+  }
 }

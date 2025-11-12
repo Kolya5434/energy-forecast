@@ -5,14 +5,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { darkTheme, lightTheme } from '../theme';
-import { EvaluationContent } from '@/pages/EvaluationContent.tsx';
-import { Header } from '@/pages/Header.tsx';
-import { HelpContent } from '@/pages/HelpContent.tsx';
-import { InterpretContent } from '@/pages/InterpretContent.tsx';
-import { MainContent } from '@/pages/MainContent.tsx';
-import { ShapForcePlot } from '@/pages/ShapForcePlot.tsx';
-import { SidePanel } from '@/pages/SidePanel.tsx';
-import { SimulationContent } from '@/pages/SimulationContent.tsx';
+import { EvaluationContent } from './pages/EvaluationContent.tsx';
+import { Header } from './pages/Header.tsx';
+import { HelpContent } from './pages/HelpContent.tsx';
+import { InterpretContent } from './pages/InterpretContent.tsx';
+import { MainContent } from './pages/MainContent.tsx';
+import { ShapForcePlot } from './pages/ShapForcePlot.tsx';
+import { SidePanel } from './pages/SidePanel.tsx';
+import { SimulationContent } from './pages/SimulationContent.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
 
