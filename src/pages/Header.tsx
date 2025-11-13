@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -45,7 +45,7 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'help', label: 'FAQ' }
 ];
 
-export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
+const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
   const { i18n, t } = useTranslation();
   const isSmall = useMediaQuery('(max-width:1920px)');
@@ -173,3 +173,5 @@ export const Header = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, a
     </Box>
   );
 };
+
+export const Header = memo(HeaderComponent);

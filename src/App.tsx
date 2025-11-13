@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 
 import { Box, CircularProgress, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -27,8 +27,9 @@ function App() {
   const isXlUp = useMediaQuery(theme.breakpoints.up('xl'), { noSsr: true });
   const [isPanelOpen, setIsPanelOpen] = useState(isXlUp);
 
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
-  const togglePanel = () => setIsPanelOpen((prev) => !prev);
+  const toggleTheme = useCallback(() => setIsDarkMode((prev) => !prev), []);
+  const togglePanel = useCallback(() => setIsPanelOpen((prev) => !prev), []);
+  const handleSetActiveView = useCallback((view: View) => setActiveView(view), []);
 
   const showSidePanel = activeView === 'forecast';
 
@@ -64,7 +65,7 @@ function App() {
                 isPanelOpen={isPanelOpen}
                 togglePanel={togglePanel}
                 activeView={activeView}
-                setActiveView={setActiveView}
+                setActiveView={handleSetActiveView}
               />
               <Suspense
                 fallback={

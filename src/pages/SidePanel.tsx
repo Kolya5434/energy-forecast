@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import FirstPageIcon from '@mui/icons-material/FirstPage';
@@ -23,7 +23,7 @@ interface SidePanelProps {
   isOpen: boolean;
 }
 
-const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
+const SidePanelComponent = ({ togglePanel, isOpen }: SidePanelProps) => {
   const { t } = useTranslation();
   const { models, isLoadingModels, getPredictions } = useApi();
 
@@ -101,5 +101,7 @@ const SidePanel = ({ togglePanel, isOpen }: SidePanelProps) => {
     </Box>
   );
 };
+
+const SidePanel = memo(SidePanelComponent);
 
 export { SidePanel };
