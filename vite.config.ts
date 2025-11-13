@@ -8,11 +8,44 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: [
+          // Core React
+          'react-vendor': [
             'react',
             'react-dom',
+            'react-hook-form'
+          ],
+          // i18n
+          'i18n': [
             'i18next',
             'react-i18next'
+          ],
+          // MUI Core
+          'mui-core': [
+            '@mui/material',
+            '@emotion/react',
+            '@emotion/styled'
+          ],
+          // MUI Icons & Date Pickers
+          'mui-extras': [
+            '@mui/icons-material',
+            '@mui/x-date-pickers',
+            'dayjs'
+          ],
+          // Charts
+          'charts': [
+            'echarts',
+            'recharts'
+          ],
+          // Export libraries
+          'export': [
+            'xlsx',
+            'jspdf',
+            'jspdf-autotable',
+            'docx'
+          ],
+          // HTTP client
+          'http': [
+            'axios'
           ]
         }
       }
