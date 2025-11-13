@@ -1,22 +1,23 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 
-import { Box, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+import { Box, CircularProgress, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { darkTheme, lightTheme } from '../theme';
-import { EvaluationContent } from './pages/EvaluationContent.tsx';
 import { Header } from './pages/Header.tsx';
-import { HelpContent } from './pages/HelpContent.tsx';
-import { InterpretContent } from './pages/InterpretContent.tsx';
-import { MainContent } from './pages/MainContent.tsx';
-import { ShapForcePlot } from './pages/ShapForcePlot.tsx';
 import { SidePanel } from './pages/SidePanel.tsx';
-import { SimulationContent } from './pages/SimulationContent.tsx';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
 
 import './i18n';
+
+const MainContent = lazy(() => import('./pages/MainContent.tsx').then(m => ({ default: m.MainContent })));
+const InterpretContent = lazy(() => import('./pages/InterpretContent.tsx').then(m => ({ default: m.InterpretContent })));
+const ShapForcePlot = lazy(() => import('./pages/ShapForcePlot.tsx').then(m => ({ default: m.ShapForcePlot })));
+const EvaluationContent = lazy(() => import('./pages/EvaluationContent.tsx').then(m => ({ default: m.EvaluationContent })));
+const SimulationContent = lazy(() => import('./pages/SimulationContent.tsx').then(m => ({ default: m.SimulationContent })));
+const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then(m => ({ default: m.HelpContent })));
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -65,9 +66,16 @@ function App() {
                 activeView={activeView}
                 setActiveView={setActiveView}
               />
-              {renderContent()}
+              <Suspense
+                fallback={
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
+                    <CircularProgress />
+                  </Box>
+                }
+              >
+                {renderContent()}
+              </Suspense>
             </Box>
-            {/*<RightPanel />*/}
           </Box>
         </ApiProvider>
       </LocalizationProvider>
