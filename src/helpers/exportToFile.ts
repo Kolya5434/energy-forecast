@@ -1,8 +1,3 @@
-import { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } from 'docx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
-
 import type { ExportTypes } from '../types/shared';
 
 interface ExportDataRow {
@@ -20,7 +15,10 @@ interface ExportOptions {
 /**
  * Export data to Excel format (XLSX)
  */
-const exportToExcel = (options: ExportOptions) => {
+const exportToExcel = async (options: ExportOptions) => {
+  // Dynamic import of XLSX library
+  const XLSX = await import('xlsx');
+
   const { data, fileName, title = 'Аналіз важливості ознак', modelName } = options;
 
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
@@ -47,20 +45,26 @@ const exportToExcel = (options: ExportOptions) => {
 /**
  * Export data to PDF format
  */
-const exportToPDF = (options: ExportOptions) => {
+const exportToPDF = async (options: ExportOptions) => {
+  // Dynamic imports of jsPDF libraries
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable')
+  ]);
+
   const { data, fileName, modelName } = options;
-  
+
   const doc = new jsPDF();
-  
+
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
-  
+
   const tableData = data.map((row, index) => [
     (index + 1).toString(),
     row.name,
     row.value.toFixed(4),
     `${((row.value / totalValue) * 100).toFixed(2)}%`
   ]);
-  
+
   autoTable(doc, {
     startY: 20,
     head: [['#', 'Feature Name', 'Importance', 'Relative Importance (%)']],
@@ -109,11 +113,14 @@ const exportToPDF = (options: ExportOptions) => {
  * Export data to Word format (DOCX)
  */
 const exportToWord = async (options: ExportOptions) => {
+  // Dynamic import of docx library
+  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } = await import('docx');
+
   const { data, fileName, title = 'Аналіз важливості ознак', modelName } = options;
 
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-  const paragraphs: Paragraph[] = [
+  const paragraphs = [
     new Paragraph({
       text: title,
       heading: 'Heading1',
@@ -224,10 +231,10 @@ export const handleExport = async (format: ExportTypes, data: ExportDataRow[], m
   try {
     switch (format) {
       case 'xlsx':
-        exportToExcel(options);
+        await exportToExcel(options);
         break;
       case 'pdf':
-        exportToPDF(options);
+        await exportToPDF(options);
         break;
       case 'docx':
         await exportToWord(options);

@@ -1,8 +1,3 @@
-import { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } from 'docx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
-
 import type { ExportTypes } from '../types/shared';
 
 interface MetricData {
@@ -34,9 +29,12 @@ const formatMetricValue = (value: number | null, decimals: number = 4): string =
 /**
  * Export evaluation metrics to Excel format (XLSX)
  */
-const exportEvaluationToExcel = (options: EvaluationExportOptions) => {
+const exportEvaluationToExcel = async (options: EvaluationExportOptions) => {
+  // Dynamic import of XLSX library
+  const XLSX = await import('xlsx');
+
   const { data, fileName, title = 'Порівняння моделей', includePerformance = true } = options;
-  
+
   // Prepare worksheet data
   const worksheetData: any[][] = [
     [title],
@@ -45,14 +43,14 @@ const exportEvaluationToExcel = (options: EvaluationExportOptions) => {
     [],
     []
   ];
-  
+
   // Headers
   const headers = ['Модель', 'MAE', 'RMSE', 'R²', 'Explained Variance', 'MAPE (%)'];
   if (includePerformance) {
     headers.push('Latency (ms)', 'Memory (MB)');
   }
   worksheetData.push(headers);
-  
+
   // Data rows
   data.forEach((row) => {
     const rowData = [
@@ -63,18 +61,18 @@ const exportEvaluationToExcel = (options: EvaluationExportOptions) => {
       formatMetricValue(row['Explained Variance']),
       formatMetricValue(row['MAPE (%)'], 2)
     ];
-    
+
     if (includePerformance) {
       rowData.push(formatMetricValue(row.avg_latency_ms, 2), formatMetricValue(row.memory_increment_mb, 2));
     }
-    
+
     worksheetData.push(rowData);
   });
-  
+
   // Add summary statistics
   worksheetData.push([]);
   worksheetData.push(['Статистика']);
-  
+
   const calculateStats = (key: keyof MetricData) => {
     const values = data.map((d) => d[key]).filter((v): v is number => v !== null);
     if (values.length === 0) return { min: 'N/A', max: 'N/A', avg: 'N/A' };
@@ -84,44 +82,50 @@ const exportEvaluationToExcel = (options: EvaluationExportOptions) => {
       avg: (values.reduce((a, b) => a + b, 0) / values.length).toFixed(4)
     };
   };
-  
+
   const maeStats = calculateStats('MAE');
   const rmseStats = calculateStats('RMSE');
   worksheetData.push(['', `Min: ${maeStats.min}`, `Min: ${rmseStats.min}`]);
   worksheetData.push(['', `Max: ${maeStats.max}`, `Max: ${rmseStats.max}`]);
   worksheetData.push(['', `Avg: ${maeStats.avg}`, `Avg: ${rmseStats.avg}`]);
-  
+
   // Create worksheet
   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-  
+
   // Set column widths
   const colWidths = [{ wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 12 }];
   if (includePerformance) {
     colWidths.push({ wch: 15 }, { wch: 15 });
   }
   worksheet['!cols'] = colWidths;
-  
+
   // Create workbook and save
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Порівняння моделей');
-  
+
   XLSX.writeFile(workbook, `${fileName}.xlsx`);
 };
 
 /**
  * Export evaluation metrics to PDF format
  */
-const exportEvaluationToPDF = (options: EvaluationExportOptions) => {
+const exportEvaluationToPDF = async (options: EvaluationExportOptions) => {
+  // Dynamic imports of jsPDF libraries
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable')
+  ]);
+
   const { data, fileName, includePerformance = true } = options;
-  
+
   const doc = new jsPDF({ orientation: 'landscape' });
-  
+
   // Prepare table data
   const headers = ['Model', 'MAE', 'RMSE', 'R²', 'Explained Var.', 'MAPE (%)'];
   if (includePerformance) {
     headers.push('Latency (ms)', 'Memory (MB)');
   }
-  
+
   const tableData = data.map((row) => {
     const rowData = [
       row.modelId,
@@ -131,22 +135,22 @@ const exportEvaluationToPDF = (options: EvaluationExportOptions) => {
       formatMetricValue(row['Explained Variance']),
       formatMetricValue(row['MAPE (%)'], 2)
     ];
-    
+
     if (includePerformance) {
       rowData.push(formatMetricValue(row.avg_latency_ms, 2), formatMetricValue(row.memory_increment_mb, 2));
     }
-    
+
     return rowData;
   });
-  
+
   // Add title and metadata
   doc.setFontSize(18);
   doc.text('Model Comparison', 14, 15);
-  
+
   doc.setFontSize(10);
   doc.text(`Export Date: ${new Date().toLocaleString('en-US')}`, 14, 22);
   doc.text(`Total Models: ${data.length}`, 14, 28);
-  
+
   // Create table
   autoTable(doc, {
     startY: 35,
@@ -179,7 +183,7 @@ const exportEvaluationToPDF = (options: EvaluationExportOptions) => {
       fillColor: [245, 245, 245]
     }
   });
-  
+
   // Add footer
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
@@ -192,7 +196,7 @@ const exportEvaluationToPDF = (options: EvaluationExportOptions) => {
       { align: 'center' }
     );
   }
-  
+
   doc.save(`${fileName}.pdf`);
 };
 
@@ -200,10 +204,13 @@ const exportEvaluationToPDF = (options: EvaluationExportOptions) => {
  * Export evaluation metrics to Word format (DOCX)
  */
 const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
+  // Dynamic import of docx library
+  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } = await import('docx');
+
   const { data, fileName, title = 'Порівняння моделей', includePerformance = true } = options;
-  
+
   // Title paragraphs
-  const paragraphs: Paragraph[] = [
+  const paragraphs = [
     new Paragraph({
       text: title,
       heading: 'Heading1',
@@ -219,7 +226,7 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
       spacing: { after: 300 }
     })
   ];
-  
+
   // Table headers
   const headerCells = [
     new TableCell({ children: [new Paragraph({ text: 'Модель', bold: true })], width: { size: 20, type: WidthType.PERCENTAGE } }),
@@ -229,14 +236,14 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
     new TableCell({ children: [new Paragraph({ text: 'Explained Var.', bold: true })], width: { size: 14, type: WidthType.PERCENTAGE } }),
     new TableCell({ children: [new Paragraph({ text: 'MAPE (%)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } })
   ];
-  
+
   if (includePerformance) {
     headerCells.push(
       new TableCell({ children: [new Paragraph({ text: 'Latency (ms)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } }),
       new TableCell({ children: [new Paragraph({ text: 'Memory (MB)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } })
     );
   }
-  
+
   // Table rows
   const tableRows = [
     new TableRow({ children: headerCells }),
@@ -249,24 +256,24 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
         new TableCell({ children: [new Paragraph({ text: formatMetricValue(row['Explained Variance']) })] }),
         new TableCell({ children: [new Paragraph({ text: formatMetricValue(row['MAPE (%)'], 2) })] })
       ];
-      
+
       if (includePerformance) {
         cells.push(
           new TableCell({ children: [new Paragraph({ text: formatMetricValue(row.avg_latency_ms, 2) })] }),
           new TableCell({ children: [new Paragraph({ text: formatMetricValue(row.memory_increment_mb, 2) })] })
         );
       }
-      
+
       return new TableRow({ children: cells });
     })
   ];
-  
+
   // Create table
   const table = new Table({
     rows: tableRows,
     width: { size: 100, type: WidthType.PERCENTAGE }
   });
-  
+
   // Create document
   const doc = new Document({
     sections: [
@@ -275,7 +282,7 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
       }
     ]
   });
-  
+
   // Save document
   const blob = await Packer.toBlob(doc);
   const url = window.URL.createObjectURL(blob);
@@ -312,10 +319,10 @@ export const exportEvaluationMetrics = async (
   try {
     switch (format) {
       case 'xlsx':
-        exportEvaluationToExcel(options);
+        await exportEvaluationToExcel(options);
         break;
       case 'pdf':
-        exportEvaluationToPDF(options);
+        await exportEvaluationToPDF(options);
         break;
       case 'docx':
         await exportEvaluationToWord(options);

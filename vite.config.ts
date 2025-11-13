@@ -36,13 +36,6 @@ export default defineConfig({
             'echarts',
             'recharts'
           ],
-          // Export libraries
-          'export': [
-            'xlsx',
-            'jspdf',
-            'jspdf-autotable',
-            'docx'
-          ],
           // HTTP client
           'http': [
             'axios'
