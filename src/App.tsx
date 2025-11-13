@@ -1,23 +1,31 @@
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import { Box, CircularProgress, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { darkTheme, lightTheme } from '../theme';
+import { ApiProvider } from './context/ApiContext.tsx';
 import { Header } from './pages/Header.tsx';
 import { SidePanel } from './pages/SidePanel.tsx';
-import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
 
 import './i18n';
 
-const MainContent = lazy(() => import('./pages/MainContent.tsx').then(m => ({ default: m.MainContent })));
-const InterpretContent = lazy(() => import('./pages/InterpretContent.tsx').then(m => ({ default: m.InterpretContent })));
-const ShapForcePlot = lazy(() => import('./pages/ShapForcePlot.tsx').then(m => ({ default: m.ShapForcePlot })));
-const EvaluationContent = lazy(() => import('./pages/EvaluationContent.tsx').then(m => ({ default: m.EvaluationContent })));
-const SimulationContent = lazy(() => import('./pages/SimulationContent.tsx').then(m => ({ default: m.SimulationContent })));
-const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then(m => ({ default: m.HelpContent })));
+const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
+const InterpretContent = lazy(() =>
+  import('./pages/InterpretContent.tsx').then((m) => ({ default: m.InterpretContent }))
+);
+const ShapForcePlot = lazy(() => import('./pages/ShapForcePlot.tsx').then((m) => ({ default: m.ShapForcePlot })));
+const EvaluationContent = lazy(() =>
+  import('./pages/EvaluationContent.tsx').then((m) => ({ default: m.EvaluationContent }))
+);
+const SimulationContent = lazy(() =>
+  import('./pages/SimulationContent.tsx').then((m) => ({ default: m.SimulationContent }))
+);
+const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then((m) => ({ default: m.HelpContent })));
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -78,6 +86,8 @@ function App() {
               </Suspense>
             </Box>
           </Box>
+          <Analytics />
+          <SpeedInsights />
         </ApiProvider>
       </LocalizationProvider>
     </ThemeProvider>
