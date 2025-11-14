@@ -165,7 +165,7 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
           >
             <LanguageIcon />
             <Box component="span" sx={{ ml: 1, fontSize: 14, ':focus-visible': { outline: 'none' } }}>
-              {i18n.language.toUpperCase()}
+              {i18n.language?.toUpperCase()}
             </Box>
           </IconButton>
         </Box>
