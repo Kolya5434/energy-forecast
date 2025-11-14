@@ -1,0 +1,35 @@
+/* Force GPU acceleration for better animation performance */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix non-composited animations in MUI components */
+.MuiSelect-select,
+.MuiInputBase-root,
+.MuiOutlinedInput-root {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize MUI autocomplete animations */
+@keyframes mui-auto-fill-cancel {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Prevent layout shifts during loading */
+#root {
+  min-height: 100vh;
+  contain: layout style paint;
+}
+
+/* Performance optimization for images */
+img {
+  content-visibility: auto;
+}
