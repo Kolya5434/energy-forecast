@@ -53,7 +53,7 @@ export const SimulationContent = () => {
 
   const firstMlModel = useMemo(() => {
     if (!models) return '';
-    return Object.keys(models).find((id) => models[id].type === 'ml' || models[id].type === 'ensemble') || '';
+    return Object.keys(models).find((id) => models[id]?.type === 'ml' || models[id]?.type === 'ensemble') || '';
   }, [models]);
 
   const { control, handleSubmit, watch, setValue } = useForm<ISimulationFormInput>({
@@ -151,7 +151,7 @@ export const SimulationContent = () => {
                   <Select {...field} label={t('Модель для симуляції')}>
                     {models &&
                       Object.keys(models)
-                        .filter((id) => models[id].type === 'ml' || models[id].type === 'ensemble')
+                        .filter((id) => models[id]?.type === 'ml' || models[id]?.type === 'ensemble')
                         .map((modelId) => (
                           <MenuItem key={modelId} value={modelId}>
                             {modelId}

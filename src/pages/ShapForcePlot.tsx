@@ -132,7 +132,7 @@ export const ShapForcePlot = () => {
             >
               {models &&
                 Object.keys(models)
-                  .filter((id) => models[id].type === 'ml')
+                  .filter((id) => models[id]?.type === 'ml')
                   .map((modelId) => (
                     <MenuItem key={modelId} value={modelId}>
                       {modelId}

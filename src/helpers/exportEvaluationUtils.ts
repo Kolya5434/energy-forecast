@@ -205,7 +205,7 @@ const exportEvaluationToPDF = async (options: EvaluationExportOptions) => {
  */
 const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
   // Dynamic import of docx library
-  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } = await import('docx');
+  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } = await import('docx');
 
   const { data, fileName, title = 'Порівняння моделей', includePerformance = true } = options;
 
@@ -229,18 +229,18 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
 
   // Table headers
   const headerCells = [
-    new TableCell({ children: [new Paragraph({ text: 'Модель', bold: true })], width: { size: 20, type: WidthType.PERCENTAGE } }),
-    new TableCell({ children: [new Paragraph({ text: 'MAE', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } }),
-    new TableCell({ children: [new Paragraph({ text: 'RMSE', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } }),
-    new TableCell({ children: [new Paragraph({ text: 'R²', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } }),
-    new TableCell({ children: [new Paragraph({ text: 'Explained Var.', bold: true })], width: { size: 14, type: WidthType.PERCENTAGE } }),
-    new TableCell({ children: [new Paragraph({ text: 'MAPE (%)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } })
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Модель', bold: true })] })], width: { size: 20, type: WidthType.PERCENTAGE } }),
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'MAE', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } }),
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'RMSE', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } }),
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'R²', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } }),
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Explained Var.', bold: true })] })], width: { size: 14, type: WidthType.PERCENTAGE } }),
+    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'MAPE (%)', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } })
   ];
 
   if (includePerformance) {
     headerCells.push(
-      new TableCell({ children: [new Paragraph({ text: 'Latency (ms)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } }),
-      new TableCell({ children: [new Paragraph({ text: 'Memory (MB)', bold: true })], width: { size: 12, type: WidthType.PERCENTAGE } })
+      new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Latency (ms)', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } }),
+      new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Memory (MB)', bold: true })] })], width: { size: 12, type: WidthType.PERCENTAGE } })
     );
   }
 

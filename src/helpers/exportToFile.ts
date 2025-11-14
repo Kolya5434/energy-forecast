@@ -114,7 +114,7 @@ const exportToPDF = async (options: ExportOptions) => {
  */
 const exportToWord = async (options: ExportOptions) => {
   // Dynamic import of docx library
-  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } = await import('docx');
+  const { AlignmentType, Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } = await import('docx');
 
   const { data, fileName, title = 'Аналіз важливості ознак', modelName } = options;
 
@@ -149,19 +149,19 @@ const exportToWord = async (options: ExportOptions) => {
     new TableRow({
       children: [
         new TableCell({
-          children: [new Paragraph({ text: '№', bold: true })],
+          children: [new Paragraph({ children: [new TextRun({ text: '№', bold: true })] })],
           width: { size: 10, type: WidthType.PERCENTAGE }
         }),
         new TableCell({
-          children: [new Paragraph({ text: 'Назва ознаки', bold: true })],
+          children: [new Paragraph({ children: [new TextRun({ text: 'Назва ознаки', bold: true })] })],
           width: { size: 45, type: WidthType.PERCENTAGE }
         }),
         new TableCell({
-          children: [new Paragraph({ text: 'Важливість', bold: true })],
+          children: [new Paragraph({ children: [new TextRun({ text: 'Важливість', bold: true })] })],
           width: { size: 20, type: WidthType.PERCENTAGE }
         }),
         new TableCell({
-          children: [new Paragraph({ text: 'Відносна важливість (%)', bold: true })],
+          children: [new Paragraph({ children: [new TextRun({ text: 'Відносна важливість (%)', bold: true })] })],
           width: { size: 25, type: WidthType.PERCENTAGE }
         })
       ]
