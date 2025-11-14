@@ -13,6 +13,15 @@
   backface-visibility: hidden;
 }
 
+/* Fix CircularProgress animation performance */
+.MuiCircularProgress-root,
+.MuiCircularProgress-svg,
+.MuiCircularProgress-circle {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* Optimize MUI autocomplete animations */
 @keyframes mui-auto-fill-cancel {
   from {
@@ -24,6 +33,14 @@
 }
 
 /* Prevent layout shifts during loading */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
 #root {
   min-height: 100vh;
   contain: layout style paint;
@@ -32,4 +49,9 @@
 /* Performance optimization for images */
 img {
   content-visibility: auto;
+}
+
+/* Optimize font loading to prevent layout shifts */
+@font-face {
+  font-display: swap;
 }
