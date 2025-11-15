@@ -9,33 +9,21 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Core React - split into smaller chunks
-            if (id.includes('react/') || id.includes('react-dom/client')) {
-              return 'react-core';
-            }
-            if (id.includes('react-dom') && !id.includes('client')) {
-              return 'react-dom';
-            }
-            if (id.includes('react-hook-form')) {
-              return 'react-forms';
-            }
-            if (id.includes('scheduler')) {
-              return 'react-core';
-            }
-
             // i18n
-            if (id.includes('i18next') || id.includes('react-i18next')) {
+            if (id.includes('i18next')) {
               return 'i18n';
             }
 
-            // MUI - split into more granular chunks
+            // React Hook Form
+            if (id.includes('react-hook-form')) {
+              return 'react-forms';
+            }
+
+            // MUI and Emotion - must come before React check
             if (id.includes('@mui/material')) {
               return 'mui-material';
             }
-            if (id.includes('@emotion/react') || id.includes('@emotion/styled')) {
-              return 'emotion';
-            }
-            if (id.includes('@emotion/cache') || id.includes('@emotion/serialize')) {
+            if (id.includes('@emotion')) {
               return 'emotion';
             }
             if (id.includes('@mui/icons-material')) {
@@ -46,6 +34,12 @@ export default defineConfig({
             }
             if (id.includes('@mui/system') || id.includes('@mui/utils')) {
               return 'mui-material';
+            }
+
+            // Core React - keep together to avoid module resolution issues
+            // Check for /react/, /react-dom/ to avoid catching packages with 'react' in name
+            if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('scheduler')) {
+              return 'react-vendor';
             }
 
             // Chart libraries
