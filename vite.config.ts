@@ -9,25 +9,64 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-hook-form')) {
-              return 'react-vendor';
+            // Core React - split into smaller chunks
+            if (id.includes('react/') || id.includes('react-dom/client')) {
+              return 'react-core';
             }
+            if (id.includes('react-dom') && !id.includes('client')) {
+              return 'react-dom';
+            }
+            if (id.includes('react-hook-form')) {
+              return 'react-forms';
+            }
+            if (id.includes('scheduler')) {
+              return 'react-core';
+            }
+
+            // i18n
             if (id.includes('i18next') || id.includes('react-i18next')) {
               return 'i18n';
             }
-            if (id.includes('@mui/material') || id.includes('@emotion')) {
-              return 'mui-core';
+
+            // MUI - split into more granular chunks
+            if (id.includes('@mui/material')) {
+              return 'mui-material';
             }
-            if (id.includes('@mui/icons-material') || id.includes('@mui/x-date-pickers') || id.includes('dayjs')) {
-              return 'mui-extras';
+            if (id.includes('@emotion/react') || id.includes('@emotion/styled')) {
+              return 'emotion';
             }
-            if (id.includes('echarts') || id.includes('recharts')) {
-              return 'charts';
+            if (id.includes('@emotion/cache') || id.includes('@emotion/serialize')) {
+              return 'emotion';
             }
+            if (id.includes('@mui/icons-material')) {
+              return 'mui-icons';
+            }
+            if (id.includes('@mui/x-date-pickers') || id.includes('dayjs')) {
+              return 'mui-pickers';
+            }
+            if (id.includes('@mui/system') || id.includes('@mui/utils')) {
+              return 'mui-material';
+            }
+
+            // Chart libraries
+            if (id.includes('echarts')) {
+              return 'echarts';
+            }
+            if (id.includes('recharts')) {
+              return 'recharts';
+            }
+
+            // HTTP
             if (id.includes('axios')) {
               return 'http';
             }
-            // Heavy document export libraries - only load when needed
+
+            // Vercel analytics - separate chunk
+            if (id.includes('@vercel/analytics') || id.includes('@vercel/speed-insights')) {
+              return 'vercel-analytics';
+            }
+
+            // Heavy document export libraries - these should be lazy loaded
             if (id.includes('xlsx')) {
               return 'xlsx-vendor';
             }
@@ -40,25 +79,31 @@ export default defineConfig({
             if (id.includes('html2canvas')) {
               return 'html2canvas-vendor';
             }
+
             // Other vendors
             return 'vendor';
           }
-        }
+        },
+        // Optimize chunk loading
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       },
       treeshake: {
         moduleSideEffects: false,
         propertyReadSideEffects: false
       }
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
     cssCodeSplit: true,
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        passes: 2
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+        passes: 2,
+        ecma: 2020
       },
       mangle: {
         safari10: true
@@ -68,9 +113,19 @@ export default defineConfig({
       }
     },
     reportCompressedSize: false,
-    sourcemap: false
+    sourcemap: false,
+    // Target modern browsers for smaller output
+    target: 'es2020',
+    modulePreload: {
+      polyfill: false
+    }
   },
   css: {
     devSourcemap: false
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@mui/material', '@emotion/react', '@emotion/styled'],
+    exclude: ['xlsx', 'jspdf', 'jspdf-autotable', 'docx']
   }
 });

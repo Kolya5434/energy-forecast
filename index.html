@@ -5,8 +5,33 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Energy forecast application providing real-time energy consumption predictions and analytics" />
+
+    <!-- Preconnect to API -->
     <link rel="preconnect" href="https://mykola121-energy-forecast-api.hf.space" crossorigin />
     <link rel="dns-prefetch" href="https://mykola121-energy-forecast-api.hf.space" />
+
+    <!-- Performance optimizations -->
+    <meta name="theme-color" content="#121212" />
+
+    <!-- Critical inline styles for initial render -->
+    <style>
+      /* Prevent FOUC and optimize initial render */
+      #root {
+        min-height: 100vh;
+        background-color: #121212;
+      }
+
+      /* Loading state optimization */
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
+
     <title>Energy Forecast</title>
   </head>
   <body>
