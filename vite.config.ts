@@ -19,21 +19,15 @@ export default defineConfig({
               return 'react-forms';
             }
 
-            // MUI and Emotion - must come before React check
-            if (id.includes('@mui/material')) {
-              return 'mui-material';
-            }
-            if (id.includes('@emotion')) {
-              return 'emotion';
+            // MUI and Emotion - keep together due to tight coupling
+            if (id.includes('@mui/material') || id.includes('@emotion') || id.includes('@mui/system')) {
+              return 'mui-core';
             }
             if (id.includes('@mui/icons-material')) {
               return 'mui-icons';
             }
             if (id.includes('@mui/x-date-pickers') || id.includes('dayjs')) {
               return 'mui-pickers';
-            }
-            if (id.includes('@mui/system') || id.includes('@mui/utils')) {
-              return 'mui-material';
             }
 
             // Core React - keep together to avoid module resolution issues
