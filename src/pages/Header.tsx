@@ -162,7 +162,7 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
           <IconButton
             onClick={handleLanguageToggle}
             color="inherit"
-            aria-label={`current language: ${i18n.language}`}
+            aria-label={`current language is ${currentLang}`}
             sx={{ ':hover': { backgroundColor: 'background.paper' } }}
           >
             <LanguageIcon />
