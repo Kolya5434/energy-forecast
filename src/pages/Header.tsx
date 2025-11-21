@@ -21,6 +21,7 @@ import {
   useTheme
 } from '@mui/material';
 
+import i18n from '../i18n';
 import type { View } from '../types/shared';
 
 interface HeaderProps {
@@ -47,7 +48,7 @@ const VIEW_CONFIGS: ViewConfig[] = [
 
 const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation(); // ← тільки t
   const isSmall = useMediaQuery('(max-width:1920px)');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
