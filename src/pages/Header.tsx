@@ -53,13 +53,15 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
 
   const showMenuButton = !isPanelOpen && activeView === 'forecast';
 
-  const handleLanguageToggle = () => {
-    const languages = ['uk', 'en', 'de', 'it'];
-    const currentIndex = languages.indexOf(i18n.language);
-    const nextLang = languages[(currentIndex + 1) % languages.length];
+  const currentLang = i18n.resolvedLanguage || i18n.language || 'uk';
 
-    i18n?.changeLanguage(nextLang).catch((err) => {
-      console.error('Failed to change language:', err);
+  const handleLanguageToggle = () => {
+    const supported = ['uk', 'en', 'de', 'it'];
+    const index = supported.indexOf(currentLang);
+    const nextLang = supported[(index + 1) % supported.length];
+
+    i18n.changeLanguage(nextLang).catch((err) => {
+      console.error('Language change failed:', err);
     });
   };
 
@@ -165,7 +167,7 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
           >
             <LanguageIcon />
             <Box component="span" sx={{ ml: 1, fontSize: 14, ':focus-visible': { outline: 'none' } }}>
-              {i18n.language?.toUpperCase()}
+              {currentLang.toUpperCase()}
             </Box>
           </IconButton>
         </Box>

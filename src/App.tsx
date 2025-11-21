@@ -10,8 +10,6 @@ import { darkTheme, lightTheme } from '../theme';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
 
-import './i18n';
-
 const Header = lazy(() => import('./pages/Header.tsx').then((m) => ({ default: m.Header })));
 const SidePanel = lazy(() => import('./pages/SidePanel.tsx').then((m) => ({ default: m.SidePanel })));
 const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
