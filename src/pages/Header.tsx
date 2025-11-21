@@ -58,7 +58,7 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
     const currentIndex = languages.indexOf(i18n.language);
     const nextLang = languages[(currentIndex + 1) % languages.length];
 
-    i18n.changeLanguage(nextLang).catch((err) => {
+    i18n?.changeLanguage(nextLang).catch((err) => {
       console.error('Failed to change language:', err);
     });
   };
