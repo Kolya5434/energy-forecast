@@ -159,5 +159,9 @@
   "Кухня (Wh)": "Cucina (Wh)",
   "Пральня (Wh)": "Lavanderia (Wh)",
   "Клімат-контроль (Wh)": "Climatizzazione (Wh)",
-  "Ручна зміна ознаки": "Modifica manuale della caratteristica"
+  "Ручна зміна ознаки": "Modifica manuale della caratteristica",
+  "Редагувати": "Modifica",
+  "Умови прогнозу": "Condizioni di previsione",
+  "Параметри симуляції": "Parametri di simulazione",
+  "Модель": "Modello"
 }

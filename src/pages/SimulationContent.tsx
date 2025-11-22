@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Dayjs } from 'dayjs';
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
 
 import ClearIcon from '@mui/icons-material/Clear';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   Accordion,
   AccordionDetails,
@@ -15,9 +16,11 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   Divider,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
@@ -25,6 +28,7 @@ import {
   Skeleton,
   Stack,
   TextField,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -89,9 +93,72 @@ export const SimulationContent = () => {
   }, [models]);
 
   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
+  const [isEditMode, setIsEditMode] = useState(true);
+  const [lastSubmittedRequest, setLastSubmittedRequest] = useState<ISimulationRequest | null>(null);
 
   const handlePanelChange = (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
     setExpandedPanels((prev) => (isExpanded ? [...prev, panel] : prev.filter((p) => p !== panel)));
+  };
+
+  // Get filled conditions for display in view mode
+  const getFilledConditionsDisplay = () => {
+    if (!lastSubmittedRequest) return [];
+    const items: { label: string; value: string }[] = [];
+
+    if (lastSubmittedRequest.weather) {
+      const w = lastSubmittedRequest.weather;
+      if (w.temperature !== undefined) items.push({ label: t('Температура (°C)'), value: String(w.temperature) });
+      if (w.humidity !== undefined) items.push({ label: t('Вологість (%)'), value: String(w.humidity) });
+      if (w.wind_speed !== undefined) items.push({ label: t('Швидкість вітру (м/с)'), value: String(w.wind_speed) });
+    }
+
+    if (lastSubmittedRequest.calendar) {
+      const c = lastSubmittedRequest.calendar;
+      if (c.is_holiday) items.push({ label: t('Свято'), value: '✓' });
+      if (c.is_weekend) items.push({ label: t('Вихідний'), value: '✓' });
+    }
+
+    if (lastSubmittedRequest.time_scenario) {
+      const ts = lastSubmittedRequest.time_scenario;
+      if (ts.hour !== undefined) items.push({ label: t('Година'), value: String(ts.hour) });
+      if (ts.day_of_week !== undefined) items.push({ label: t('День тижня'), value: String(ts.day_of_week) });
+      if (ts.day_of_month !== undefined) items.push({ label: t('День місяця'), value: String(ts.day_of_month) });
+      if (ts.day_of_year !== undefined) items.push({ label: t('День року'), value: String(ts.day_of_year) });
+      if (ts.week_of_year !== undefined) items.push({ label: t('Тиждень року'), value: String(ts.week_of_year) });
+      if (ts.month !== undefined) items.push({ label: t('Місяць'), value: String(ts.month) });
+      if (ts.quarter !== undefined) items.push({ label: t('Квартал'), value: String(ts.quarter) });
+      if (ts.year !== undefined) items.push({ label: t('Рік'), value: String(ts.year) });
+    }
+
+    if (lastSubmittedRequest.energy) {
+      const e = lastSubmittedRequest.energy;
+      if (e.voltage !== undefined) items.push({ label: t('Напруга (V)'), value: String(e.voltage) });
+      if (e.global_reactive_power !== undefined) items.push({ label: t('Реактивна потужність'), value: String(e.global_reactive_power) });
+      if (e.global_intensity !== undefined) items.push({ label: t('Сила струму (A)'), value: String(e.global_intensity) });
+    }
+
+    if (lastSubmittedRequest.zone_consumption) {
+      const z = lastSubmittedRequest.zone_consumption;
+      if (z.sub_metering_1 !== undefined) items.push({ label: t('Кухня (Wh)'), value: String(z.sub_metering_1) });
+      if (z.sub_metering_2 !== undefined) items.push({ label: t('Пральня (Wh)'), value: String(z.sub_metering_2) });
+      if (z.sub_metering_3 !== undefined) items.push({ label: t('Клімат-контроль (Wh)'), value: String(z.sub_metering_3) });
+    }
+
+    if (lastSubmittedRequest.is_anomaly) {
+      items.push({ label: t('Аномалія'), value: '✓' });
+    }
+
+    if (lastSubmittedRequest.feature_overrides?.length) {
+      const fo = lastSubmittedRequest.feature_overrides[0];
+      if (fo) {
+        items.push({ label: t('Дата зміни'), value: fo.date });
+        Object.entries(fo.features).forEach(([key, val]) => {
+          items.push({ label: t(key), value: String(val) });
+        });
+      }
+    }
+
+    return items;
   };
 
   const { control, handleSubmit, watch, setValue, reset } = useForm<ISimulationFormInput>({
@@ -228,6 +295,9 @@ export const SimulationContent = () => {
     }
 
     runSimulation(simulationRequest);
+    setLastSubmittedRequest(simulationRequest);
+    setIsEditMode(false);
+    setExpandedPanels([]);
   };
 
   const handleClear = () => {
@@ -235,6 +305,8 @@ export const SimulationContent = () => {
     clearPredictions();
     reset();
     setExpandedPanels([]);
+    setIsEditMode(true);
+    setLastSubmittedRequest(null);
   };
 
   const chartData = useMemo(() => {
@@ -265,6 +337,43 @@ export const SimulationContent = () => {
         <Typography variant="h5">{t('Симуляція сценаріїв (What-If)')}</Typography>
         <Divider sx={{ my: 2 }} />
 
+        {/* View mode - show submitted parameters */}
+        {!isEditMode && lastSubmittedRequest && (
+          <Box sx={{ mb: 2, p: 2, bgcolor: 'background.default', borderRadius: 2, border: 1, borderColor: 'divider' }}>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t('Параметри симуляції')}:
+              </Typography>
+              <Chip label={`${t('Модель')}: ${lastSubmittedRequest.model_id}`} size="small" />
+              <Chip label={`${t('Горизонт (днів)')}: ${lastSubmittedRequest.forecast_horizon}`} size="small" />
+              <Tooltip title={t('Редагувати')}>
+                <IconButton size="small" onClick={() => setIsEditMode(true)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+            {getFilledConditionsDisplay().length > 0 && (
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {getFilledConditionsDisplay().map((item, index) => (
+                  <Chip
+                    key={index}
+                    label={`${item.label}: ${item.value}`}
+                    size="small"
+                    variant="outlined"
+                  />
+                ))}
+              </Stack>
+            )}
+            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+              <Button variant="outlined" color="secondary" startIcon={<ClearIcon />} onClick={handleClear}>
+                {t('Очистити')}
+              </Button>
+            </Stack>
+          </Box>
+        )}
+
+        {/* Edit mode - show form */}
+        {isEditMode && (
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Basic settings */}
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
@@ -709,6 +818,7 @@ export const SimulationContent = () => {
             </Button>
           </Stack>
         </form>
+        )}
 
         {simulationError && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -725,7 +835,7 @@ export const SimulationContent = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip
+                <RechartsTooltip
                   contentStyle={{ backgroundColor: 'rgba(30, 30, 30, 0.8)', border: 'none', borderRadius: '8px' }}
                 />
                 <Legend />

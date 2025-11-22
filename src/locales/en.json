@@ -159,5 +159,9 @@
   "Кухня (Wh)": "Kitchen (Wh)",
   "Пральня (Wh)": "Laundry (Wh)",
   "Клімат-контроль (Wh)": "Climate control (Wh)",
-  "Ручна зміна ознаки": "Manual feature override"
+  "Ручна зміна ознаки": "Manual feature override",
+  "Редагувати": "Edit",
+  "Умови прогнозу": "Forecast conditions",
+  "Параметри симуляції": "Simulation parameters",
+  "Модель": "Model"
 }

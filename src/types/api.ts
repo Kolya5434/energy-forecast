@@ -5,7 +5,52 @@ export interface IModelInfo {
 
 export type ModelsApiResponse = Record<string, IModelInfo>;
 
-export interface IPredictionRequest {
+// Condition interfaces (shared between prediction and simulation)
+export interface IWeatherConditions {
+  temperature?: number;      // °C
+  humidity?: number;         // 0-100
+  wind_speed?: number;       // м/с, ≥0
+}
+
+export interface ICalendarConditions {
+  is_holiday?: boolean;
+  is_weekend?: boolean;
+}
+
+export interface ITimeScenario {
+  hour?: number;             // 0-23
+  day_of_week?: number;      // 0-6 (0=Пн)
+  day_of_month?: number;     // 1-31
+  day_of_year?: number;      // 1-366
+  week_of_year?: number;     // 1-53
+  month?: number;            // 1-12
+  year?: number;             // ≥2000
+  quarter?: number;          // 1-4
+}
+
+export interface IEnergyConditions {
+  voltage?: number;                // V, ≥0
+  global_reactive_power?: number;  // ≥0
+  global_intensity?: number;       // A, ≥0
+}
+
+export interface IZoneConsumption {
+  sub_metering_1?: number;   // Кухня (Wh), ≥0
+  sub_metering_2?: number;   // Пральня (Wh), ≥0
+  sub_metering_3?: number;   // Клімат (Wh), ≥0
+}
+
+// Extended conditions for prediction/simulation
+export interface IExtendedConditions {
+  weather?: IWeatherConditions;
+  calendar?: ICalendarConditions;
+  time_scenario?: ITimeScenario;
+  energy?: IEnergyConditions;
+  zone_consumption?: IZoneConsumption;
+  is_anomaly?: boolean;
+}
+
+export interface IPredictionRequest extends IExtendedConditions {
   model_ids: string[];
   forecast_horizon: number;
 }
@@ -85,40 +130,6 @@ export interface IFeatureOverride {
   features: {
     [featureName: string]: number;
   };
-}
-
-export interface IWeatherConditions {
-  temperature?: number;      // °C
-  humidity?: number;         // 0-100
-  wind_speed?: number;       // м/с, ≥0
-}
-
-export interface ICalendarConditions {
-  is_holiday?: boolean;
-  is_weekend?: boolean;
-}
-
-export interface ITimeScenario {
-  hour?: number;             // 0-23
-  day_of_week?: number;      // 0-6 (0=Пн)
-  day_of_month?: number;     // 1-31
-  day_of_year?: number;      // 1-366
-  week_of_year?: number;     // 1-53
-  month?: number;            // 1-12
-  year?: number;             // ≥2000
-  quarter?: number;          // 1-4
-}
-
-export interface IEnergyConditions {
-  voltage?: number;                // V, ≥0
-  global_reactive_power?: number;  // ≥0
-  global_intensity?: number;       // A, ≥0
-}
-
-export interface IZoneConsumption {
-  sub_metering_1?: number;   // Кухня (Wh), ≥0
-  sub_metering_2?: number;   // Пральня (Wh), ≥0
-  sub_metering_3?: number;   // Клімат (Wh), ≥0
 }
 
 export interface ISimulationRequest {

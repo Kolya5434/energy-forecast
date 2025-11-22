@@ -35,6 +35,7 @@ function App() {
 
   const toggleTheme = useCallback(() => setIsDarkMode((prev) => !prev), []);
   const togglePanel = useCallback(() => setIsPanelOpen((prev) => !prev), []);
+  const closePanel = useCallback(() => setIsPanelOpen(false), []);
   const handleSetActiveView = useCallback((view: View) => setActiveView(view), []);
 
   const showSidePanel = activeView === 'forecast';
@@ -65,7 +66,7 @@ function App() {
         <ApiProvider>
           <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}><CircularProgress /></Box>}>
             <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
-              {showSidePanel ? <SidePanel isOpen={isPanelOpen} togglePanel={togglePanel} /> : null}
+              {showSidePanel ? <SidePanel isOpen={isPanelOpen} togglePanel={togglePanel} onForecastSubmit={closePanel} /> : null}
               <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <Header
                   toggleTheme={toggleTheme}

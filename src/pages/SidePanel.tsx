@@ -21,11 +21,12 @@ import { useApi } from '../context/useApi.tsx';
 interface SidePanelProps {
   togglePanel: () => void;
   isOpen: boolean;
+  onForecastSubmit?: () => void;
 }
 
-const SidePanelComponent = ({ togglePanel, isOpen }: SidePanelProps) => {
+const SidePanelComponent = ({ togglePanel, isOpen, onForecastSubmit }: SidePanelProps) => {
   const { t } = useTranslation();
-  const { models, isLoadingModels, getPredictions } = useApi();
+  const { models, isLoadingModels, getPredictions, extendedConditions, setConditionsEditMode } = useApi();
 
   const [selectedModels, setSelectedModels] = useState<string[]>(['XGBoost_Tuned']);
   const [forecastHorizon, setForecastHorizon] = useState<number>(7);
@@ -38,8 +39,15 @@ const SidePanelComponent = ({ togglePanel, isOpen }: SidePanelProps) => {
   const handleForecast = () => {
     getPredictions({
       model_ids: selectedModels,
-      forecast_horizon: forecastHorizon
+      forecast_horizon: forecastHorizon,
+      ...extendedConditions
     });
+    // Switch to view mode
+    setConditionsEditMode(false);
+    // Close panel
+    if (onForecastSubmit) {
+      onForecastSubmit();
+    }
   };
 
   return (

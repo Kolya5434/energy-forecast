@@ -2,10 +2,13 @@ import { createContext, useCallback, useEffect, useState, type ReactNode } from 
 
 import { fetchEvaluation, fetchInterpretation, fetchModels, postPredictions, postSimulation } from '../api';
 import type {
-  IEvaluationApiResponse, IInterpretationApiResponse,
+  IEvaluationApiResponse,
+  IExtendedConditions,
+  IInterpretationApiResponse,
   IPredictionRequest,
   IPredictionResponse,
-  IShapInterpretationResponse, ISimulationRequest,
+  IShapInterpretationResponse,
+  ISimulationRequest,
   ModelsApiResponse
 } from '../types/api';
 
@@ -18,6 +21,13 @@ interface IApiContext {
   isLoadingPredictions: boolean;
   predictionsError: string | null;
   getPredictions: (data: IPredictionRequest) => void;
+
+  extendedConditions: IExtendedConditions;
+  setExtendedConditions: (conditions: IExtendedConditions) => void;
+  clearExtendedConditions: () => void;
+
+  isConditionsEditMode: boolean;
+  setConditionsEditMode: (isEdit: boolean) => void;
 
   evaluations: Record<string, IEvaluationApiResponse>;
   isLoadingEvaluation: boolean;
@@ -49,6 +59,9 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [predictions, setPredictions] = useState<IPredictionResponse[] | null>(null);
   const [isLoadingPredictions, setIsLoadingPredictions] = useState(false);
   const [predictionsError, setPredictionsError] = useState<string | null>(null);
+
+  const [extendedConditions, setExtendedConditionsState] = useState<IExtendedConditions>({});
+  const [isConditionsEditMode, setIsConditionsEditMode] = useState(true);
 
   const [evaluations, setEvaluations] = useState<Record<string, IEvaluationApiResponse>>({});
   const [isLoadingEvaluation, setIsLoadingEvaluation] = useState(false);
@@ -163,6 +176,18 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     setPredictions(null);
   };
 
+  const setExtendedConditions = useCallback((conditions: IExtendedConditions) => {
+    setExtendedConditionsState(conditions);
+  }, []);
+
+  const clearExtendedConditions = useCallback(() => {
+    setExtendedConditionsState({});
+  }, []);
+
+  const setConditionsEditMode = useCallback((isEdit: boolean) => {
+    setIsConditionsEditMode(isEdit);
+  }, []);
+
   const value = {
     models,
     isLoadingModels,
@@ -171,6 +196,11 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     isLoadingPredictions,
     predictionsError,
     getPredictions,
+    extendedConditions,
+    setExtendedConditions,
+    clearExtendedConditions,
+    isConditionsEditMode,
+    setConditionsEditMode,
     evaluations,
     isLoadingEvaluation,
     evaluationError,
