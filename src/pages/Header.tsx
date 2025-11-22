@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import LanguageIcon from '@mui/icons-material/Language';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -26,8 +25,6 @@ import type { View } from '../types/shared';
 
 interface HeaderProps {
   toggleTheme: () => void;
-  togglePanel: () => void;
-  isPanelOpen: boolean;
   setActiveView: (view: View) => void;
   activeView: View;
 }
@@ -46,13 +43,11 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'help', label: 'FAQ' }
 ];
 
-const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView, activeView }: HeaderProps) => {
+const HeaderComponent = ({ toggleTheme, setActiveView, activeView }: HeaderProps) => {
   const theme = useTheme();
-  const { t } = useTranslation(); // ← тільки t
+  const { t } = useTranslation();
   const isSmall = useMediaQuery('(max-width:1920px)');
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const showMenuButton = !isPanelOpen && activeView === 'forecast';
 
   const currentLang = i18n.resolvedLanguage || i18n.language || 'uk';
 
@@ -81,26 +76,6 @@ const HeaderComponent = ({ toggleTheme, togglePanel, isPanelOpen, setActiveView,
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-          <IconButton
-            onClick={togglePanel}
-            color="inherit"
-            sx={{
-              visibility: showMenuButton ? 'visible' : 'hidden',
-              opacity: showMenuButton ? 1 : 0,
-              transition: 'opacity 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              ':hover': { backgroundColor: 'background.paper' }
-            }}
-            aria-label="toggle menu"
-          >
-            <FilterListIcon />
-            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-              {t('Фільтри')}
-            </Box>
-          </IconButton>
-
           {!isSmall ? (
             <ButtonGroup variant="text" aria-label="view navigation" sx={{ flexWrap: 'wrap' }}>
               {VIEW_CONFIGS.map(({ id, label }) => (

@@ -2,7 +2,7 @@ import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
-import { Box, CircularProgress, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+import { Box, CircularProgress, CssBaseline, ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -11,7 +11,6 @@ import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
 
 const Header = lazy(() => import('./pages/Header.tsx').then((m) => ({ default: m.Header })));
-const SidePanel = lazy(() => import('./pages/SidePanel.tsx').then((m) => ({ default: m.SidePanel })));
 const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
 const InterpretContent = lazy(() =>
   import('./pages/InterpretContent.tsx').then((m) => ({ default: m.InterpretContent }))
@@ -30,15 +29,9 @@ function App() {
   const [activeView, setActiveView] = useState<View>('forecast');
 
   const theme = useMemo(() => (isDarkMode ? darkTheme : lightTheme), [isDarkMode]);
-  const isXlUp = useMediaQuery(theme.breakpoints.up('xl'), { noSsr: true });
-  const [isPanelOpen, setIsPanelOpen] = useState(isXlUp);
 
   const toggleTheme = useCallback(() => setIsDarkMode((prev) => !prev), []);
-  const togglePanel = useCallback(() => setIsPanelOpen((prev) => !prev), []);
-  const closePanel = useCallback(() => setIsPanelOpen(false), []);
   const handleSetActiveView = useCallback((view: View) => setActiveView(view), []);
-
-  const showSidePanel = activeView === 'forecast';
 
   const renderContent = () => {
     switch (activeView) {
@@ -66,12 +59,9 @@ function App() {
         <ApiProvider>
           <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}><CircularProgress /></Box>}>
             <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
-              {showSidePanel ? <SidePanel isOpen={isPanelOpen} togglePanel={togglePanel} onForecastSubmit={closePanel} /> : null}
               <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <Header
                   toggleTheme={toggleTheme}
-                  isPanelOpen={isPanelOpen}
-                  togglePanel={togglePanel}
                   activeView={activeView}
                   setActiveView={handleSetActiveView}
                 />

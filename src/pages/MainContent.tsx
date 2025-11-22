@@ -3,16 +3,24 @@ import { useTranslation } from 'react-i18next';
 
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
   Checkbox,
   Chip,
+  FormControl,
   FormControlLabel,
   IconButton,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
   Paper,
+  Select,
+  type SelectChangeEvent,
   Skeleton,
   Stack,
   TextField,
@@ -31,10 +39,28 @@ import classes from './MainContent.module.scss';
 
 export const MainContent = () => {
   const { t } = useTranslation();
-  const { predictions, isLoadingPredictions, clearPredictions, extendedConditions, setExtendedConditions, clearExtendedConditions, isConditionsEditMode, setConditionsEditMode } = useApi();
+  const { models, isLoadingModels, predictions, isLoadingPredictions, getPredictions, clearPredictions, extendedConditions, setExtendedConditions, clearExtendedConditions, isConditionsEditMode, setConditionsEditMode } = useApi();
   const [chartType, setChartType] = useState<ChartType>('line');
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
+
+  // Form controls for prediction request
+  const [selectedModelsForRequest, setSelectedModelsForRequest] = useState<string[]>(['XGBoost_Tuned']);
+  const [forecastHorizon, setForecastHorizon] = useState<number>(7);
+
+  const handleModelSelectChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    setSelectedModelsForRequest(typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const handleForecast = () => {
+    getPredictions({
+      model_ids: selectedModelsForRequest,
+      forecast_horizon: forecastHorizon,
+      ...extendedConditions
+    });
+    setConditionsEditMode(false);
+  };
 
   // Local form state
   const [formState, setFormState] = useState({
@@ -289,6 +315,50 @@ export const MainContent = () => {
     <Box component="main" className={classes.mainContent}>
       <Paper elevation={0} className={classes.paper}>
         <div className={classes.controlsWrapper}>
+          {isConditionsEditMode ? (
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
+              <FormControl size="small" sx={{ minWidth: 250 }}>
+                <InputLabel>{t('Вибір моделей')}</InputLabel>
+                <Select
+                  multiple
+                  value={selectedModelsForRequest}
+                  onChange={handleModelSelectChange}
+                  input={<OutlinedInput label={t('Вибір моделей')} />}
+                  disabled={isLoadingModels}
+                  renderValue={(selected) => selected.join(', ')}
+                >
+                  {models &&
+                    Object.keys(models).map((modelId) => (
+                      <MenuItem key={modelId} value={modelId}>
+                        <Checkbox checked={selectedModelsForRequest.includes(modelId)} />
+                        {modelId}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                label={t('Горизонт (днів)')}
+                type="number"
+                size="small"
+                value={forecastHorizon}
+                onChange={(e) => setForecastHorizon(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                sx={{ width: 130 }}
+                slotProps={{ htmlInput: { min: 1, max: 30 } }}
+              />
+
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<PlayArrowIcon />}
+                onClick={handleForecast}
+                disabled={isLoadingPredictions || selectedModelsForRequest.length === 0}
+              >
+                {t('Сформувати прогноз')}
+              </Button>
+            </Stack>
+          ) : null}
+
           <ChartControls
             chartType={chartType}
             onChartTypeChange={setChartType}
@@ -544,31 +614,38 @@ export const MainContent = () => {
             </AccordionDetails>
           </Accordion>
           </Box>
-        ) : hasFilledConditions ? (
-          /* View mode - show filled conditions as chips */
+        ) : (
+          /* View mode - show all selected filters as chips */
           <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: 1, borderColor: 'divider' }}>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
               <Typography variant="subtitle2" color="text.secondary">
-                {t('Умови прогнозу')}:
+                {t('Обрані фільтри')}:
               </Typography>
               <Tooltip title={t('Редагувати')}>
-                <IconButton size="small" onClick={() => setConditionsEditMode(true)}>
+                <IconButton size="small" onClick={() => setConditionsEditMode(true)} color="primary">
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Stack>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
-              {getFilledConditionsDisplay().map((item, index) => (
-                <Chip
-                  key={index}
-                  label={`${item.label}: ${item.value}`}
-                  size="small"
-                  variant="outlined"
-                />
-              ))}
+            <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: hasFilledConditions ? 1 : 0 }}>
+              <Chip label={`${t('Моделі: ')}${selectedModelsForRequest.join(', ')}`} size="small" variant="outlined" />
+              <Chip label={`${t('Горизонт (днів)')}: ${forecastHorizon}`} size="small" variant="outlined" />
             </Stack>
+            {hasFilledConditions && (
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {getFilledConditionsDisplay().map((item, index) => (
+                  <Chip
+                    key={index}
+                    label={`${item.label}: ${item.value}`}
+                    size="small"
+                    variant="outlined"
+                    color="secondary"
+                  />
+                ))}
+              </Stack>
+            )}
           </Box>
-        ) : null}
+        )}
 
         <Box className={classes.chartContainer}>
           {isLoadingPredictions ? (
