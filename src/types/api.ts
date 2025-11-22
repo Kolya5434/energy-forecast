@@ -1,6 +1,12 @@
 export interface IModelInfo {
-  description: string;
   type: 'classical' | 'ml' | 'dl' | 'ensemble';
+  granularity: 'daily' | 'hourly';
+  feature_set: 'none' | 'simple' | 'full' | 'base_scaled';
+  description: string;
+  supports_conditions: boolean;
+  supports_simulation: boolean;
+  avg_latency_ms: number | null;
+  memory_increment_mb: number | null;
 }
 
 export type ModelsApiResponse = Record<string, IModelInfo>;
@@ -55,6 +61,10 @@ export interface IPredictionRequest extends IExtendedConditions {
   forecast_horizon: number;
 }
 
+export interface IConditionsApplied extends IExtendedConditions {
+  feature_overrides?: IFeatureOverride[];
+}
+
 export interface IPredictionResponse {
   model_id: string;
   forecast: {
@@ -62,6 +72,9 @@ export interface IPredictionResponse {
   };
   metadata: {
     latency_ms: number;
+    error?: string;
+    conditions_applied?: IConditionsApplied;
+    simulated?: boolean;
   };
 }
 
@@ -147,4 +160,51 @@ export interface SimulationChartData {
   date: string;
   baseForecast?: number;
   simulatedForecast?: number;
+}
+
+// Historical API types
+export interface IHistoricalRequest {
+  days?: number;           // 1-365, default 30
+  granularity?: 'daily' | 'hourly';
+  include_stats?: boolean;
+}
+
+export interface IHistoricalResponse {
+  granularity: 'daily' | 'hourly';
+  period_days: number;
+  data_points: number;
+  date_range: {
+    start: string;
+    end: string;
+  };
+  values: Record<string, number>;
+  statistics?: {
+    min: number;
+    max: number;
+    mean: number;
+    std: number;
+    median: number;
+  };
+}
+
+// Features API types
+export interface IAvailableConditions {
+  weather?: string[];
+  calendar?: string[];
+  time?: string[];
+  energy?: string[];
+  zone_consumption?: string[];
+  anomaly?: string[];
+}
+
+export interface IFeaturesResponse {
+  model_id: string;
+  type: string;
+  granularity: string;
+  feature_set: string;
+  supports_conditions: boolean;
+  feature_names?: string[];
+  feature_count?: number;
+  available_conditions?: IAvailableConditions;
+  note?: string;
 }

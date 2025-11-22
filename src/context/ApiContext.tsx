@@ -1,9 +1,20 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react';
 
-import { fetchEvaluation, fetchInterpretation, fetchModels, postPredictions, postSimulation } from '../api';
+import {
+  fetchEvaluation,
+  fetchFeatures,
+  fetchHistorical,
+  fetchInterpretation,
+  fetchModels,
+  postPredictions,
+  postSimulation
+} from '../api';
 import type {
   IEvaluationApiResponse,
   IExtendedConditions,
+  IFeaturesResponse,
+  IHistoricalRequest,
+  IHistoricalResponse,
   IInterpretationApiResponse,
   IPredictionRequest,
   IPredictionResponse,
@@ -44,8 +55,20 @@ interface IApiContext {
   simulationError: string | null;
   runSimulation: (data: ISimulationRequest) => Promise<void>;
   clearSimulation: () => void;
-  
+
   clearPredictions: () => void;
+
+  // Historical data
+  historicalData: IHistoricalResponse | null;
+  isLoadingHistorical: boolean;
+  historicalError: string | null;
+  getHistorical: (params?: IHistoricalRequest) => Promise<void>;
+
+  // Features info
+  featuresCache: Record<string, IFeaturesResponse>;
+  isLoadingFeatures: boolean;
+  featuresError: string | null;
+  getFeatures: (modelId: string) => Promise<IFeaturesResponse | null>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -74,6 +97,14 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [isLoadingSimulation, setIsLoadingSimulation] = useState(false);
   const [simulationError, setSimulationError] = useState<string | null>(null);
   const [simulationResult, setSimulationResult] = useState<IPredictionResponse | null>(null);
+
+  const [historicalData, setHistoricalData] = useState<IHistoricalResponse | null>(null);
+  const [isLoadingHistorical, setIsLoadingHistorical] = useState(false);
+  const [historicalError, setHistoricalError] = useState<string | null>(null);
+
+  const [featuresCache, setFeaturesCache] = useState<Record<string, IFeaturesResponse>>({});
+  const [isLoadingFeatures, setIsLoadingFeatures] = useState(false);
+  const [featuresError, setFeaturesError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInitialModels = async () => {
@@ -188,6 +219,43 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     setIsConditionsEditMode(isEdit);
   }, []);
 
+  const getHistorical = useCallback(async (params?: IHistoricalRequest) => {
+    try {
+      setIsLoadingHistorical(true);
+      setHistoricalError(null);
+      const result = await fetchHistorical(params);
+      setHistoricalData(result);
+    } catch (err) {
+      setHistoricalError('Не вдалося завантажити історичні дані');
+      console.error('Error fetching historical data:', err);
+    } finally {
+      setIsLoadingHistorical(false);
+    }
+  }, []);
+
+  const getFeatures = useCallback(
+    async (modelId: string): Promise<IFeaturesResponse | null> => {
+      if (featuresCache[modelId]) {
+        return featuresCache[modelId];
+      }
+
+      try {
+        setIsLoadingFeatures(true);
+        setFeaturesError(null);
+        const result = await fetchFeatures(modelId);
+        setFeaturesCache((prev) => ({ ...prev, [modelId]: result }));
+        return result;
+      } catch (err) {
+        setFeaturesError(`Не вдалося отримати ознаки для моделі ${modelId}`);
+        console.error('Error fetching features:', err);
+        return null;
+      } finally {
+        setIsLoadingFeatures(false);
+      }
+    },
+    [featuresCache]
+  );
+
   const value = {
     models,
     isLoadingModels,
@@ -215,6 +283,14 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     simulationError,
     runSimulation,
     clearSimulation,
+    historicalData,
+    isLoadingHistorical,
+    historicalError,
+    getHistorical,
+    featuresCache,
+    isLoadingFeatures,
+    featuresError,
+    getFeatures
   };
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

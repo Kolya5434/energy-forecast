@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import CategoryIcon from '@mui/icons-material/Category';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HistoryIcon from '@mui/icons-material/History';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import SpeedIcon from '@mui/icons-material/Speed';
 import {
   Accordion,
   AccordionDetails,
@@ -13,6 +17,7 @@ import {
   Button,
   Checkbox,
   Chip,
+  Collapse,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -21,12 +26,14 @@ import {
   OutlinedInput,
   Paper,
   Select,
-  type SelectChangeEvent,
   Skeleton,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Tooltip,
-  Typography
+  Typography,
+  type SelectChangeEvent
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
@@ -35,7 +42,9 @@ import type { IExtendedConditions } from '../types/api.ts';
 import type { ChartType, IChartDataPoint } from '../types/shared.ts';
 import { ChartControls } from './components/charts/ChartControls';
 import { ChartRenderer } from './components/charts/ChartRenderer';
+import { HistoricalChart } from './components/charts/HistoricalChart';
 import { ModelSelector } from './components/charts/ModelSelector';
+import { ModelFeaturesTab } from './components/ModelFeaturesTab';
 import classes from './MainContent.module.scss';
 
 // Validation constraints for extended conditions
@@ -73,10 +82,25 @@ const clampValue = (field: string, value: string): string => {
 
 export const MainContent = () => {
   const { t } = useTranslation();
-  const { models, isLoadingModels, predictions, isLoadingPredictions, getPredictions, clearPredictions, extendedConditions, setExtendedConditions, clearExtendedConditions, isConditionsEditMode, setConditionsEditMode } = useApi();
+  const {
+    models,
+    isLoadingModels,
+    predictions,
+    isLoadingPredictions,
+    getPredictions,
+    clearPredictions,
+    extendedConditions,
+    setExtendedConditions,
+    clearExtendedConditions,
+    isConditionsEditMode,
+    setConditionsEditMode
+  } = useApi();
   const [chartType, setChartType] = useState<ChartType>('line');
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
+  const [filtersExpanded, setFiltersExpanded] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [historicalDays, setHistoricalDays] = useState<number>(30);
 
   // Form controls for prediction request
   const [selectedModelsForRequest, setSelectedModelsForRequest] = useState<string[]>(['XGBoost_Tuned']);
@@ -290,15 +314,18 @@ export const MainContent = () => {
     if (extendedConditions.energy) {
       const e = extendedConditions.energy;
       if (e.voltage !== undefined) items.push({ label: t('Напруга (V)'), value: String(e.voltage) });
-      if (e.global_reactive_power !== undefined) items.push({ label: t('Реактивна потужність'), value: String(e.global_reactive_power) });
-      if (e.global_intensity !== undefined) items.push({ label: t('Сила струму (A)'), value: String(e.global_intensity) });
+      if (e.global_reactive_power !== undefined)
+        items.push({ label: t('Реактивна потужність'), value: String(e.global_reactive_power) });
+      if (e.global_intensity !== undefined)
+        items.push({ label: t('Сила струму (A)'), value: String(e.global_intensity) });
     }
 
     if (extendedConditions.zone_consumption) {
       const z = extendedConditions.zone_consumption;
       if (z.sub_metering_1 !== undefined) items.push({ label: t('Кухня (Wh)'), value: String(z.sub_metering_1) });
       if (z.sub_metering_2 !== undefined) items.push({ label: t('Пральня (Wh)'), value: String(z.sub_metering_2) });
-      if (z.sub_metering_3 !== undefined) items.push({ label: t('Клімат-контроль (Wh)'), value: String(z.sub_metering_3) });
+      if (z.sub_metering_3 !== undefined)
+        items.push({ label: t('Клімат-контроль (Wh)'), value: String(z.sub_metering_3) });
     }
 
     if (extendedConditions.is_anomaly) {
@@ -352,364 +379,440 @@ export const MainContent = () => {
   return (
     <Box component="main" className={classes.mainContent}>
       <Paper elevation={0} className={classes.paper}>
-        <div className={classes.controlsWrapper}>
-          {isConditionsEditMode ? (
-            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
-              <FormControl size="small" sx={{ minWidth: 250 }}>
-                <InputLabel>{t('Вибір моделей')}</InputLabel>
-                <Select
-                  multiple
-                  value={selectedModelsForRequest}
-                  onChange={handleModelSelectChange}
-                  input={<OutlinedInput label={t('Вибір моделей')} />}
-                  disabled={isLoadingModels}
-                  renderValue={(selected) => selected.join(', ')}
+        {activeTab === 0 && (
+          <div className={classes.controlsWrapper}>
+            {isConditionsEditMode ? (
+              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
+                <FormControl size="small" sx={{ minWidth: 250 }}>
+                  <InputLabel>{t('Вибір моделей')}</InputLabel>
+                  <Select
+                    multiple
+                    value={selectedModelsForRequest}
+                    onChange={handleModelSelectChange}
+                    input={<OutlinedInput label={t('Вибір моделей')} />}
+                    disabled={isLoadingModels}
+                    renderValue={(selected) => selected.join(', ')}
+                  >
+                    {models &&
+                      Object.keys(models).map((modelId) => {
+                        const info = models[modelId];
+                        return (
+                          <MenuItem key={modelId} value={modelId}>
+                            <Checkbox checked={selectedModelsForRequest.includes(modelId)} />
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
+                              <span>{modelId}</span>
+                              {info?.avg_latency_ms !== null && info?.avg_latency_ms !== undefined && (
+                                <Chip
+                                  size="small"
+                                  icon={<SpeedIcon sx={{ fontSize: 14 }} />}
+                                  label={`${info.avg_latency_ms.toFixed(0)}ms`}
+                                  sx={{ height: 20, fontSize: '0.7rem' }}
+                                />
+                              )}
+                            </Box>
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  label={t('Горизонт (днів)')}
+                  type="number"
+                  size="small"
+                  value={forecastHorizon}
+                  onChange={(e) => setForecastHorizon(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                  sx={{ width: 130 }}
+                  slotProps={{ htmlInput: { min: 1, max: 30 } }}
+                />
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<PlayArrowIcon />}
+                  onClick={handleForecast}
+                  disabled={isLoadingPredictions || selectedModelsForRequest.length === 0}
                 >
-                  {models &&
-                    Object.keys(models).map((modelId) => (
-                      <MenuItem key={modelId} value={modelId}>
-                        <Checkbox checked={selectedModelsForRequest.includes(modelId)} />
-                        {modelId}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
+                  {t('Сформувати прогноз')}
+                </Button>
+              </Stack>
+            ) : null}
 
-              <TextField
-                label={t('Горизонт (днів)')}
-                type="number"
-                size="small"
-                value={forecastHorizon}
-                onChange={(e) => setForecastHorizon(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                sx={{ width: 130 }}
-                slotProps={{ htmlInput: { min: 1, max: 30 } }}
+            <ChartControls
+              chartType={chartType}
+              onChartTypeChange={setChartType}
+              onClearData={handleClearData}
+              showClearButton={!!predictions && predictions.length > 0}
+            />
+
+            {activeTab === 0 && (
+              <ModelSelector
+                predictions={predictions}
+                selectedModels={selectedModels}
+                onModelToggle={handleModelToggle}
+                onSelectAll={handleSelectAll}
+                getModelColor={getModelColor}
               />
-
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<PlayArrowIcon />}
-                onClick={handleForecast}
-                disabled={isLoadingPredictions || selectedModelsForRequest.length === 0}
-              >
-                {t('Сформувати прогноз')}
-              </Button>
-            </Stack>
-          ) : null}
-
-          <ChartControls
-            chartType={chartType}
-            onChartTypeChange={setChartType}
-            onClearData={handleClearData}
-            showClearButton={!!predictions && predictions.length > 0}
-          />
-
-          <ModelSelector
-            predictions={predictions}
-            selectedModels={selectedModels}
-            onModelToggle={handleModelToggle}
-            onSelectAll={handleSelectAll}
-            getModelColor={getModelColor}
-          />
-        </div>
-
-        {/* Extended conditions - View or Edit mode */}
-        {isConditionsEditMode ? (
-          <Box sx={{ mb: 2 }}>
-            {/* Weather conditions */}
-            <Accordion expanded={expandedPanels.includes('weather')} onChange={handlePanelChange('weather')}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>{t('Погодні умови')}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-                  <TextField
-                    value={formState.temperature}
-                    onChange={handleInputChange('temperature')}
-                    label={t('Температура (°C)')}
-                    type="number"
-                    size="small"
-                    sx={{ width: 160 }}
-                    placeholder="-10...40"
-                  />
-                  <TextField
-                    value={formState.humidity}
-                    onChange={handleInputChange('humidity')}
-                    label={t('Вологість (%)')}
-                    type="number"
-                    size="small"
-                    sx={{ width: 160 }}
-                    placeholder="0-100"
-                    slotProps={{ htmlInput: { min: 0, max: 100 } }}
-                  />
-                  <TextField
-                    value={formState.wind_speed}
-                    onChange={handleInputChange('wind_speed')}
-                    label={t('Швидкість вітру (м/с)')}
-                    type="number"
-                    size="small"
-                    sx={{ width: 180 }}
-                    placeholder="≥0"
-                    slotProps={{ htmlInput: { min: 0 } }}
-                  />
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-
-            {/* Calendar conditions */}
-            <Accordion expanded={expandedPanels.includes('calendar')} onChange={handlePanelChange('calendar')}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>{t('Календарні умови')}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack direction="row" spacing={3}>
-                  <FormControlLabel
-                    control={<Checkbox checked={formState.is_holiday} onChange={handleInputChange('is_holiday')} />}
-                    label={t('Свято')}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox checked={formState.is_weekend} onChange={handleInputChange('is_weekend')} />}
-                    label={t('Вихідний')}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox checked={formState.is_anomaly} onChange={handleInputChange('is_anomaly')} />}
-                    label={t('Аномалія')}
-                  />
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-
-          {/* Time scenario */}
-          <Accordion expanded={expandedPanels.includes('time')} onChange={handlePanelChange('time')}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{t('Часовий сценарій')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                <TextField
-                  value={formState.hour}
-                  onChange={handleInputChange('hour')}
-                  label={t('Година')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 120 }}
-                  placeholder="0-23"
-                  slotProps={{ htmlInput: { min: 0, max: 23 } }}
-                />
-                <TextField
-                  value={formState.day_of_week}
-                  onChange={handleInputChange('day_of_week')}
-                  label={t('День тижня')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 130 }}
-                  placeholder="0-6"
-                  slotProps={{ htmlInput: { min: 0, max: 6 } }}
-                />
-                <TextField
-                  value={formState.day_of_month}
-                  onChange={handleInputChange('day_of_month')}
-                  label={t('День місяця')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 130 }}
-                  placeholder="1-31"
-                  slotProps={{ htmlInput: { min: 1, max: 31 } }}
-                />
-                <TextField
-                  value={formState.day_of_year}
-                  onChange={handleInputChange('day_of_year')}
-                  label={t('День року')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 130 }}
-                  placeholder="1-366"
-                  slotProps={{ htmlInput: { min: 1, max: 366 } }}
-                />
-                <TextField
-                  value={formState.week_of_year}
-                  onChange={handleInputChange('week_of_year')}
-                  label={t('Тиждень року')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 140 }}
-                  placeholder="1-53"
-                  slotProps={{ htmlInput: { min: 1, max: 53 } }}
-                />
-                <TextField
-                  value={formState.month}
-                  onChange={handleInputChange('month')}
-                  label={t('Місяць')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 120 }}
-                  placeholder="1-12"
-                  slotProps={{ htmlInput: { min: 1, max: 12 } }}
-                />
-                <TextField
-                  value={formState.quarter}
-                  onChange={handleInputChange('quarter')}
-                  label={t('Квартал')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 120 }}
-                  placeholder="1-4"
-                  slotProps={{ htmlInput: { min: 1, max: 4 } }}
-                />
-                <TextField
-                  value={formState.year}
-                  onChange={handleInputChange('year')}
-                  label={t('Рік')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 120 }}
-                  placeholder="≥2000"
-                  slotProps={{ htmlInput: { min: 2000 } }}
-                />
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Energy conditions */}
-          <Accordion expanded={expandedPanels.includes('energy')} onChange={handlePanelChange('energy')}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{t('Енергетичні параметри')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-                <TextField
-                  value={formState.voltage}
-                  onChange={handleInputChange('voltage')}
-                  label={t('Напруга (V)')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 150 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-                <TextField
-                  value={formState.global_reactive_power}
-                  onChange={handleInputChange('global_reactive_power')}
-                  label={t('Реактивна потужність')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 180 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-                <TextField
-                  value={formState.global_intensity}
-                  onChange={handleInputChange('global_intensity')}
-                  label={t('Сила струму (A)')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 160 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Zone consumption */}
-          <Accordion expanded={expandedPanels.includes('zone')} onChange={handlePanelChange('zone')}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{t('Споживання по зонах')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-                <TextField
-                  value={formState.sub_metering_1}
-                  onChange={handleInputChange('sub_metering_1')}
-                  label={t('Кухня (Wh)')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 150 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-                <TextField
-                  value={formState.sub_metering_2}
-                  onChange={handleInputChange('sub_metering_2')}
-                  label={t('Пральня (Wh)')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 150 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-                <TextField
-                  value={formState.sub_metering_3}
-                  onChange={handleInputChange('sub_metering_3')}
-                  label={t('Клімат-контроль (Wh)')}
-                  type="number"
-                  size="small"
-                  sx={{ width: 180 }}
-                  placeholder="≥0"
-                  slotProps={{ htmlInput: { min: 0 } }}
-                />
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-          </Box>
-        ) : (
-          /* View mode - show all selected filters as chips */
-          <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: 1, borderColor: 'divider' }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t('Обрані фільтри')}:
-              </Typography>
-              <Stack direction="row" spacing={0.5}>
-                <Tooltip title={t('Редагувати')}>
-                  <IconButton size="small" onClick={() => setConditionsEditMode(true)} color="primary">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('Очистити')}>
-                  <IconButton size="small" onClick={handleClearData} color="secondary">
-                    <ClearIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            </Stack>
-            <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: hasFilledConditions ? 1 : 0 }}>
-              <Chip label={`${t('Моделі: ')}${selectedModelsForRequest.join(', ')}`} size="small" variant="outlined" />
-              <Chip label={`${t('Горизонт (днів)')}: ${forecastHorizon}`} size="small" variant="outlined" />
-            </Stack>
-            {hasFilledConditions && (
-              <Stack direction="row" flexWrap="wrap" gap={1}>
-                {getFilledConditionsDisplay().map((item, index) => (
-                  <Chip
-                    key={index}
-                    label={`${item.label}: ${item.value}`}
-                    size="small"
-                    variant="outlined"
-                    color="secondary"
-                  />
-                ))}
-              </Stack>
             )}
-          </Box>
+          </div>
+        )}
+        {/* Tabs */}
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab icon={<ShowChartIcon />} iconPosition="start" label={t('Прогноз')} />
+          <Tab icon={<HistoryIcon />} iconPosition="start" label={t('Історичні дані')} />
+          <Tab icon={<CategoryIcon />} iconPosition="start" label={t('Ознаки моделі')} />
+        </Tabs>
+
+        {/* Tab 0: Forecast */}
+        {activeTab === 0 && (
+          <>
+            {/* Extended conditions - View or Edit mode */}
+            {isConditionsEditMode ? (
+              <Box sx={{ mb: 2 }}>
+                {/* Weather conditions */}
+                <Accordion expanded={expandedPanels.includes('weather')} onChange={handlePanelChange('weather')}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t('Погодні умови')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
+                      <TextField
+                        value={formState.temperature}
+                        onChange={handleInputChange('temperature')}
+                        label={t('Температура (°C)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 160 }}
+                        placeholder="-10...40"
+                      />
+                      <TextField
+                        value={formState.humidity}
+                        onChange={handleInputChange('humidity')}
+                        label={t('Вологість (%)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 160 }}
+                        placeholder="0-100"
+                        slotProps={{ htmlInput: { min: 0, max: 100 } }}
+                      />
+                      <TextField
+                        value={formState.wind_speed}
+                        onChange={handleInputChange('wind_speed')}
+                        label={t('Швидкість вітру (м/с)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 180 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+
+                {/* Calendar conditions */}
+                <Accordion expanded={expandedPanels.includes('calendar')} onChange={handlePanelChange('calendar')}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t('Календарні умови')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack direction="row" spacing={3}>
+                      <FormControlLabel
+                        control={<Checkbox checked={formState.is_holiday} onChange={handleInputChange('is_holiday')} />}
+                        label={t('Свято')}
+                      />
+                      <FormControlLabel
+                        control={<Checkbox checked={formState.is_weekend} onChange={handleInputChange('is_weekend')} />}
+                        label={t('Вихідний')}
+                      />
+                      <FormControlLabel
+                        control={<Checkbox checked={formState.is_anomaly} onChange={handleInputChange('is_anomaly')} />}
+                        label={t('Аномалія')}
+                      />
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+
+                {/* Time scenario */}
+                <Accordion expanded={expandedPanels.includes('time')} onChange={handlePanelChange('time')}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t('Часовий сценарій')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+                      <TextField
+                        value={formState.hour}
+                        onChange={handleInputChange('hour')}
+                        label={t('Година')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 120 }}
+                        placeholder="0-23"
+                        slotProps={{ htmlInput: { min: 0, max: 23 } }}
+                      />
+                      <TextField
+                        value={formState.day_of_week}
+                        onChange={handleInputChange('day_of_week')}
+                        label={t('День тижня')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 130 }}
+                        placeholder="0-6"
+                        slotProps={{ htmlInput: { min: 0, max: 6 } }}
+                      />
+                      <TextField
+                        value={formState.day_of_month}
+                        onChange={handleInputChange('day_of_month')}
+                        label={t('День місяця')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 130 }}
+                        placeholder="1-31"
+                        slotProps={{ htmlInput: { min: 1, max: 31 } }}
+                      />
+                      <TextField
+                        value={formState.day_of_year}
+                        onChange={handleInputChange('day_of_year')}
+                        label={t('День року')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 130 }}
+                        placeholder="1-366"
+                        slotProps={{ htmlInput: { min: 1, max: 366 } }}
+                      />
+                      <TextField
+                        value={formState.week_of_year}
+                        onChange={handleInputChange('week_of_year')}
+                        label={t('Тиждень року')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 140 }}
+                        placeholder="1-53"
+                        slotProps={{ htmlInput: { min: 1, max: 53 } }}
+                      />
+                      <TextField
+                        value={formState.month}
+                        onChange={handleInputChange('month')}
+                        label={t('Місяць')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 120 }}
+                        placeholder="1-12"
+                        slotProps={{ htmlInput: { min: 1, max: 12 } }}
+                      />
+                      <TextField
+                        value={formState.quarter}
+                        onChange={handleInputChange('quarter')}
+                        label={t('Квартал')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 120 }}
+                        placeholder="1-4"
+                        slotProps={{ htmlInput: { min: 1, max: 4 } }}
+                      />
+                      <TextField
+                        value={formState.year}
+                        onChange={handleInputChange('year')}
+                        label={t('Рік')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 120 }}
+                        placeholder="≥2000"
+                        slotProps={{ htmlInput: { min: 2000 } }}
+                      />
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+
+                {/* Energy conditions */}
+                <Accordion expanded={expandedPanels.includes('energy')} onChange={handlePanelChange('energy')}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t('Енергетичні параметри')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
+                      <TextField
+                        value={formState.voltage}
+                        onChange={handleInputChange('voltage')}
+                        label={t('Напруга (V)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 150 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                      <TextField
+                        value={formState.global_reactive_power}
+                        onChange={handleInputChange('global_reactive_power')}
+                        label={t('Реактивна потужність')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 180 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                      <TextField
+                        value={formState.global_intensity}
+                        onChange={handleInputChange('global_intensity')}
+                        label={t('Сила струму (A)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 160 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+
+                {/* Zone consumption */}
+                <Accordion expanded={expandedPanels.includes('zone')} onChange={handlePanelChange('zone')}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{t('Споживання по зонах')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
+                      <TextField
+                        value={formState.sub_metering_1}
+                        onChange={handleInputChange('sub_metering_1')}
+                        label={t('Кухня (Wh)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 150 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                      <TextField
+                        value={formState.sub_metering_2}
+                        onChange={handleInputChange('sub_metering_2')}
+                        label={t('Пральня (Wh)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 150 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                      <TextField
+                        value={formState.sub_metering_3}
+                        onChange={handleInputChange('sub_metering_3')}
+                        label={t('Клімат-контроль (Wh)')}
+                        type="number"
+                        size="small"
+                        sx={{ width: 180 }}
+                        placeholder="≥0"
+                        slotProps={{ htmlInput: { min: 0 } }}
+                      />
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+              </Box>
+            ) : (
+              /* View mode - show all selected filters as chips with collapse */
+              <Box
+                sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: 1, borderColor: 'divider' }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{ mb: filtersExpanded ? 1 : 0, cursor: 'pointer' }}
+                  onClick={() => setFiltersExpanded(!filtersExpanded)}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {t('Обрані фільтри')}:
+                    </Typography>
+                    <IconButton size="small">
+                      <ExpandMoreIcon
+                        sx={{
+                          transform: filtersExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s'
+                        }}
+                      />
+                    </IconButton>
+                  </Stack>
+                  <Stack direction="row" spacing={0.5}>
+                    <Tooltip title={t('Редагувати')}>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConditionsEditMode(true);
+                        }}
+                        color="primary"
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('Очистити')}>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearData();
+                        }}
+                        color="secondary"
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                </Stack>
+                <Collapse in={filtersExpanded}>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: hasFilledConditions ? 1 : 0 }}>
+                    <Chip
+                      label={`${t('Моделі: ')}${selectedModelsForRequest.join(', ')}`}
+                      size="small"
+                      variant="outlined"
+                    />
+                    <Chip label={`${t('Горизонт (днів)')}: ${forecastHorizon}`} size="small" variant="outlined" />
+                  </Stack>
+                  {hasFilledConditions && (
+                    <Stack direction="row" flexWrap="wrap" gap={1}>
+                      {getFilledConditionsDisplay().map((item, index) => (
+                        <Chip
+                          key={index}
+                          label={`${item.label}: ${item.value}`}
+                          size="small"
+                          variant="outlined"
+                          color="secondary"
+                        />
+                      ))}
+                    </Stack>
+                  )}
+                </Collapse>
+              </Box>
+            )}
+
+            <Box className={classes.chartContainer}>
+              {isLoadingPredictions ? (
+                <Skeleton variant="rectangular" width="100%" height="100%" />
+              ) : !predictions || chartData.length === 0 ? (
+                <Box className={classes.emptyState}>
+                  <Typography color="text.secondary">
+                    {t('Виберіть моделі та натисніть "Сформувати прогноз", щоб побачити результат.')}
+                  </Typography>
+                </Box>
+              ) : (
+                <ChartRenderer
+                  chartType={chartType}
+                  chartData={chartData}
+                  filteredPredictions={filteredPredictions}
+                  getModelColor={getModelColor}
+                />
+              )}
+            </Box>
+          </>
         )}
 
-        <Box className={classes.chartContainer}>
-          {isLoadingPredictions ? (
-            <Skeleton variant="rectangular" width="100%" height="100%" />
-          ) : !predictions || chartData.length === 0 ? (
-            <Box className={classes.emptyState}>
-              <Typography color="text.secondary">
-                {t('Виберіть моделі та натисніть "Сформувати прогноз", щоб побачити результат.')}
-              </Typography>
-            </Box>
-          ) : (
-            <ChartRenderer
-              chartType={chartType}
-              chartData={chartData}
-              filteredPredictions={filteredPredictions}
-              getModelColor={getModelColor}
-            />
-          )}
-        </Box>
+        {/* Tab 1: Historical */}
+        {activeTab === 1 && <HistoricalChart days={historicalDays} onDaysChange={setHistoricalDays} />}
+
+        {/* Tab 2: Model Features */}
+        {activeTab === 2 && <ModelFeaturesTab />}
       </Paper>
     </Box>
   );
