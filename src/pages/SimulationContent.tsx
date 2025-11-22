@@ -37,6 +37,40 @@ import { useApi } from '../context/useApi';
 import { COLORS, OPTIONS_SIMULATABLE_FEATURES } from '../shared/constans.ts';
 import type { IFeatureOverride, ISimulationRequest, SimulationChartData } from '../types/api';
 
+// Validation constraints for extended conditions
+const FIELD_CONSTRAINTS: Record<string, { min?: number; max?: number }> = {
+  temperature: { min: -50, max: 100 },
+  humidity: { min: 0, max: 100 },
+  wind_speed: { min: 0, max: 150 },
+  hour: { min: 0, max: 23 },
+  time_day_of_week: { min: 0, max: 6 },
+  day_of_month: { min: 1, max: 31 },
+  time_day_of_year: { min: 1, max: 366 },
+  week_of_year: { min: 1, max: 53 },
+  month: { min: 1, max: 12 },
+  year: { min: 2000 },
+  quarter: { min: 1, max: 4 },
+  voltage: { min: 0 },
+  global_reactive_power: { min: 0 },
+  global_intensity: { min: 0 },
+  sub_metering_1: { min: 0 },
+  sub_metering_2: { min: 0 },
+  sub_metering_3: { min: 0 },
+  forecastHorizon: { min: 1, max: 30 }
+};
+
+const clampValue = (field: string, value: number | string): number | string => {
+  if (value === '') return '';
+  const num = Number(value);
+  if (isNaN(num)) return '';
+  const constraints = FIELD_CONSTRAINTS[field];
+  if (!constraints) return value;
+  let clamped = num;
+  if (constraints.min !== undefined && clamped < constraints.min) clamped = constraints.min;
+  if (constraints.max !== undefined && clamped > constraints.max) clamped = constraints.max;
+  return clamped;
+};
+
 interface ISimulationFormInput {
   selectedModel: string;
   forecastHorizon: number;
@@ -407,7 +441,8 @@ export const SimulationContent = () => {
                   type="number"
                   size="small"
                   sx={{ width: 140 }}
-                  onChange={(e) => field.onChange(Math.max(1, parseInt(e.target.value, 10)))}
+                  slotProps={{ htmlInput: { min: 1, max: 30 } }}
+                  onChange={(e) => field.onChange(clampValue('forecastHorizon', e.target.value))}
                 />
               )}
             />
@@ -459,6 +494,7 @@ export const SimulationContent = () => {
                         sx={{ width: 160 }}
                         placeholder="0-100"
                         slotProps={{ htmlInput: { min: 0, max: 100 } }}
+                        onChange={(e) => field.onChange(clampValue('humidity', e.target.value))}
                       />
                     )}
                   />
@@ -474,6 +510,7 @@ export const SimulationContent = () => {
                         sx={{ width: 180 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('wind_speed', e.target.value))}
                       />
                     )}
                   />
@@ -531,6 +568,7 @@ export const SimulationContent = () => {
                         sx={{ width: 120 }}
                         placeholder="0-23"
                         slotProps={{ htmlInput: { min: 0, max: 23 } }}
+                        onChange={(e) => field.onChange(clampValue('hour', e.target.value))}
                       />
                     )}
                   />
@@ -546,6 +584,7 @@ export const SimulationContent = () => {
                         sx={{ width: 130 }}
                         placeholder="0-6"
                         slotProps={{ htmlInput: { min: 0, max: 6 } }}
+                        onChange={(e) => field.onChange(clampValue('time_day_of_week', e.target.value))}
                       />
                     )}
                   />
@@ -561,6 +600,7 @@ export const SimulationContent = () => {
                         sx={{ width: 130 }}
                         placeholder="1-31"
                         slotProps={{ htmlInput: { min: 1, max: 31 } }}
+                        onChange={(e) => field.onChange(clampValue('day_of_month', e.target.value))}
                       />
                     )}
                   />
@@ -576,6 +616,7 @@ export const SimulationContent = () => {
                         sx={{ width: 130 }}
                         placeholder="1-366"
                         slotProps={{ htmlInput: { min: 1, max: 366 } }}
+                        onChange={(e) => field.onChange(clampValue('time_day_of_year', e.target.value))}
                       />
                     )}
                   />
@@ -591,6 +632,7 @@ export const SimulationContent = () => {
                         sx={{ width: 140 }}
                         placeholder="1-53"
                         slotProps={{ htmlInput: { min: 1, max: 53 } }}
+                        onChange={(e) => field.onChange(clampValue('week_of_year', e.target.value))}
                       />
                     )}
                   />
@@ -606,6 +648,7 @@ export const SimulationContent = () => {
                         sx={{ width: 120 }}
                         placeholder="1-12"
                         slotProps={{ htmlInput: { min: 1, max: 12 } }}
+                        onChange={(e) => field.onChange(clampValue('month', e.target.value))}
                       />
                     )}
                   />
@@ -621,6 +664,7 @@ export const SimulationContent = () => {
                         sx={{ width: 120 }}
                         placeholder="1-4"
                         slotProps={{ htmlInput: { min: 1, max: 4 } }}
+                        onChange={(e) => field.onChange(clampValue('quarter', e.target.value))}
                       />
                     )}
                   />
@@ -636,6 +680,7 @@ export const SimulationContent = () => {
                         sx={{ width: 120 }}
                         placeholder="≥2000"
                         slotProps={{ htmlInput: { min: 2000 } }}
+                        onChange={(e) => field.onChange(clampValue('year', e.target.value))}
                       />
                     )}
                   />
@@ -662,6 +707,7 @@ export const SimulationContent = () => {
                         sx={{ width: 150 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('voltage', e.target.value))}
                       />
                     )}
                   />
@@ -677,6 +723,7 @@ export const SimulationContent = () => {
                         sx={{ width: 180 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('global_reactive_power', e.target.value))}
                       />
                     )}
                   />
@@ -692,6 +739,7 @@ export const SimulationContent = () => {
                         sx={{ width: 160 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('global_intensity', e.target.value))}
                       />
                     )}
                   />
@@ -718,6 +766,7 @@ export const SimulationContent = () => {
                         sx={{ width: 150 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('sub_metering_1', e.target.value))}
                       />
                     )}
                   />
@@ -733,6 +782,7 @@ export const SimulationContent = () => {
                         sx={{ width: 150 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('sub_metering_2', e.target.value))}
                       />
                     )}
                   />
@@ -748,6 +798,7 @@ export const SimulationContent = () => {
                         sx={{ width: 180 }}
                         placeholder="≥0"
                         slotProps={{ htmlInput: { min: 0 } }}
+                        onChange={(e) => field.onChange(clampValue('sub_metering_3', e.target.value))}
                       />
                     )}
                   />

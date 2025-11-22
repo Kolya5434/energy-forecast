@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -36,6 +37,39 @@ import { ChartControls } from './components/charts/ChartControls';
 import { ChartRenderer } from './components/charts/ChartRenderer';
 import { ModelSelector } from './components/charts/ModelSelector';
 import classes from './MainContent.module.scss';
+
+// Validation constraints for extended conditions
+const FIELD_CONSTRAINTS: Record<string, { min?: number; max?: number }> = {
+  temperature: { min: -50, max: 100 },
+  humidity: { min: 0, max: 100 },
+  wind_speed: { min: 0, max: 150 },
+  hour: { min: 0, max: 23 },
+  day_of_week: { min: 0, max: 6 },
+  day_of_month: { min: 1, max: 31 },
+  day_of_year: { min: 1, max: 366 },
+  week_of_year: { min: 1, max: 53 },
+  month: { min: 1, max: 12 },
+  year: { min: 2000 },
+  quarter: { min: 1, max: 4 },
+  voltage: { min: 0 },
+  global_reactive_power: { min: 0 },
+  global_intensity: { min: 0 },
+  sub_metering_1: { min: 0 },
+  sub_metering_2: { min: 0 },
+  sub_metering_3: { min: 0 }
+};
+
+const clampValue = (field: string, value: string): string => {
+  if (value === '') return '';
+  const num = Number(value);
+  if (isNaN(num)) return '';
+  const constraints = FIELD_CONSTRAINTS[field];
+  if (!constraints) return value;
+  let clamped = num;
+  if (constraints.min !== undefined && clamped < constraints.min) clamped = constraints.min;
+  if (constraints.max !== undefined && clamped > constraints.max) clamped = constraints.max;
+  return String(clamped);
+};
 
 export const MainContent = () => {
   const { t } = useTranslation();
@@ -91,8 +125,12 @@ export const MainContent = () => {
   };
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setFormState((prev) => ({ ...prev, [field]: value }));
+    if (e.target.type === 'checkbox') {
+      setFormState((prev) => ({ ...prev, [field]: e.target.checked }));
+    } else {
+      const clampedValue = clampValue(field, e.target.value);
+      setFormState((prev) => ({ ...prev, [field]: clampedValue }));
+    }
   };
 
   // Sync form state to context when values change
@@ -621,11 +659,18 @@ export const MainContent = () => {
               <Typography variant="subtitle2" color="text.secondary">
                 {t('Обрані фільтри')}:
               </Typography>
-              <Tooltip title={t('Редагувати')}>
-                <IconButton size="small" onClick={() => setConditionsEditMode(true)} color="primary">
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+              <Stack direction="row" spacing={0.5}>
+                <Tooltip title={t('Редагувати')}>
+                  <IconButton size="small" onClick={() => setConditionsEditMode(true)} color="primary">
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t('Очистити')}>
+                  <IconButton size="small" onClick={handleClearData} color="secondary">
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
             </Stack>
             <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: hasFilledConditions ? 1 : 0 }}>
               <Chip label={`${t('Моделі: ')}${selectedModelsForRequest.join(', ')}`} size="small" variant="outlined" />
