@@ -1,21 +1,36 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react';
 
 import {
+  fetchAnomalies,
+  fetchDecomposition,
   fetchEvaluation,
   fetchFeatures,
   fetchHistorical,
   fetchInterpretation,
   fetchModels,
+  fetchPatterns,
+  fetchPeaks,
+  postCompare,
   postPredictions,
   postSimulation
 } from '../api';
 import type {
+  IAnomaliesRequest,
+  IAnomaliesResponse,
+  ICompareRequest,
+  ICompareResponse,
+  IDecompositionRequest,
+  IDecompositionResponse,
   IEvaluationApiResponse,
   IExtendedConditions,
   IFeaturesResponse,
   IHistoricalRequest,
   IHistoricalResponse,
   IInterpretationApiResponse,
+  IPatternsRequest,
+  IPatternsResponse,
+  IPeaksRequest,
+  IPeaksResponse,
   IPredictionRequest,
   IPredictionResponse,
   IShapInterpretationResponse,
@@ -69,6 +84,37 @@ interface IApiContext {
   isLoadingFeatures: boolean;
   featuresError: string | null;
   getFeatures: (modelId: string) => Promise<IFeaturesResponse | null>;
+
+  // Patterns
+  patternsData: IPatternsResponse | null;
+  isLoadingPatterns: boolean;
+  patternsError: string | null;
+  getPatterns: (params?: IPatternsRequest) => Promise<void>;
+
+  // Anomalies
+  anomaliesData: IAnomaliesResponse | null;
+  isLoadingAnomalies: boolean;
+  anomaliesError: string | null;
+  getAnomalies: (params?: IAnomaliesRequest) => Promise<void>;
+
+  // Peaks
+  peaksData: IPeaksResponse | null;
+  isLoadingPeaks: boolean;
+  peaksError: string | null;
+  getPeaks: (params?: IPeaksRequest) => Promise<void>;
+
+  // Decomposition
+  decompositionData: IDecompositionResponse | null;
+  isLoadingDecomposition: boolean;
+  decompositionError: string | null;
+  getDecomposition: (params?: IDecompositionRequest) => Promise<void>;
+
+  // Compare scenarios
+  compareResult: ICompareResponse | null;
+  isLoadingCompare: boolean;
+  compareError: string | null;
+  compareScenarios: (data: ICompareRequest) => Promise<void>;
+  clearCompare: () => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -105,6 +151,26 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [featuresCache, setFeaturesCache] = useState<Record<string, IFeaturesResponse>>({});
   const [isLoadingFeatures, setIsLoadingFeatures] = useState(false);
   const [featuresError, setFeaturesError] = useState<string | null>(null);
+
+  const [patternsData, setPatternsData] = useState<IPatternsResponse | null>(null);
+  const [isLoadingPatterns, setIsLoadingPatterns] = useState(false);
+  const [patternsError, setPatternsError] = useState<string | null>(null);
+
+  const [anomaliesData, setAnomaliesData] = useState<IAnomaliesResponse | null>(null);
+  const [isLoadingAnomalies, setIsLoadingAnomalies] = useState(false);
+  const [anomaliesError, setAnomaliesError] = useState<string | null>(null);
+
+  const [peaksData, setPeaksData] = useState<IPeaksResponse | null>(null);
+  const [isLoadingPeaks, setIsLoadingPeaks] = useState(false);
+  const [peaksError, setPeaksError] = useState<string | null>(null);
+
+  const [decompositionData, setDecompositionData] = useState<IDecompositionResponse | null>(null);
+  const [isLoadingDecomposition, setIsLoadingDecomposition] = useState(false);
+  const [decompositionError, setDecompositionError] = useState<string | null>(null);
+
+  const [compareResult, setCompareResult] = useState<ICompareResponse | null>(null);
+  const [isLoadingCompare, setIsLoadingCompare] = useState(false);
+  const [compareError, setCompareError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInitialModels = async () => {
@@ -256,6 +322,81 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     [featuresCache]
   );
 
+  const getPatterns = useCallback(async (params?: IPatternsRequest) => {
+    try {
+      setIsLoadingPatterns(true);
+      setPatternsError(null);
+      const result = await fetchPatterns(params);
+      setPatternsData(result);
+    } catch (err) {
+      setPatternsError('Не вдалося завантажити патерни');
+      console.error('Error fetching patterns:', err);
+    } finally {
+      setIsLoadingPatterns(false);
+    }
+  }, []);
+
+  const getAnomalies = useCallback(async (params?: IAnomaliesRequest) => {
+    try {
+      setIsLoadingAnomalies(true);
+      setAnomaliesError(null);
+      const result = await fetchAnomalies(params);
+      setAnomaliesData(result);
+    } catch (err) {
+      setAnomaliesError('Не вдалося завантажити аномалії');
+      console.error('Error fetching anomalies:', err);
+    } finally {
+      setIsLoadingAnomalies(false);
+    }
+  }, []);
+
+  const getPeaks = useCallback(async (params?: IPeaksRequest) => {
+    try {
+      setIsLoadingPeaks(true);
+      setPeaksError(null);
+      const result = await fetchPeaks(params);
+      setPeaksData(result);
+    } catch (err) {
+      setPeaksError('Не вдалося завантажити пікові періоди');
+      console.error('Error fetching peaks:', err);
+    } finally {
+      setIsLoadingPeaks(false);
+    }
+  }, []);
+
+  const getDecomposition = useCallback(async (params?: IDecompositionRequest) => {
+    try {
+      setIsLoadingDecomposition(true);
+      setDecompositionError(null);
+      const result = await fetchDecomposition(params);
+      setDecompositionData(result);
+    } catch (err) {
+      setDecompositionError('Не вдалося завантажити декомпозицію');
+      console.error('Error fetching decomposition:', err);
+    } finally {
+      setIsLoadingDecomposition(false);
+    }
+  }, []);
+
+  const compareScenarios = useCallback(async (data: ICompareRequest) => {
+    try {
+      setIsLoadingCompare(true);
+      setCompareError(null);
+      const result = await postCompare(data);
+      setCompareResult(result);
+    } catch (err) {
+      setCompareError('Не вдалося порівняти сценарії');
+      console.error('Error comparing scenarios:', err);
+    } finally {
+      setIsLoadingCompare(false);
+    }
+  }, []);
+
+  const clearCompare = useCallback(() => {
+    setCompareResult(null);
+    setCompareError(null);
+  }, []);
+
   const value = {
     models,
     isLoadingModels,
@@ -290,7 +431,28 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     featuresCache,
     isLoadingFeatures,
     featuresError,
-    getFeatures
+    getFeatures,
+    patternsData,
+    isLoadingPatterns,
+    patternsError,
+    getPatterns,
+    anomaliesData,
+    isLoadingAnomalies,
+    anomaliesError,
+    getAnomalies,
+    peaksData,
+    isLoadingPeaks,
+    peaksError,
+    getPeaks,
+    decompositionData,
+    isLoadingDecomposition,
+    decompositionError,
+    getDecomposition,
+    compareResult,
+    isLoadingCompare,
+    compareError,
+    compareScenarios,
+    clearCompare
   };
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
