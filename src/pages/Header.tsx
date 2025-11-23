@@ -40,6 +40,7 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'shap_force_plot', label: 'Візуалізація SHAP Force Plot' },
   { id: 'evaluation', label: 'Evaluation' },
   { id: 'simulation', label: 'Simulation' },
+  { id: 'analytics', label: 'Аналітика' },
   { id: 'help', label: 'FAQ' }
 ];
 

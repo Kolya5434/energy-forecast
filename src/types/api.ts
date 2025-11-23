@@ -253,7 +253,7 @@ export interface IPatternStats {
 
 export interface IPatternsResponse {
   period: PatternPeriod;
-  pattern: Record<string, IPatternStats>;
+  pattern: Record<string, IPatternStats | number>;  // yearly returns numbers, others return stats
   peak_hour?: number;
   off_peak_hour?: number;
   peak_to_offpeak_ratio?: number;
