@@ -263,7 +263,7 @@ describe('postPredictions API', () => {
         model_ids: ['XGBoost_Tuned'],
         forecast_horizon: 2
       };
-      
+
       const mockResponse = {
         data: {
           model_id: 'XGBoost_Tuned',
@@ -276,13 +276,332 @@ describe('postPredictions API', () => {
           }
         }
       };
-      
+
       vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
-      
+
       const result = await postPredictions(request);
-      
+
       expect(result.forecast['2010-11-27']).toBe(588.411376953125);
       expect(result.forecast['2010-11-28']).toBe(610.5526733398438);
+    });
+  });
+
+  describe('Extended Conditions', () => {
+    it('should make predictions with weather conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        weather: {
+          temperature: 25,
+          humidity: 70,
+          wind_speed: 10
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 520.0 },
+          metadata: {
+            latency_ms: 30.5,
+            conditions_applied: {
+              weather: { temperature: 25, humidity: 70, wind_speed: 10 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(axiosInstance.post).toHaveBeenCalledWith('/api/predict', request);
+      expect(result.metadata.conditions_applied?.weather?.temperature).toBe(25);
+    });
+
+    it('should make predictions with calendar conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        calendar: {
+          is_holiday: true,
+          is_weekend: false
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 450.0 },
+          metadata: {
+            latency_ms: 28.0,
+            conditions_applied: {
+              calendar: { is_holiday: true, is_weekend: false }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.calendar?.is_holiday).toBe(true);
+    });
+
+    it('should make predictions with time_scenario conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        time_scenario: {
+          hour: 18,
+          day_of_week: 5,
+          month: 12,
+          quarter: 4
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 680.0 },
+          metadata: {
+            latency_ms: 32.0,
+            conditions_applied: {
+              time_scenario: { hour: 18, day_of_week: 5, month: 12, quarter: 4 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.time_scenario?.hour).toBe(18);
+    });
+
+    it('should make predictions with energy conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['RandomForest'],
+        forecast_horizon: 7,
+        energy: {
+          voltage: 240,
+          global_reactive_power: 0.5,
+          global_intensity: 5.0
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: { '2010-11-27': 600.0 },
+          metadata: {
+            latency_ms: 25.0,
+            conditions_applied: {
+              energy: { voltage: 240, global_reactive_power: 0.5, global_intensity: 5.0 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.energy?.voltage).toBe(240);
+    });
+
+    it('should make predictions with zone_consumption conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['RandomForest'],
+        forecast_horizon: 7,
+        zone_consumption: {
+          sub_metering_1: 100,
+          sub_metering_2: 150,
+          sub_metering_3: 200
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: { '2010-11-27': 550.0 },
+          metadata: {
+            latency_ms: 22.0,
+            conditions_applied: {
+              zone_consumption: { sub_metering_1: 100, sub_metering_2: 150, sub_metering_3: 200 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.zone_consumption?.sub_metering_1).toBe(100);
+    });
+
+    it('should make predictions with lag_overrides', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        lag_overrides: {
+          lag_1: 500,
+          lag_24: 480,
+          lag_168: 520
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 510.0 },
+          metadata: {
+            latency_ms: 20.0,
+            conditions_applied: {
+              lag_overrides: { lag_1: 500, lag_24: 480, lag_168: 520 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.lag_overrides?.lag_1).toBe(500);
+    });
+
+    it('should make predictions with volatility conditions', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        volatility: {
+          roll_mean_3: 450,
+          roll_std_3: 50,
+          roll_mean_24: 480,
+          roll_std_24: 60
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 470.0 },
+          metadata: {
+            latency_ms: 18.0,
+            conditions_applied: {
+              volatility: { roll_mean_3: 450, roll_std_3: 50, roll_mean_24: 480, roll_std_24: 60 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.volatility?.roll_mean_3).toBe(450);
+    });
+
+    it('should make predictions with is_anomaly flag', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        is_anomaly: true
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 900.0 },
+          metadata: {
+            latency_ms: 15.0,
+            conditions_applied: {
+              is_anomaly: true
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.is_anomaly).toBe(true);
+    });
+
+    it('should make predictions with all extended conditions combined', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['RandomForest'],
+        forecast_horizon: 7,
+        weather: { temperature: 30, humidity: 80 },
+        calendar: { is_holiday: false, is_weekend: true },
+        time_scenario: { hour: 14, day_of_week: 6 },
+        energy: { voltage: 235 },
+        zone_consumption: { sub_metering_1: 50 },
+        lag_overrides: { lag_1: 400 },
+        volatility: { roll_mean_24: 420 },
+        is_anomaly: false
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: { '2010-11-27': 480.0 },
+          metadata: {
+            latency_ms: 45.0,
+            conditions_applied: {
+              weather: { temperature: 30, humidity: 80 },
+              calendar: { is_holiday: false, is_weekend: true },
+              time_scenario: { hour: 14, day_of_week: 6 },
+              energy: { voltage: 235 },
+              zone_consumption: { sub_metering_1: 50 },
+              lag_overrides: { lag_1: 400 },
+              volatility: { roll_mean_24: 420 },
+              is_anomaly: false
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.conditions_applied?.weather?.temperature).toBe(30);
+      expect(result.metadata.conditions_applied?.calendar?.is_weekend).toBe(true);
+      expect(result.metadata.conditions_applied?.is_anomaly).toBe(false);
+    });
+
+    it('should handle simulated flag in response metadata', async () => {
+      const request: IPredictionRequest = {
+        model_ids: ['XGBoost_Tuned'],
+        forecast_horizon: 7,
+        weather: { temperature: 25 }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 500.0 },
+          metadata: {
+            latency_ms: 25.0,
+            simulated: true,
+            conditions_applied: {
+              weather: { temperature: 25 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postPredictions(request);
+
+      expect(result.metadata.simulated).toBe(true);
     });
   });
 });

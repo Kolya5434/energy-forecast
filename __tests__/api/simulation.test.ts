@@ -556,17 +556,329 @@ describe('postSimulation API', () => {
           }
         ]
       };
-      
+
       const error = {
         response: {
           status: 400,
           data: { error: "NaNs detected in features for simulation." }
         }
       };
-      
+
       vi.mocked(axiosInstance.post).mockRejectedValueOnce(error);
-      
+
       await expect(postSimulation(request)).rejects.toEqual(error);
+    });
+  });
+
+  describe('Extended Conditions', () => {
+    it('should simulate with weather conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost_Tuned',
+        forecast_horizon: 7,
+        weather: {
+          temperature: 35,
+          humidity: 85,
+          wind_speed: 15
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 720.0 },
+          metadata: {
+            latency_ms: 35.0,
+            simulated: true,
+            conditions_applied: {
+              weather: { temperature: 35, humidity: 85, wind_speed: 15 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.weather?.temperature).toBe(35);
+      expect(result.metadata.simulated).toBe(true);
+    });
+
+    it('should simulate with calendar conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost_Tuned',
+        forecast_horizon: 7,
+        calendar: {
+          is_holiday: true,
+          is_weekend: true
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 380.0 },
+          metadata: {
+            latency_ms: 22.0,
+            simulated: true,
+            conditions_applied: {
+              calendar: { is_holiday: true, is_weekend: true }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.calendar?.is_holiday).toBe(true);
+    });
+
+    it('should simulate with time_scenario conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'RandomForest',
+        forecast_horizon: 7,
+        time_scenario: {
+          hour: 20,
+          day_of_week: 0,
+          day_of_month: 15,
+          month: 1,
+          year: 2011
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: { '2010-11-27': 650.0 },
+          metadata: {
+            latency_ms: 28.0,
+            simulated: true,
+            conditions_applied: {
+              time_scenario: { hour: 20, day_of_week: 0, day_of_month: 15, month: 1, year: 2011 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.time_scenario?.year).toBe(2011);
+    });
+
+    it('should simulate with energy conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'RandomForest',
+        forecast_horizon: 7,
+        energy: {
+          voltage: 250,
+          global_reactive_power: 0.8,
+          global_intensity: 8.5
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: { '2010-11-27': 680.0 },
+          metadata: {
+            latency_ms: 30.0,
+            simulated: true,
+            conditions_applied: {
+              energy: { voltage: 250, global_reactive_power: 0.8, global_intensity: 8.5 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.energy?.global_intensity).toBe(8.5);
+    });
+
+    it('should simulate with zone_consumption conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost',
+        forecast_horizon: 7,
+        zone_consumption: {
+          sub_metering_1: 200,
+          sub_metering_2: 250,
+          sub_metering_3: 300
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost',
+          forecast: { '2010-11-27': 750.0 },
+          metadata: {
+            latency_ms: 18.0,
+            simulated: true,
+            conditions_applied: {
+              zone_consumption: { sub_metering_1: 200, sub_metering_2: 250, sub_metering_3: 300 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.zone_consumption?.sub_metering_3).toBe(300);
+    });
+
+    it('should simulate with lag_overrides', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost_Tuned',
+        forecast_horizon: 7,
+        lag_overrides: {
+          lag_1: 600,
+          lag_2: 580,
+          lag_3: 560,
+          lag_24: 550,
+          lag_48: 540,
+          lag_168: 530
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 590.0 },
+          metadata: {
+            latency_ms: 25.0,
+            simulated: true,
+            conditions_applied: {
+              lag_overrides: { lag_1: 600, lag_2: 580, lag_3: 560, lag_24: 550, lag_48: 540, lag_168: 530 }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.lag_overrides?.lag_168).toBe(530);
+    });
+
+    it('should simulate with volatility conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost_Tuned',
+        forecast_horizon: 7,
+        volatility: {
+          roll_mean_3: 500,
+          roll_std_3: 80,
+          roll_mean_24: 520,
+          roll_std_24: 100,
+          roll_mean_168: 510,
+          roll_std_168: 90
+        }
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 515.0 },
+          metadata: {
+            latency_ms: 20.0,
+            simulated: true,
+            conditions_applied: {
+              volatility: {
+                roll_mean_3: 500,
+                roll_std_3: 80,
+                roll_mean_24: 520,
+                roll_std_24: 100,
+                roll_mean_168: 510,
+                roll_std_168: 90
+              }
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.volatility?.roll_mean_168).toBe(510);
+    });
+
+    it('should simulate with is_anomaly flag', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'XGBoost_Tuned',
+        forecast_horizon: 7,
+        is_anomaly: true
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'XGBoost_Tuned',
+          forecast: { '2010-11-27': 1200.0 },
+          metadata: {
+            latency_ms: 12.0,
+            simulated: true,
+            conditions_applied: {
+              is_anomaly: true
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.is_anomaly).toBe(true);
+      expect(result.forecast['2010-11-27']).toBeGreaterThan(1000);
+    });
+
+    it('should simulate with combined feature_overrides and extended conditions', async () => {
+      const request: ISimulationRequest = {
+        model_id: 'RandomForest',
+        forecast_horizon: 7,
+        feature_overrides: [
+          { date: '2010-11-28', features: { 'day_of_week': 6 } }
+        ],
+        weather: { temperature: 28 },
+        calendar: { is_weekend: true },
+        is_anomaly: false
+      };
+
+      const mockResponse = {
+        data: {
+          model_id: 'RandomForest',
+          forecast: {
+            '2010-11-27': 500.0,
+            '2010-11-28': 420.0
+          },
+          metadata: {
+            latency_ms: 40.0,
+            simulated: true,
+            conditions_applied: {
+              weather: { temperature: 28 },
+              calendar: { is_weekend: true },
+              is_anomaly: false,
+              feature_overrides: [
+                { date: '2010-11-28', features: { 'day_of_week': 6 } }
+              ]
+            }
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.post).mockResolvedValueOnce(mockResponse);
+
+      const result = await postSimulation(request);
+
+      expect(result.metadata.conditions_applied?.weather?.temperature).toBe(28);
+      expect(result.metadata.conditions_applied?.feature_overrides).toHaveLength(1);
     });
   });
 });

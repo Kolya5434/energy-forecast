@@ -61,15 +61,95 @@ describe('fetchModels API', () => {
           'Voting': { type: 'ensemble', granularity: 'daily', feature_set: 'simple' }
         }
       };
-      
+
       vi.mocked(axiosInstance.get).mockResolvedValueOnce(mockResponse);
-      
+
       const result = await fetchModels();
-      
+
       expect(result['ARIMA'].type).toBe('classical');
       expect(result['RandomForest'].type).toBe('ml');
       expect(result['GRU'].type).toBe('dl');
       expect(result['Voting'].type).toBe('ensemble');
+    });
+
+    it('should handle complete model info with all fields', async () => {
+      const mockResponse = {
+        data: {
+          'XGBoost_Tuned': {
+            type: 'ml',
+            granularity: 'daily',
+            feature_set: 'simple',
+            description: 'Tuned XGBoost model for daily forecasting',
+            supports_conditions: true,
+            supports_simulation: true,
+            avg_latency_ms: 25.5,
+            memory_increment_mb: 128.0
+          },
+          'ARIMA': {
+            type: 'classical',
+            granularity: 'daily',
+            feature_set: 'none',
+            description: 'Classical ARIMA time series model',
+            supports_conditions: false,
+            supports_simulation: false,
+            avg_latency_ms: 15.2,
+            memory_increment_mb: 32.0
+          },
+          'LSTM': {
+            type: 'dl',
+            granularity: 'hourly',
+            feature_set: 'base_scaled',
+            description: 'Deep learning LSTM model',
+            supports_conditions: false,
+            supports_simulation: false,
+            avg_latency_ms: 4500.0,
+            memory_increment_mb: 512.0
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.get).mockResolvedValueOnce(mockResponse);
+
+      const result = await fetchModels();
+
+      // Check XGBoost_Tuned supports conditions and simulation
+      expect(result['XGBoost_Tuned'].supports_conditions).toBe(true);
+      expect(result['XGBoost_Tuned'].supports_simulation).toBe(true);
+      expect(result['XGBoost_Tuned'].description).toBe('Tuned XGBoost model for daily forecasting');
+      expect(result['XGBoost_Tuned'].avg_latency_ms).toBe(25.5);
+      expect(result['XGBoost_Tuned'].memory_increment_mb).toBe(128.0);
+
+      // Check ARIMA does not support conditions/simulation
+      expect(result['ARIMA'].supports_conditions).toBe(false);
+      expect(result['ARIMA'].supports_simulation).toBe(false);
+
+      // Check LSTM performance metrics
+      expect(result['LSTM'].avg_latency_ms).toBe(4500.0);
+      expect(result['LSTM'].memory_increment_mb).toBe(512.0);
+    });
+
+    it('should handle null latency and memory values', async () => {
+      const mockResponse = {
+        data: {
+          'NewModel': {
+            type: 'ml',
+            granularity: 'hourly',
+            feature_set: 'full',
+            description: 'New model without performance data',
+            supports_conditions: true,
+            supports_simulation: false,
+            avg_latency_ms: null,
+            memory_increment_mb: null
+          }
+        }
+      };
+
+      vi.mocked(axiosInstance.get).mockResolvedValueOnce(mockResponse);
+
+      const result = await fetchModels();
+
+      expect(result['NewModel'].avg_latency_ms).toBeNull();
+      expect(result['NewModel'].memory_increment_mb).toBeNull();
     });
   });
   
