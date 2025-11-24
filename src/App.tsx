@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
@@ -9,6 +9,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { darkTheme, lightTheme } from '../theme';
 import { ApiProvider } from './context/ApiContext.tsx';
 import type { View } from './types/shared.ts';
+
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 const Header = lazy(() => import('./pages/Header.tsx').then((m) => ({ default: m.Header })));
 const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
@@ -28,12 +30,38 @@ const AnalyticsContent = lazy(() =>
 const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then((m) => ({ default: m.HelpContent })));
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
+  const [systemPrefersDark, setSystemPrefersDark] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
   const [activeView, setActiveView] = useState<View>('forecast');
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      setSystemPrefersDark(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  const isDarkMode = useMemo(() => {
+    if (themeMode === 'system') {
+      return systemPrefersDark;
+    }
+    return themeMode === 'dark';
+  }, [themeMode, systemPrefersDark]);
 
   const theme = useMemo(() => (isDarkMode ? darkTheme : lightTheme), [isDarkMode]);
 
-  const toggleTheme = useCallback(() => setIsDarkMode((prev) => !prev), []);
+  const toggleTheme = useCallback(() => {
+    setThemeMode((prev) => {
+      if (prev === 'light') return 'dark';
+      if (prev === 'dark') return 'system';
+      return 'light';
+    });
+  }, []);
   const handleSetActiveView = useCallback((view: View) => setActiveView(view), []);
 
   const renderContent = () => {
@@ -69,6 +97,7 @@ function App() {
                   toggleTheme={toggleTheme}
                   activeView={activeView}
                   setActiveView={handleSetActiveView}
+                  themeMode={themeMode}
                 />
                 <Suspense
                   fallback={

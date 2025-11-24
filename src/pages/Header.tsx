@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
 import LanguageIcon from '@mui/icons-material/Language';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -16,17 +17,18 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
-  useMediaQuery,
-  useTheme
+  useMediaQuery
 } from '@mui/material';
 
 import i18n from '../i18n';
+import type { ThemeMode } from '../App';
 import type { View } from '../types/shared';
 
 interface HeaderProps {
   toggleTheme: () => void;
   setActiveView: (view: View) => void;
   activeView: View;
+  themeMode: ThemeMode;
 }
 
 interface ViewConfig {
@@ -44,13 +46,25 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'help', label: 'FAQ' }
 ];
 
-const HeaderComponent = ({ toggleTheme, setActiveView, activeView }: HeaderProps) => {
-  const theme = useTheme();
+const HeaderComponent = ({ toggleTheme, setActiveView, activeView, themeMode }: HeaderProps) => {
   const { t } = useTranslation();
   const isSmall = useMediaQuery('(max-width:1920px)');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const currentLang = i18n.resolvedLanguage || i18n.language || 'uk';
+
+  const getThemeIcon = () => {
+    switch (themeMode) {
+      case 'light':
+        return <Brightness7Icon />;
+      case 'dark':
+        return <Brightness4Icon />;
+      case 'system':
+        return <BrightnessAutoIcon />;
+      default:
+        return <BrightnessAutoIcon />;
+    }
+  };
 
   const handleLanguageToggle = () => {
     const supported = ['uk', 'en', 'de', 'it'];
@@ -134,7 +148,7 @@ const HeaderComponent = ({ toggleTheme, setActiveView, activeView }: HeaderProps
             </>
           ) : null}
           <IconButton onClick={toggleTheme} color="inherit" aria-label="toggle theme">
-            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            {getThemeIcon()}
           </IconButton>
           <IconButton
             onClick={handleLanguageToggle}
