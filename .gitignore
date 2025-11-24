@@ -11,8 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Environment files (keep template files, ignore actual .env)
 .env
-.env*
+!.env.local
+!.env.hg
+!.env.docker.local
+!.env.docker.hg
 
 # Editor directories and files
 .vscode/*

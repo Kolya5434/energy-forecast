@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Frontend application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Switch between local and HG backend using environment variable
+        VITE_API_ENDPOINT: ${API_ENDPOINT:-http://localhost:7860}
+    container_name: energy-forecast-frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development mode (with hot reload)
+  frontend-dev:
+    image: node:20-alpine
+    container_name: energy-forecast-frontend-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_ENDPOINT=${API_ENDPOINT:-http://localhost:7860}
+    command: sh -c "npm install -g pnpm@10 && pnpm install && pnpm dev --host"
+    profiles:
+      - dev
