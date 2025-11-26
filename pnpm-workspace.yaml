@@ -1,5 +1,6 @@
 packages:
-  - '.'
+  - .
 
 ignoredBuiltDependencies:
+  - '@vercel/speed-insights'
   - core-js
