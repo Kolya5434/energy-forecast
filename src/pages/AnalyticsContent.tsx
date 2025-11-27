@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { lazy, ReactElement, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -6,14 +6,16 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Box, Paper, Tab, Tabs } from '@mui/material';
+import { Box, CircularProgress, Paper, Tab, Tabs } from '@mui/material';
 
-import { AnomaliesTab } from './components/analytics/AnomaliesTab';
-import { CompareTab } from './components/analytics/CompareTab';
-import { DecompositionTab } from './components/analytics/DecompositionTab';
-import { PatternsTab } from './components/analytics/PatternsTab';
-import { PeaksTab } from './components/analytics/PeaksTab';
 import classes from './MainContent.module.scss';
+
+// Lazy load analytics tabs to defer echarts loading
+const PeaksTab = lazy(() => import('./components/analytics/PeaksTab').then((m) => ({ default: m.PeaksTab })));
+const PatternsTab = lazy(() => import('./components/analytics/PatternsTab').then((m) => ({ default: m.PatternsTab })));
+const AnomaliesTab = lazy(() => import('./components/analytics/AnomaliesTab').then((m) => ({ default: m.AnomaliesTab })));
+const DecompositionTab = lazy(() => import('./components/analytics/DecompositionTab').then((m) => ({ default: m.DecompositionTab })));
+const CompareTab = lazy(() => import('./components/analytics/CompareTab').then((m) => ({ default: m.CompareTab })));
 
 type AnalyticsTabType = 'peaks' | 'patterns' | 'anomalies' | 'decomposition' | 'compare';
 
@@ -75,7 +77,15 @@ export const AnalyticsContent = () => {
           ))}
         </Tabs>
 
-        {renderTabContent()}
+        <Suspense
+          fallback={
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+              <CircularProgress />
+            </Box>
+          }
+        >
+          {renderTabContent()}
+        </Suspense>
       </Paper>
     </Box>
   );
