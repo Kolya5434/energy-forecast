@@ -6,26 +6,18 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryIcon from '@mui/icons-material/History';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import SpeedIcon from '@mui/icons-material/Speed';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
-  Button,
   Checkbox,
   Chip,
   Collapse,
-  FormControl,
   FormControlLabel,
   IconButton,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
   Paper,
-  Select,
   Skeleton,
   Stack,
   Tab,
@@ -37,6 +29,7 @@ import {
 } from '@mui/material';
 
 import { useApi } from '../context/useApi.tsx';
+import { clampValue } from '../helpers/conditionsValidation';
 import { COLORS } from '../shared/constans.ts';
 import type { IExtendedConditions } from '../types/api.ts';
 import type { ChartType, IChartDataPoint } from '../types/shared.ts';
@@ -44,41 +37,9 @@ import { ChartControls } from './components/charts/ChartControls';
 import { ChartRenderer } from './components/charts/ChartRenderer';
 import { HistoricalChart } from './components/charts/HistoricalChart';
 import { ModelSelector } from './components/charts/ModelSelector';
+import { ForecastControls } from './components/ForecastControls';
 import { ModelFeaturesTab } from './components/ModelFeaturesTab';
 import classes from './MainContent.module.scss';
-
-// Validation constraints for extended conditions
-const FIELD_CONSTRAINTS: Record<string, { min?: number; max?: number }> = {
-  temperature: { min: -50, max: 100 },
-  humidity: { min: 0, max: 100 },
-  wind_speed: { min: 0, max: 150 },
-  hour: { min: 0, max: 23 },
-  day_of_week: { min: 0, max: 6 },
-  day_of_month: { min: 1, max: 31 },
-  day_of_year: { min: 1, max: 366 },
-  week_of_year: { min: 1, max: 53 },
-  month: { min: 1, max: 12 },
-  year: { min: 2000 },
-  quarter: { min: 1, max: 4 },
-  voltage: { min: 0 },
-  global_reactive_power: { min: 0 },
-  global_intensity: { min: 0 },
-  sub_metering_1: { min: 0 },
-  sub_metering_2: { min: 0 },
-  sub_metering_3: { min: 0 }
-};
-
-const clampValue = (field: string, value: string): string => {
-  if (value === '') return '';
-  const num = Number(value);
-  if (isNaN(num)) return '';
-  const constraints = FIELD_CONSTRAINTS[field];
-  if (!constraints) return value;
-  let clamped = num;
-  if (constraints.min !== undefined && clamped < constraints.min) clamped = constraints.min;
-  if (constraints.max !== undefined && clamped > constraints.max) clamped = constraints.max;
-  return String(clamped);
-};
 
 export const MainContent = () => {
   const { t } = useTranslation();
@@ -378,60 +339,16 @@ export const MainContent = () => {
         {activeTab === 0 && (
           <div className={classes.controlsWrapper}>
             {isConditionsEditMode ? (
-              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
-                <FormControl size="small" sx={{ minWidth: 250 }}>
-                  <InputLabel>{t('Вибір моделей')}</InputLabel>
-                  <Select
-                    multiple
-                    value={selectedModelsForRequest}
-                    onChange={handleModelSelectChange}
-                    input={<OutlinedInput label={t('Вибір моделей')} />}
-                    disabled={isLoadingModels}
-                    renderValue={(selected) => selected.join(', ')}
-                  >
-                    {models &&
-                      Object.keys(models).map((modelId) => {
-                        const info = models[modelId];
-                        return (
-                          <MenuItem key={modelId} value={modelId}>
-                            <Checkbox checked={selectedModelsForRequest.includes(modelId)} />
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-                              <span>{modelId}</span>
-                              {info?.avg_latency_ms !== null && info?.avg_latency_ms !== undefined && (
-                                <Chip
-                                  size="small"
-                                  icon={<SpeedIcon sx={{ fontSize: 14 }} />}
-                                  label={`${info.avg_latency_ms.toFixed(0)}ms`}
-                                  sx={{ height: 20, fontSize: '0.7rem' }}
-                                />
-                              )}
-                            </Box>
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-
-                <TextField
-                  label={t('Горизонт (днів)')}
-                  type="number"
-                  size="small"
-                  value={forecastHorizon}
-                  onChange={(e) => setForecastHorizon(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                  sx={{ width: 130 }}
-                  slotProps={{ htmlInput: { min: 1, max: 30 } }}
-                />
-
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<PlayArrowIcon />}
-                  onClick={handleForecast}
-                  disabled={isLoadingPredictions || selectedModelsForRequest.length === 0}
-                >
-                  {t('Сформувати прогноз')}
-                </Button>
-              </Stack>
+              <ForecastControls
+                models={models}
+                isLoadingModels={isLoadingModels}
+                isLoadingPredictions={isLoadingPredictions}
+                selectedModels={selectedModelsForRequest}
+                forecastHorizon={forecastHorizon}
+                onModelSelectChange={handleModelSelectChange}
+                onForecastHorizonChange={setForecastHorizon}
+                onForecast={handleForecast}
+              />
             ) : null}
 
             <ChartControls
