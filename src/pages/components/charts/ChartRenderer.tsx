@@ -245,7 +245,7 @@ export const ChartRenderer = ({ chartType, chartData, filteredPredictions, getMo
     );
   };
 
-  const renderChart = useMemo(() => {
+  const renderChart = () => {
     switch (chartType) {
       case 'bar':
         return renderBarChart('horizontal', false);
@@ -273,7 +273,7 @@ export const ChartRenderer = ({ chartType, chartData, filteredPredictions, getMo
       default:
         return renderLineChart('monotone');
     }
-  }, [chartType, chartData, filteredPredictions, getModelColor]);
+  };
 
-  return <>{renderChart}</>;
+  return <>{renderChart()}</>;
 };

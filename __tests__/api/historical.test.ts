@@ -189,7 +189,8 @@ describe('fetchHistorical API', () => {
 
       vi.mocked(axiosInstance.get).mockRejectedValueOnce(error);
 
-      await expect(fetchHistorical({ granularity: 'invalid' as any })).rejects.toEqual(error);
+      // @ts-expect-error - Testing invalid granularity value
+      await expect(fetchHistorical({ granularity: 'invalid' })).rejects.toEqual(error);
     });
 
     it('should handle network error', async () => {

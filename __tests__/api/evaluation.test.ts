@@ -109,7 +109,7 @@ describe('fetchEvaluation API', () => {
               q3: 25,
               max: 50
             })),
-            scatter_data: Array.from({ length: 500 }, (_, i) => ({
+            scatter_data: Array.from({ length: 500 }, () => ({
               actual: 100 + Math.random() * 200,
               predicted: 100 + Math.random() * 200
             }))
@@ -121,9 +121,9 @@ describe('fetchEvaluation API', () => {
       
       const result = await fetchEvaluation('LargeDataModel');
       
-      expect(result.error_analysis.residuals_over_time).toHaveLength(1000);
-      expect(result.error_analysis.monthly_errors).toHaveLength(12);
-      expect(result.error_analysis.scatter_data).toHaveLength(500);
+      expect(result.error_analysis?.residuals_over_time).toHaveLength(1000);
+      expect(result.error_analysis?.monthly_errors).toHaveLength(12);
+      expect(result.error_analysis?.scatter_data).toHaveLength(500);
     });
   });
   
@@ -201,9 +201,9 @@ describe('fetchEvaluation API', () => {
       
       const result = await fetchEvaluation('EmptyAnalysisModel');
       
-      expect(result.error_analysis.residuals_over_time).toHaveLength(0);
-      expect(result.error_analysis.monthly_errors).toHaveLength(0);
-      expect(result.error_analysis.scatter_data).toHaveLength(0);
+      expect(result.error_analysis?.residuals_over_time).toHaveLength(0);
+      expect(result.error_analysis?.monthly_errors).toHaveLength(0);
+      expect(result.error_analysis?.scatter_data).toHaveLength(0);
     });
     
     it('should handle high precision metric values', async () => {

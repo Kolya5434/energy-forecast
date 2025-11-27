@@ -163,7 +163,8 @@ describe('fetchPatterns API', () => {
 
       vi.mocked(axiosInstance.get).mockRejectedValueOnce(error);
 
-      await expect(fetchPatterns({ period: 'invalid' as any })).rejects.toEqual(error);
+      // @ts-expect-error - Testing invalid period value
+      await expect(fetchPatterns({ period: 'invalid' })).rejects.toEqual(error);
     });
 
     it('should handle network error', async () => {

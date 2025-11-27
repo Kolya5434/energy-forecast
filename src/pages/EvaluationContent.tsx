@@ -35,7 +35,15 @@ type SortableMetricKey = 'MAE' | 'RMSE' | 'R2' | 'avg_latency_ms' | 'memory_incr
 export const EvaluationContent = () => {
   const { t } = useTranslation();
   const { models, isLoadingModels, getEvaluation, evaluations, isLoadingEvaluation, evaluationError } = useApi();
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+
+  // Initialize with first ML model when models are available
+  const initialModel = useMemo(() => {
+    if (!models) return [];
+    const firstMlModel = Object.keys(models).find((id) => models[id]?.type === 'ml');
+    return firstMlModel ? [firstMlModel] : [];
+  }, [models]);
+
+  const [selectedModels, setSelectedModels] = useState<string[]>(() => initialModel);
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [sortBy, setSortBy] = useState<SortableMetricKey>('MAE');
@@ -50,28 +58,21 @@ export const EvaluationContent = () => {
     });
   }, [selectedModels, getEvaluation, evaluations]);
 
-  useEffect(() => {
-    if (models && selectedModels.length === 0) {
-      const firstMlModel = Object.keys(models).find((id) => models[id]?.type === 'ml');
-      if (firstMlModel) {
-        setSelectedModels([firstMlModel]);
-      }
-    }
-  }, [models, selectedModels.length]);
+  const handleViewModeChange = useCallback((_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
+    if (newMode !== null) {
+      const oldMode = viewMode;
+      setViewMode(newMode);
 
-  useEffect(() => {
-    if (viewMode === 'errors') {
-      if (selectedModels.length > 1) {
+      // Handle selection cache when switching between modes
+      if (newMode === 'errors' && selectedModels.length > 1) {
         setSelectionCache(selectedModels);
         setSelectedModels([selectedModels[0] || '']);
-      }
-    } else {
-      if (selectionCache.length > 0) {
+      } else if (oldMode === 'errors' && newMode !== 'errors' && selectionCache.length > 0) {
         setSelectedModels(selectionCache);
         setSelectionCache([]);
       }
     }
-  }, [viewMode]);
+  }, [viewMode, selectedModels, selectionCache]);
 
   const prepareExportData = () => {
     return combinedMetricsData.map((row) => ({
@@ -124,12 +125,6 @@ export const EvaluationContent = () => {
     }
   };
 
-  const handleViewModeChange = (_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
-    if (newMode !== null) {
-      setViewMode(newMode);
-    }
-  };
-
   const combinedMetricsData = useMemo(() => {
     return selectedModels
       .map((modelId) => {
@@ -153,10 +148,10 @@ export const EvaluationContent = () => {
   }, [combinedMetricsData, sortBy, sortOrder]);
 
   const getBestWorst = useCallback(
-    (metric: SortableMetricKey) => {
+    (metric: string) => {
       if (combinedMetricsData.length === 0) return { best: null, worst: null };
 
-      const values = combinedMetricsData.map((row) => row[metric]).filter((v): v is number => v !== null && v !== undefined);
+      const values = combinedMetricsData.map((row) => row[metric as SortableMetricKey]).filter((v): v is number => v !== null && v !== undefined);
       if (values.length === 0) return { best: null, worst: null };
 
       if (metric === 'R2') {
@@ -167,11 +162,11 @@ export const EvaluationContent = () => {
     [combinedMetricsData]
   );
 
-  const handleSort = (metric: SortableMetricKey) => {
+  const handleSort = (metric: string) => {
     if (sortBy === metric) {
       setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
-      setSortBy(metric);
+      setSortBy(metric as SortableMetricKey);
       setSortOrder(metric === 'R2' ? 'desc' : 'asc');
     }
   };

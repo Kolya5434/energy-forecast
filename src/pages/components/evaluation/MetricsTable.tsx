@@ -13,8 +13,8 @@ interface MetricsTableProps {
   metrics: MetricConfig[];
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-  onSort: (metric: any) => void;
-  getBestWorst: (metric: any) => { best: number | null; worst: number | null };
+  onSort: (metric: string) => void;
+  getBestWorst: (metric: string) => { best: number | null; worst: number | null };
   isLoading: boolean;
 }
 

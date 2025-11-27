@@ -96,7 +96,7 @@ export const MainContent = () => {
     setConditionsEditMode
   } = useApi();
   const [chartType, setChartType] = useState<ChartType>('line');
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [manuallySelectedModels, setManuallySelectedModels] = useState<string[]>([]);
   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
   const [filtersExpanded, setFiltersExpanded] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -208,28 +208,24 @@ export const MainContent = () => {
     setExtendedConditions(conditions);
   }, [formState, setExtendedConditions]);
 
-  useEffect(() => {
-    if (predictions) {
-      const newModelIds = predictions.map((p) => p.model_id);
+  // Compute selected models based on predictions
+  const selectedModels = useMemo(() => {
+    if (!predictions) return [];
 
-      setSelectedModels((prev) => {
-        if (prev.length === 0) return newModelIds;
+    const newModelIds = predictions.map((p) => p.model_id);
 
-        const modelsToAdd = newModelIds.filter((id) => !prev.includes(id));
-        const filteredModels = prev.filter((id) => newModelIds.includes(id));
+    if (manuallySelectedModels.length === 0) return newModelIds;
 
-        if (modelsToAdd.length > 0) return [...filteredModels, ...modelsToAdd];
-        if (filteredModels.length === prev.length) return prev;
+    const modelsToAdd = newModelIds.filter((id) => !manuallySelectedModels.includes(id));
+    const filteredModels = manuallySelectedModels.filter((id) => newModelIds.includes(id));
 
-        return filteredModels;
-      });
-    } else {
-      setSelectedModels([]);
-    }
-  }, [predictions]);
+    if (modelsToAdd.length > 0) return [...filteredModels, ...modelsToAdd];
+
+    return filteredModels;
+  }, [predictions, manuallySelectedModels]);
 
   const handleModelToggle = useCallback((modelId: string) => {
-    setSelectedModels((prev) => {
+    setManuallySelectedModels((prev) => {
       if (prev.includes(modelId)) {
         if (prev.length === 1) return prev;
         return prev.filter((id) => id !== modelId);
@@ -240,14 +236,14 @@ export const MainContent = () => {
 
   const handleSelectAll = useCallback(() => {
     if (predictions) {
-      setSelectedModels(predictions.map((p) => p.model_id));
+      setManuallySelectedModels(predictions.map((p) => p.model_id));
     }
   }, [predictions]);
 
   const handleClearData = useCallback(() => {
     if (clearPredictions) {
       clearPredictions();
-      setSelectedModels([]);
+      setManuallySelectedModels([]);
       setChartType('line');
       clearExtendedConditions();
       setFormState({

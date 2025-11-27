@@ -90,7 +90,7 @@ export const ErrorAnalysis = ({ selectedModelId, evaluation, isLoading }: ErrorA
             <Legend />
             <Bar dataKey="q1" fill="#90caf9" name="Q1" stackId="a" strokeWidth={0} />
             <Bar
-              dataKey={(entry: any) => entry.q3 - entry.q1}
+              dataKey={(entry: { q1: number; q3: number }) => entry.q3 - entry.q1}
               fill="#1976d2"
               name={t('IQR (Q1-Q3)')}
               stackId="a"

@@ -331,15 +331,15 @@ describe('fetchDecomposition API', () => {
           period: 24,
           period_description: 'Daily (24 hours)',
           components: {
-            trend: { '2010-01-01T00:00:00': 35.123456789012345 },
-            seasonal: { '2010-01-01T00:00:00': -5.234567890123456 },
-            residual: { '2010-01-01T00:00:00': 0.345678901234567 }
+            trend: { '2010-01-01T00:00:00': 35.12345678901234 },
+            seasonal: { '2010-01-01T00:00:00': -5.23456789012345 },
+            residual: { '2010-01-01T00:00:00': 0.34567890123456 }
           },
           summary: {
-            trend_strength: 0.854321098765432,
-            seasonal_strength: 0.723456789012345,
-            residual_std: 2.345678901234567,
-            seasonal_amplitude: 15.678901234567890
+            trend_strength: 0.85432109876543,
+            seasonal_strength: 0.72345678901234,
+            residual_std: 2.34567890123456,
+            seasonal_amplitude: 15.67890123456789
           }
         }
       };
@@ -348,8 +348,8 @@ describe('fetchDecomposition API', () => {
 
       const result = await fetchDecomposition();
 
-      expect(result.components.trend['2010-01-01T00:00:00']).toBe(35.123456789012345);
-      expect(result.summary.trend_strength).toBe(0.854321098765432);
+      expect(result.components.trend['2010-01-01T00:00:00']).toBe(35.12345678901234);
+      expect(result.summary.trend_strength).toBe(0.85432109876543);
     });
   });
 });

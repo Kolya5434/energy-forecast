@@ -36,7 +36,7 @@ const exportEvaluationToExcel = async (options: EvaluationExportOptions) => {
   const { data, fileName, title = 'Порівняння моделей', includePerformance = true } = options;
 
   // Prepare worksheet data
-  const worksheetData: any[][] = [
+  const worksheetData: (string | number | undefined)[][] = [
     [title],
     [`Дата експорту: ${new Date().toLocaleString('uk-UA')}`],
     [`Кількість моделей: ${data.length}`],
