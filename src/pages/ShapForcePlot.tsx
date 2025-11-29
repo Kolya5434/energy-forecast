@@ -18,6 +18,7 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
+import { LoadingFallback } from '../components/LoadingFallback';
 import { useApi } from '../context/useApi.tsx';
 
 export const ShapForcePlot = () => {
@@ -71,9 +72,7 @@ export const ShapForcePlot = () => {
         <Typography variant="h6" gutterBottom>
           {t('SHAP Force Plot - Аналіз впливу ознак на прогноз')}
         </Typography>
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography color="text.secondary">{t('Завантаження даних...')}</Typography>
-        </Box>
+        <LoadingFallback />
       </Paper>
     );
   }

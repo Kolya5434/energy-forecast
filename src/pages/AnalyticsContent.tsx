@@ -6,8 +6,9 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Box, CircularProgress, Paper, Tab, Tabs } from '@mui/material';
+import { Box, Paper, Tab, Tabs } from '@mui/material';
 
+import { LoadingFallback } from '../components/LoadingFallback';
 import classes from './MainContent.module.scss';
 
 // Lazy load analytics tabs to defer echarts loading
@@ -77,13 +78,7 @@ export const AnalyticsContent = () => {
           ))}
         </Tabs>
 
-        <Suspense
-          fallback={
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-              <CircularProgress />
-            </Box>
-          }
-        >
+        <Suspense fallback={<LoadingFallback />}>
           {renderTabContent()}
         </Suspense>
       </Paper>

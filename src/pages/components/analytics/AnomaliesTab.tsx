@@ -11,7 +11,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   FormControl,
   IconButton,
   InputLabel,
@@ -30,6 +29,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
+import { LoadingFallback } from '../../../components/LoadingFallback';
 import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 
@@ -113,11 +113,7 @@ export const AnomaliesTab = () => {
   };
 
   if (isLoadingAnomalies) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingFallback />;
   }
 
   if (anomaliesError) {

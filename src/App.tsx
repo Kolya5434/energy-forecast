@@ -2,10 +2,11 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
-import { Box, CircularProgress, CssBaseline, ThemeProvider } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+import { LoadingFallback } from './components/LoadingFallback';
 import { darkTheme, lightTheme } from '../theme';
 import { ApiProvider } from './context/ApiContext.tsx';
 import { Header } from './pages/Header.tsx';
@@ -97,13 +98,7 @@ function App() {
                 setActiveView={handleSetActiveView}
                 themeMode={themeMode}
               />
-              <Suspense
-                fallback={
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
-                    <CircularProgress />
-                  </Box>
-                }
-              >
+              <Suspense fallback={<LoadingFallback />}>
                 {renderContent()}
               </Suspense>
             </Box>

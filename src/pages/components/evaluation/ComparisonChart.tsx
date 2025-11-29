@@ -3,6 +3,7 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart,
 
 import { Typography } from '@mui/material';
 
+import { LoadingFallback } from '../../../components/LoadingFallback';
 import { CHART_MARGIN, COLORS, TOOLTIP_STYLE_ERRORS } from '../../../shared/constans';
 import type { ChartType } from '../../../types/shared';
 
@@ -23,9 +24,12 @@ export const ComparisonChart = ({ combinedMetricsData, chartType, metrics, isLoa
   const { t } = useTranslation();
 
   if (combinedMetricsData.length === 0) {
+    if (isLoading) {
+      return <LoadingFallback />;
+    }
     return (
       <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-        {isLoading ? t('Завантаження оцінок...') : t('Немає даних для відображення графіка.')}
+        {t('Немає даних для відображення графіка.')}
       </Typography>
     );
   }

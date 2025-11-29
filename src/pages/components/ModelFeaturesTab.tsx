@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   FormControl,
   InputLabel,
@@ -28,6 +27,7 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
+import { LoadingFallback } from '../../components/LoadingFallback';
 import { useApi } from '../../context/useApi';
 import type { IFeaturesResponse } from '../../types/api';
 
@@ -185,11 +185,7 @@ export const ModelFeaturesTab = () => {
       </FormControl>
 
       {/* Loading state */}
-      {isLoadingFeatures && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
+      {isLoadingFeatures && <LoadingFallback />}
 
       {/* Error state */}
       {featuresError && (

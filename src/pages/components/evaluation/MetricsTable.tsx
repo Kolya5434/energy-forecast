@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
+import { LoadingFallback } from '../../../components/LoadingFallback';
+
 interface MetricConfig {
   key: string;
   label: string;
@@ -30,9 +32,12 @@ export const MetricsTable = ({
   const { t } = useTranslation();
 
   if (sortedTableData.length === 0) {
+    if (isLoading) {
+      return <LoadingFallback />;
+    }
     return (
       <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-        {isLoading ? t('Завантаження оцінок...') : t('Немає даних для відображення. Виберіть моделі для аналізу.')}
+        {t('Немає даних для відображення. Виберіть моделі для аналізу.')}
       </Typography>
     );
   }

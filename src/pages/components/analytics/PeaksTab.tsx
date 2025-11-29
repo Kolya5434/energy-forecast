@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   FormControl,
   IconButton,
   InputLabel,
@@ -31,6 +30,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
+import { LoadingFallback } from '../../../components/LoadingFallback';
 import { useState } from 'react';
 
 import { useApi } from '../../../context/useApi';
@@ -56,11 +56,7 @@ export const PeaksTab = () => {
   };
 
   if (isLoadingPeaks) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingFallback />;
   }
 
   if (peaksError) {
