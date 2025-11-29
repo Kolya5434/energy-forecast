@@ -15,8 +15,9 @@ import {
   Bar
 } from 'recharts';
 
-import { Box, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
+import { LoadingFallback } from '../../../components/LoadingFallback';
 import { CHART_MARGIN, TOOLTIP_STYLE_ERRORS } from '../../../shared/constans';
 import type { IEvaluationApiResponse } from '../../../types/api';
 
@@ -38,7 +39,7 @@ export const ErrorAnalysis = ({ selectedModelId, evaluation, isLoading }: ErrorA
   }
 
   if (!evaluation || !evaluation.error_analysis) {
-    if (isLoading) return <Skeleton variant="rectangular" width="100%" height={400} />;
+    if (isLoading) return <LoadingFallback />;
     return (
       <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
         {t('Дані аналізу помилок недоступні для цієї моделі.')}

@@ -20,12 +20,12 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Skeleton,
   Stack,
   Tooltip as MuiTooltip,
   Typography
 } from '@mui/material';
 
+import { LoadingFallback } from '../../../components/LoadingFallback';
 import { useApi } from '../../../context/useApi';
 
 interface HistoricalChartProps {
@@ -104,7 +104,7 @@ export const HistoricalChart = ({ days = 30, onDaysChange }: HistoricalChartProp
         {/* Chart */}
         <Box sx={{ height: 250 }}>
           {isLoadingHistorical ? (
-            <Skeleton variant="rectangular" width="100%" height="100%" />
+            <LoadingFallback />
           ) : chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>

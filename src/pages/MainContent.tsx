@@ -18,7 +18,6 @@ import {
   FormControlLabel,
   IconButton,
   Paper,
-  Skeleton,
   Stack,
   Tab,
   Tabs,
@@ -28,6 +27,7 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
+import { LoadingFallback } from '../components/LoadingFallback';
 import { useApi } from '../context/useApi.tsx';
 import { clampValue } from '../helpers/conditionsValidation';
 import { COLORS } from '../shared/constans.ts';
@@ -702,7 +702,7 @@ export const MainContent = () => {
 
             <Box className={classes.chartContainer}>
               {isLoadingPredictions ? (
-                <Skeleton variant="rectangular" width="100%" height="100%" />
+                <LoadingFallback />
               ) : !predictions || chartData.length === 0 ? (
                 <Box className={classes.emptyState}>
                   <Typography color="text.secondary">

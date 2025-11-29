@@ -25,13 +25,14 @@ import {
   MenuItem,
   Paper,
   Select,
-  Skeleton,
   Stack,
   TextField,
   Tooltip,
   Typography
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import { LoadingFallback } from '../components/LoadingFallback';
 
 import { useApi } from '../context/useApi';
 import { COLORS, OPTIONS_SIMULATABLE_FEATURES } from '../shared/constans.ts';
@@ -879,7 +880,7 @@ export const SimulationContent = () => {
 
         <Box sx={{ height: 400 }}>
           {isLoadingPredictions || isLoadingSimulation ? (
-            <Skeleton variant="rectangular" width="100%" height={400} />
+            <LoadingFallback />
           ) : chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

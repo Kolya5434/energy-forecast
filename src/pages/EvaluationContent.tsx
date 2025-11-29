@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { Box, Chip, Paper, Skeleton, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { Box, Chip, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 
+import { LoadingFallback } from '../components/LoadingFallback';
 import { useApi } from '../context/useApi.tsx';
 import {
   exportEvaluationToDOCX,
@@ -173,7 +174,7 @@ export const EvaluationContent = () => {
 
   const renderContent = () => {
     if (isLoadingEvaluation && combinedMetricsData.length === 0) {
-      return <Skeleton variant="rectangular" width="100%" height={400} />;
+      return <LoadingFallback />;
     }
 
     if (evaluationError && combinedMetricsData.length === 0) {
@@ -240,7 +241,7 @@ export const EvaluationContent = () => {
         />
 
         {isLoadingModels ? (
-          <Skeleton variant="text" width="100%" height={40} />
+          <LoadingFallback />
         ) : (
           models && (
             <Box className={classes.modelSelector}>
