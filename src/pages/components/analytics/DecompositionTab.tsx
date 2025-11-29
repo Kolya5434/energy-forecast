@@ -19,8 +19,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-
+import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 
 const PERIOD_OPTIONS = [
@@ -198,7 +197,7 @@ export const DecompositionTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Тренд')}
             </Typography>
-            <ReactECharts
+            <OptimizedEChart
               option={getChartOption('trend', '#1976d2', '')}
               style={{ height: 250 }}
             />
@@ -208,7 +207,7 @@ export const DecompositionTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Сезонна компонента')}
             </Typography>
-            <ReactECharts
+            <OptimizedEChart
               option={getChartOption('seasonal', '#9c27b0', '')}
               style={{ height: 250 }}
             />
@@ -218,7 +217,7 @@ export const DecompositionTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Залишки (шум)')}
             </Typography>
-            <ReactECharts
+            <OptimizedEChart
               option={getChartOption('residual', '#ff9800', '')}
               style={{ height: 250 }}
             />

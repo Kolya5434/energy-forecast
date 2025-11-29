@@ -28,13 +28,16 @@ export default defineConfig({
               return 'react-forms';
             }
 
+            // MUI Icons - MUST come BEFORE mui-core to avoid being caught by @mui/material
+            if (id.includes('@mui/icons-material') || id.includes('/icons-material/')) {
+              return 'mui-icons';
+            }
+
             // MUI and Emotion - keep together due to tight coupling
             if (id.includes('@mui/material') || id.includes('@emotion') || id.includes('@mui/system')) {
               return 'mui-core';
             }
-            if (id.includes('@mui/icons-material')) {
-              return 'mui-icons';
-            }
+
             if (id.includes('@mui/x-date-pickers') || id.includes('dayjs')) {
               return 'mui-pickers';
             }
@@ -63,8 +66,8 @@ export default defineConfig({
               return 'http';
             }
 
-            // Vercel analytics - separate chunk
-            if (id.includes('@vercel/analytics') || id.includes('@vercel/speed-insights')) {
+            // Vercel analytics - separate chunk (must check before vendor)
+            if (id.includes('@vercel/analytics') || id.includes('@vercel/speed-insights') || id.includes('vercel')) {
               return 'vercel-analytics';
             }
 

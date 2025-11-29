@@ -25,8 +25,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-
+import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 import type { PatternPeriod } from '../../../types/api';
 
@@ -235,7 +234,7 @@ export const PatternsTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Сезонний патерн')}: {t(PERIOD_LABELS[patternsData.period])}
             </Typography>
-            <ReactECharts option={getChartOption()} style={{ height: 400 }} />
+            <OptimizedEChart option={getChartOption()} style={{ height: 400 }} />
           </Paper>
 
           {/* Data Table */}

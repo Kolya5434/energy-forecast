@@ -30,8 +30,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-
+import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 
 export const AnomaliesTab = () => {
@@ -235,14 +234,14 @@ export const AnomaliesTab = () => {
               <Typography variant="h6" gutterBottom>
                 {t('Аномалії за годинами')}
               </Typography>
-              <ReactECharts option={getHourlyChart()} style={{ height: 300 }} />
+              <OptimizedEChart option={getHourlyChart()} style={{ height: 300 }} />
             </Paper>
 
             <Paper sx={{ flex: 1, p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 {t('Аномалії за днями тижня')}
               </Typography>
-              <ReactECharts option={getDailyChart()} style={{ height: 300 }} />
+              <OptimizedEChart option={getDailyChart()} style={{ height: 300 }} />
             </Paper>
           </Stack>
 

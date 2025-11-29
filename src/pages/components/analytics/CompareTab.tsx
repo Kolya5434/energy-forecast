@@ -32,8 +32,7 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import ReactECharts from 'echarts-for-react';
-
+import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 import type { IScenarioResult } from '../../../types/api';
 
@@ -311,7 +310,7 @@ export const CompareTab = () => {
               <Typography variant="h6" gutterBottom>
                 {t('Порівняння прогнозів')}
               </Typography>
-              <ReactECharts option={getChartOption()} style={{ height: 400 }} />
+              <OptimizedEChart option={getChartOption()} style={{ height: 400 }} />
             </Paper>
 
             {/* Summary Table */}
