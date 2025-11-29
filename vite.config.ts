@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
+import viteCompression from 'vite-plugin-compression';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,6 +12,26 @@ export default defineConfig({
       open: false,
       gzipSize: true,
       brotliSize: true
+    }),
+    // Brotli compression (best compression, modern browsers)
+    viteCompression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+      threshold: 1024, // Only compress files > 1KB
+      deleteOriginFile: false,
+      compressionOptions: {
+        level: 11 // Maximum compression
+      }
+    }),
+    // Gzip compression (fallback for older browsers)
+    viteCompression({
+      algorithm: 'gzip',
+      ext: '.gz',
+      threshold: 1024,
+      deleteOriginFile: false,
+      compressionOptions: {
+        level: 9 // Maximum compression
+      }
     })
   ],
   build: {

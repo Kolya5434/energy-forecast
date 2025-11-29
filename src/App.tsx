@@ -8,11 +8,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { darkTheme, lightTheme } from '../theme';
 import { ApiProvider } from './context/ApiContext.tsx';
+import { Header } from './pages/Header.tsx';
 import type { View } from './types/shared.ts';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
-
-const Header = lazy(() => import('./pages/Header.tsx').then((m) => ({ default: m.Header })));
 const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
 const InterpretContent = lazy(() =>
   import('./pages/InterpretContent.tsx').then((m) => ({ default: m.InterpretContent }))
@@ -90,27 +89,25 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
         <ApiProvider>
-          <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}><CircularProgress /></Box>}>
-            <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
-              <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                <Header
-                  toggleTheme={toggleTheme}
-                  activeView={activeView}
-                  setActiveView={handleSetActiveView}
-                  themeMode={themeMode}
-                />
-                <Suspense
-                  fallback={
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
-                      <CircularProgress />
-                    </Box>
-                  }
-                >
-                  {renderContent()}
-                </Suspense>
-              </Box>
+          <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Header
+                toggleTheme={toggleTheme}
+                activeView={activeView}
+                setActiveView={handleSetActiveView}
+                themeMode={themeMode}
+              />
+              <Suspense
+                fallback={
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
+                    <CircularProgress />
+                  </Box>
+                }
+              >
+                {renderContent()}
+              </Suspense>
             </Box>
-          </Suspense>
+          </Box>
           <Analytics />
           <SpeedInsights />
         </ApiProvider>
