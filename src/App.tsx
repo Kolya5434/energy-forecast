@@ -1,6 +1,4 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -13,6 +11,8 @@ import { Header } from './pages/Header.tsx';
 import type { View } from './types/shared.ts';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
+
+// Lazy load page components
 const MainContent = lazy(() => import('./pages/MainContent.tsx').then((m) => ({ default: m.MainContent })));
 const InterpretContent = lazy(() =>
   import('./pages/InterpretContent.tsx').then((m) => ({ default: m.InterpretContent }))
@@ -31,6 +31,10 @@ const ScientificAnalysis = lazy(() =>
   import('./pages/ScientificAnalysis.tsx').then((m) => ({ default: m.ScientificAnalysis }))
 );
 const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then((m) => ({ default: m.HelpContent })));
+
+// Lazy load analytics components (not critical for initial load)
+const Analytics = lazy(() => import('@vercel/analytics/react').then((m) => ({ default: m.Analytics })));
+const SpeedInsights = lazy(() => import('@vercel/speed-insights/react').then((m) => ({ default: m.SpeedInsights })));
 
 function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
@@ -108,8 +112,10 @@ function App() {
               </Suspense>
             </Box>
           </Box>
-          <Analytics />
-          <SpeedInsights />
+          <Suspense fallback={null}>
+            <Analytics />
+            <SpeedInsights />
+          </Suspense>
         </ApiProvider>
       </LocalizationProvider>
     </ThemeProvider>
