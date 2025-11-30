@@ -87,10 +87,8 @@ export default defineConfig({
               return 'http';
             }
 
-            // Vercel analytics - separate chunk (must check before vendor)
-            if (id.includes('@vercel/analytics') || id.includes('@vercel/speed-insights') || id.includes('vercel')) {
-              return 'vercel-analytics';
-            }
+            // Vercel analytics - handled by lazy loading in App.tsx, no manual chunk needed
+            // Removed explicit chunking to allow dynamic imports to work properly
 
             // Heavy document export libraries - these should be lazy loaded
             if (id.includes('xlsx')) {
@@ -152,6 +150,6 @@ export default defineConfig({
   // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom', '@mui/material', '@emotion/react', '@emotion/styled'],
-    exclude: ['xlsx', 'jspdf', 'jspdf-autotable', 'docx']
+    exclude: ['xlsx', 'jspdf', 'jspdf-autotable', 'docx', '@vercel/analytics', '@vercel/speed-insights']
   }
 });
