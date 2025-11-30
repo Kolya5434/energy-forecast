@@ -20,8 +20,8 @@ export const ScientificAnalysis = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0 }}>
-      <Paper elevation={0} sx={{ p: 3, borderRadius: 2 }}>
+    <Box component="main" sx={{ flexGrow: 1, p: 2, pt: 0, overflow: 'auto' }}>
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 2, minHeight: 'auto' }}>
         <Typography variant="h5" gutterBottom>
           {t('Scientific Analysis')}
         </Typography>

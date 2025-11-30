@@ -201,8 +201,8 @@ export const ErrorAnalysisTab = () => {
                             {Object.entries(errorAnalysisResult.temporal_patterns.hourly).map(([hour, metrics]) => (
                               <TableRow key={hour} hover>
                                 <TableCell>{hour}:00</TableCell>
-                                <TableCell align="right">{metrics.mean_error.toFixed(3)}</TableCell>
-                                <TableCell align="right">{metrics.std_error.toFixed(3)}</TableCell>
+                                <TableCell align="right">{metrics.mean_error?.toFixed(3) ?? 'N/A'}</TableCell>
+                                <TableCell align="right">{metrics.std_error?.toFixed(3) ?? 'N/A'}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -232,9 +232,9 @@ export const ErrorAnalysisTab = () => {
                             {Object.entries(errorAnalysisResult.temporal_patterns.daily).map(([day, metrics]) => (
                               <TableRow key={day} hover>
                                 <TableCell>{day}</TableCell>
-                                <TableCell align="right">{metrics.mean_error.toFixed(3)}</TableCell>
+                                <TableCell align="right">{metrics.mean_error?.toFixed(3) ?? 'N/A'}</TableCell>
                                 {metrics.std_error !== undefined && (
-                                  <TableCell align="right">{metrics.std_error.toFixed(3)}</TableCell>
+                                  <TableCell align="right">{metrics.std_error?.toFixed(3) ?? 'N/A'}</TableCell>
                                 )}
                               </TableRow>
                             ))}
@@ -265,9 +265,9 @@ export const ErrorAnalysisTab = () => {
                             {Object.entries(errorAnalysisResult.temporal_patterns.monthly).map(([month, metrics]) => (
                               <TableRow key={month} hover>
                                 <TableCell>{month}</TableCell>
-                                <TableCell align="right">{metrics.mean_error.toFixed(3)}</TableCell>
+                                <TableCell align="right">{metrics.mean_error?.toFixed(3) ?? 'N/A'}</TableCell>
                                 {metrics.std_error !== undefined && (
-                                  <TableCell align="right">{metrics.std_error.toFixed(3)}</TableCell>
+                                  <TableCell align="right">{metrics.std_error?.toFixed(3) ?? 'N/A'}</TableCell>
                                 )}
                               </TableRow>
                             ))}

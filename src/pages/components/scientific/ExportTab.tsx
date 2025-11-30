@@ -253,11 +253,12 @@ export const ExportTab = () => {
                     sx={{
                       maxHeight: 300,
                       overflow: 'auto',
-                      bgcolor: 'grey.100',
+                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100'),
                       p: 2,
                       borderRadius: 1,
                       fontFamily: 'monospace',
-                      fontSize: '0.85rem'
+                      fontSize: '0.85rem',
+                      color: 'text.primary'
                     }}
                   >
                     <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
@@ -345,11 +346,12 @@ export const ExportTab = () => {
                         sx={{
                           maxHeight: 300,
                           overflow: 'auto',
-                          bgcolor: 'grey.100',
+                          bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100'),
                           p: 2,
                           borderRadius: 1,
                           fontFamily: 'monospace',
-                          fontSize: '0.85rem'
+                          fontSize: '0.85rem',
+                          color: 'text.primary'
                         }}
                       >
                         <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
