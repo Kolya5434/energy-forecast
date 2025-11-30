@@ -32,10 +32,10 @@ const VISUALIZATION_TYPES: Array<{ value: VisualizationType; label: string; requ
   { value: 'comparison', label: 'Порівняння моделей (Radar Chart)', requiresModels: true },
   { value: 'error_distribution', label: 'Розподіл помилок (Box Plot)', requiresModels: true },
   { value: 'forecast', label: 'Прогнози моделей (Line Plot)', requiresModels: true },
-  { value: 'residuals', label: 'Аналіз залишків (Q-Q Plot)', requiresModels: false },
-  { value: 'temporal_error', label: 'Часові паттерни помилок', requiresModels: false },
-  { value: 'feature_importance', label: 'Важливість ознак (Bar Chart)', requiresModels: false },
-  { value: 'correlation', label: 'Кореляційна матриця (Heatmap)', requiresModels: false }
+  { value: 'residuals', label: 'Аналіз залишків (Q-Q Plot)', requiresModels: true },
+  { value: 'temporal_error', label: 'Часові паттерни помилок', requiresModels: true },
+  { value: 'feature_importance', label: 'Важливість ознак (Bar Chart)', requiresModels: true },
+  { value: 'correlation', label: 'Кореляційна матриця (Heatmap)', requiresModels: true }
 ];
 
 export const VisualizationsTab = () => {
