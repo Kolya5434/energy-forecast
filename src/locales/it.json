@@ -341,5 +341,9 @@
   "Детальний аналіз помилок": "Analisi Dettagliata degli Errori",
   "Аналіз помилок прогнозування з часовими паттернами": "Analisi degli errori di previsione con pattern temporali",
   "Експорт результатів": "Esporta Risultati",
-  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність": "Esporta i risultati in LaTeX per pubblicazioni scientifiche e report di riproducibilità"
+  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність": "Esporta i risultati in LaTeX per pubblicazioni scientifiche e report di riproducibilità",
+  "Кількість моделей, що порівнюються в аналізі": "Numero di modelli confrontati nell'analisi",
+  "Кількість спостережень у тестовому наборі даних": "Numero di osservazioni nel set di dati di test",
+  "Модель з найменшою середньою помилкою в цьому порівнянні": "Modello con l'errore medio più basso in questo confronto",
+  "latex_export": "Per compilare questo documento LaTeX:\n1. Salva il codice LaTeX in un file (ad es. report.tex)\n2. Se è fornita una bibliografia, salvala in references.bib\n3. Esegui: pdflatex report.tex\n4. Se si usa la bibliografia: bibtex report && pdflatex report.tex && pdflatex report.tex"
 }

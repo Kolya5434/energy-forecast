@@ -166,8 +166,12 @@ export const StatisticalTestsTab = () => {
                 {t('Підсумок')}
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap">
-                <Chip label={`${t('Моделей')}: ${statisticalTestsResult.num_models}`} />
-                <Chip label={`${t('Розмір вибірки')}: ${statisticalTestsResult.sample_size}`} />
+                <Tooltip title={t('Кількість моделей, що порівнюються в аналізі')}>
+                  <Chip label={`${t('Моделей')}: ${statisticalTestsResult.num_models}`} />
+                </Tooltip>
+                <Tooltip title={t('Кількість спостережень у тестовому наборі даних')}>
+                  <Chip label={`${t('Розмір вибірки')}: ${statisticalTestsResult.sample_size}`} />
+                </Tooltip>
               </Stack>
             </CardContent>
           </Card>
@@ -232,7 +236,9 @@ export const StatisticalTestsTab = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Chip label={test.better_model} color="primary" size="small" />
+                        <Tooltip title={t('Модель з найменшою середньою помилкою в цьому порівнянні')}>
+                          <Chip label={test.better_model} color="primary" size="small" />
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title={`Статистика: ${test.t_test.statistic.toFixed(4)}`}>

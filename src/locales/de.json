@@ -341,5 +341,9 @@
   "Детальний аналіз помилок": "Detaillierte Fehleranalyse",
   "Аналіз помилок прогнозування з часовими паттернами": "Prognosefehleranalyse mit zeitlichen Mustern",
   "Експорт результатів": "Ergebnisse exportieren",
-  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність": "Ergebnisse nach LaTeX für wissenschaftliche Publikationen und Reproduzierbarkeitsbericht exportieren"
+  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність": "Ergebnisse nach LaTeX für wissenschaftliche Publikationen und Reproduzierbarkeitsbericht exportieren",
+  "Кількість моделей, що порівнюються в аналізі": "Anzahl der in der Analyse verglichenen Modelle",
+  "Кількість спостережень у тестовому наборі даних": "Anzahl der Beobachtungen im Testdatensatz",
+  "Модель з найменшою середньою помилкою в цьому порівнянні": "Modell mit dem niedrigsten durchschnittlichen Fehler in diesem Vergleich",
+  "latex_export": "So kompilieren Sie dieses LaTeX-Dokument:\n1. Speichern Sie den LaTeX-Code in einer Datei (z. B. report.tex)\n2. Wenn eine Bibliographie vorhanden ist, speichern Sie diese unter references.bib\n3. Führen Sie aus: pdflatex report.tex\n4. Bei Verwendung einer Bibliographie: bibtex report && pdflatex report.tex && pdflatex report.tex"
 }

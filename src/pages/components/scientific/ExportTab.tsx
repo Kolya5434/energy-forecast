@@ -207,7 +207,10 @@ export const ExportTab = () => {
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox checked={includeMethodology} onChange={(e) => setIncludeMethodology(e.target.checked)} />
+                      <Checkbox
+                        checked={includeMethodology}
+                        onChange={(e) => setIncludeMethodology(e.target.checked)}
+                      />
                     }
                     label={t('Включити розділ методології')}
                   />
@@ -266,11 +269,9 @@ export const ExportTab = () => {
                     </pre>
                   </Box>
 
-                  {latexExportResult.compilation_instructions && (
-                    <Alert severity="info" sx={{ mt: 2 }}>
-                      <Typography variant="caption">{latexExportResult.compilation_instructions}</Typography>
-                    </Alert>
-                  )}
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    <Typography variant="caption">{t('latex_export')}</Typography>
+                  </Alert>
                 </CardContent>
               </Card>
             )}
