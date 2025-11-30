@@ -270,7 +270,7 @@ export const ExportTab = () => {
                   </Box>
 
                   <Alert severity="info" sx={{ mt: 2 }}>
-                    <Typography variant="caption">{t('latex_export')}</Typography>
+                    <Typography variant="caption">{t('latex export')}</Typography>
                   </Alert>
                 </CardContent>
               </Card>

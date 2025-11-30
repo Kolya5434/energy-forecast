@@ -345,5 +345,5 @@
   "Кількість моделей, що порівнюються в аналізі": "Number of models being compared in analysis",
   "Кількість спостережень у тестовому наборі даних": "Number of observations in the test dataset",
   "Модель з найменшою середньою помилкою в цьому порівнянні": "Model with the lowest average error in this comparison",
-  "latex_export": "To compile this LaTeX document:\n1. Save the LaTeX code to a file (e.g., report.tex)\n2. If bibliography is provided, save it to references.bib\n3. Run: pdflatex report.tex\n4. If using bibliography: bibtex report && pdflatex report.tex && pdflatex report.tex"
+  "latex export": "To compile this LaTeX document:\n1. Save the LaTeX code to a file (e.g., report.tex)\n2. If bibliography is provided, save it to references.bib\n3. Run: pdflatex report.tex\n4. If using bibliography: bibtex report && pdflatex report.tex && pdflatex report.tex"
 }
