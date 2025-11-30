@@ -14,6 +14,15 @@ import {
   postPredictions,
   postSimulation
 } from '../api';
+import {
+  fetchModelDiagnostics,
+  postErrorAnalysis,
+  postLatexExport,
+  postReproducibilityReport,
+  postResidualAnalysis,
+  postStatisticalTests,
+  postVisualization
+} from '../api/scientific';
 import type {
   IAnomaliesRequest,
   IAnomaliesResponse,
@@ -37,6 +46,21 @@ import type {
   ISimulationRequest,
   ModelsApiResponse
 } from '../types/api';
+import type {
+  ErrorAnalysisRequest,
+  ErrorAnalysisResponse,
+  LaTeXExportRequest,
+  LaTeXExportResponse,
+  ModelDiagnosticsResponse,
+  ReproducibilityReportRequest,
+  ReproducibilityReportResponse,
+  ResidualAnalysisRequest,
+  ResidualAnalysisResponse,
+  StatisticalTestRequest,
+  StatisticalTestResponse,
+  VisualizationRequest,
+  VisualizationResponse
+} from '../types/scientific';
 
 interface IApiContext {
   models: ModelsApiResponse | null;
@@ -115,6 +139,48 @@ interface IApiContext {
   compareError: string | null;
   compareScenarios: (data: ICompareRequest) => Promise<void>;
   clearCompare: () => void;
+
+  // Scientific Analysis - Statistical Tests
+  statisticalTestsResult: StatisticalTestResponse | null;
+  isLoadingStatisticalTests: boolean;
+  statisticalTestsError: string | null;
+  runStatisticalTests: (data: StatisticalTestRequest) => Promise<void>;
+
+  // Scientific Analysis - Residual Analysis
+  residualAnalysisResult: ResidualAnalysisResponse | null;
+  isLoadingResidualAnalysis: boolean;
+  residualAnalysisError: string | null;
+  runResidualAnalysis: (data: ResidualAnalysisRequest) => Promise<void>;
+
+  // Scientific Analysis - Error Analysis
+  errorAnalysisResult: ErrorAnalysisResponse | null;
+  isLoadingErrorAnalysis: boolean;
+  errorAnalysisError: string | null;
+  runErrorAnalysis: (data: ErrorAnalysisRequest) => Promise<void>;
+
+  // Scientific Analysis - Visualization
+  visualizationResult: VisualizationResponse | null;
+  isLoadingVisualization: boolean;
+  visualizationError: string | null;
+  generateVisualization: (data: VisualizationRequest) => Promise<void>;
+
+  // Scientific Analysis - LaTeX Export
+  latexExportResult: LaTeXExportResponse | null;
+  isLoadingLatexExport: boolean;
+  latexExportError: string | null;
+  exportLatex: (data: LaTeXExportRequest) => Promise<void>;
+
+  // Scientific Analysis - Reproducibility Report
+  reproducibilityReportResult: ReproducibilityReportResponse | null;
+  isLoadingReproducibilityReport: boolean;
+  reproducibilityReportError: string | null;
+  getReproducibilityReport: (data?: ReproducibilityReportRequest) => Promise<void>;
+
+  // Scientific Analysis - Model Diagnostics
+  modelDiagnosticsResult: ModelDiagnosticsResponse | null;
+  isLoadingModelDiagnostics: boolean;
+  modelDiagnosticsError: string | null;
+  getModelDiagnostics: (modelId: string, testSizeDays?: number) => Promise<void>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -171,6 +237,36 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
   const [compareResult, setCompareResult] = useState<ICompareResponse | null>(null);
   const [isLoadingCompare, setIsLoadingCompare] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
+
+  // Scientific Analysis States
+  const [statisticalTestsResult, setStatisticalTestsResult] = useState<StatisticalTestResponse | null>(null);
+  const [isLoadingStatisticalTests, setIsLoadingStatisticalTests] = useState(false);
+  const [statisticalTestsError, setStatisticalTestsError] = useState<string | null>(null);
+
+  const [residualAnalysisResult, setResidualAnalysisResult] = useState<ResidualAnalysisResponse | null>(null);
+  const [isLoadingResidualAnalysis, setIsLoadingResidualAnalysis] = useState(false);
+  const [residualAnalysisError, setResidualAnalysisError] = useState<string | null>(null);
+
+  const [errorAnalysisResult, setErrorAnalysisResult] = useState<ErrorAnalysisResponse | null>(null);
+  const [isLoadingErrorAnalysis, setIsLoadingErrorAnalysis] = useState(false);
+  const [errorAnalysisError, setErrorAnalysisError] = useState<string | null>(null);
+
+  const [visualizationResult, setVisualizationResult] = useState<VisualizationResponse | null>(null);
+  const [isLoadingVisualization, setIsLoadingVisualization] = useState(false);
+  const [visualizationError, setVisualizationError] = useState<string | null>(null);
+
+  const [latexExportResult, setLatexExportResult] = useState<LaTeXExportResponse | null>(null);
+  const [isLoadingLatexExport, setIsLoadingLatexExport] = useState(false);
+  const [latexExportError, setLatexExportError] = useState<string | null>(null);
+
+  const [reproducibilityReportResult, setReproducibilityReportResult] =
+    useState<ReproducibilityReportResponse | null>(null);
+  const [isLoadingReproducibilityReport, setIsLoadingReproducibilityReport] = useState(false);
+  const [reproducibilityReportError, setReproducibilityReportError] = useState<string | null>(null);
+
+  const [modelDiagnosticsResult, setModelDiagnosticsResult] = useState<ModelDiagnosticsResponse | null>(null);
+  const [isLoadingModelDiagnostics, setIsLoadingModelDiagnostics] = useState(false);
+  const [modelDiagnosticsError, setModelDiagnosticsError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInitialModels = async () => {
@@ -397,6 +493,105 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     setCompareError(null);
   }, []);
 
+  // Scientific Analysis Functions
+  const runStatisticalTests = useCallback(async (data: StatisticalTestRequest) => {
+    try {
+      setIsLoadingStatisticalTests(true);
+      setStatisticalTestsError(null);
+      const result = await postStatisticalTests(data);
+      setStatisticalTestsResult(result);
+    } catch (err) {
+      setStatisticalTestsError('Не вдалося виконати статистичні тести');
+      console.error('Error running statistical tests:', err);
+    } finally {
+      setIsLoadingStatisticalTests(false);
+    }
+  }, []);
+
+  const runResidualAnalysis = useCallback(async (data: ResidualAnalysisRequest) => {
+    try {
+      setIsLoadingResidualAnalysis(true);
+      setResidualAnalysisError(null);
+      const result = await postResidualAnalysis(data);
+      setResidualAnalysisResult(result);
+    } catch (err) {
+      setResidualAnalysisError('Не вдалося виконати аналіз залишків');
+      console.error('Error running residual analysis:', err);
+    } finally {
+      setIsLoadingResidualAnalysis(false);
+    }
+  }, []);
+
+  const runErrorAnalysis = useCallback(async (data: ErrorAnalysisRequest) => {
+    try {
+      setIsLoadingErrorAnalysis(true);
+      setErrorAnalysisError(null);
+      const result = await postErrorAnalysis(data);
+      setErrorAnalysisResult(result);
+    } catch (err) {
+      setErrorAnalysisError('Не вдалося виконати аналіз помилок');
+      console.error('Error running error analysis:', err);
+    } finally {
+      setIsLoadingErrorAnalysis(false);
+    }
+  }, []);
+
+  const generateVisualization = useCallback(async (data: VisualizationRequest) => {
+    try {
+      setIsLoadingVisualization(true);
+      setVisualizationError(null);
+      const result = await postVisualization(data);
+      setVisualizationResult(result);
+    } catch (err) {
+      setVisualizationError('Не вдалося згенерувати візуалізацію');
+      console.error('Error generating visualization:', err);
+    } finally {
+      setIsLoadingVisualization(false);
+    }
+  }, []);
+
+  const exportLatex = useCallback(async (data: LaTeXExportRequest) => {
+    try {
+      setIsLoadingLatexExport(true);
+      setLatexExportError(null);
+      const result = await postLatexExport(data);
+      setLatexExportResult(result);
+    } catch (err) {
+      setLatexExportError('Не вдалося експортувати в LaTeX');
+      console.error('Error exporting LaTeX:', err);
+    } finally {
+      setIsLoadingLatexExport(false);
+    }
+  }, []);
+
+  const getReproducibilityReport = useCallback(async (data?: ReproducibilityReportRequest) => {
+    try {
+      setIsLoadingReproducibilityReport(true);
+      setReproducibilityReportError(null);
+      const result = await postReproducibilityReport(data);
+      setReproducibilityReportResult(result);
+    } catch (err) {
+      setReproducibilityReportError('Не вдалося отримати звіт про відтворюваність');
+      console.error('Error getting reproducibility report:', err);
+    } finally {
+      setIsLoadingReproducibilityReport(false);
+    }
+  }, []);
+
+  const getModelDiagnostics = useCallback(async (modelId: string, testSizeDays: number = 30) => {
+    try {
+      setIsLoadingModelDiagnostics(true);
+      setModelDiagnosticsError(null);
+      const result = await fetchModelDiagnostics(modelId, testSizeDays);
+      setModelDiagnosticsResult(result);
+    } catch (err) {
+      setModelDiagnosticsError('Не вдалося отримати діагностику моделі');
+      console.error('Error getting model diagnostics:', err);
+    } finally {
+      setIsLoadingModelDiagnostics(false);
+    }
+  }, []);
+
   const value = {
     models,
     isLoadingModels,
@@ -452,7 +647,36 @@ const ApiProvider = ({ children }: { children: ReactNode }) => {
     isLoadingCompare,
     compareError,
     compareScenarios,
-    clearCompare
+    clearCompare,
+    // Scientific Analysis
+    statisticalTestsResult,
+    isLoadingStatisticalTests,
+    statisticalTestsError,
+    runStatisticalTests,
+    residualAnalysisResult,
+    isLoadingResidualAnalysis,
+    residualAnalysisError,
+    runResidualAnalysis,
+    errorAnalysisResult,
+    isLoadingErrorAnalysis,
+    errorAnalysisError,
+    runErrorAnalysis,
+    visualizationResult,
+    isLoadingVisualization,
+    visualizationError,
+    generateVisualization,
+    latexExportResult,
+    isLoadingLatexExport,
+    latexExportError,
+    exportLatex,
+    reproducibilityReportResult,
+    isLoadingReproducibilityReport,
+    reproducibilityReportError,
+    getReproducibilityReport,
+    modelDiagnosticsResult,
+    isLoadingModelDiagnostics,
+    modelDiagnosticsError,
+    getModelDiagnostics
   };
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

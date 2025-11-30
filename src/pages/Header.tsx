@@ -43,6 +43,7 @@ const VIEW_CONFIGS: ViewConfig[] = [
   { id: 'evaluation', label: 'Evaluation' },
   { id: 'simulation', label: 'Simulation' },
   { id: 'analytics', label: 'Аналітика' },
+  { id: 'scientific', label: 'Scientific Analysis' },
   { id: 'help', label: 'FAQ' }
 ];
 

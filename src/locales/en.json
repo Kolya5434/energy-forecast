@@ -325,5 +325,21 @@
   "Різниця від базового": "Difference from Baseline",
   "Різниця %": "Difference %",
   "Базовий": "Baseline",
-  "Час виконання": "Execution Time"
+  "Час виконання": "Execution Time",
+  "Scientific Analysis": "Scientific Analysis",
+  "Детальний науковий аналіз моделей прогнозування": "Detailed scientific analysis of forecasting models",
+  "Статистичні тести": "Statistical Tests",
+  "Аналіз залишків": "Residual Analysis",
+  "Візуалізації": "Visualizations",
+  "Аналіз помилок": "Error Analysis",
+  "Експорт": "Export",
+  "Статистичні тести значущості": "Statistical Significance Tests",
+  "Порівняйте моделі статистично щоб визначити, яка працює значно краще": "Compare models statistically to determine which performs significantly better",
+  "Аналіз залишків (помилок прогнозування) для валідації припущень моделі": "Analyze residuals (forecast errors) to validate model assumptions",
+  "Наукові візуалізації": "Scientific Visualizations",
+  "Згенеруйте високоякісні наукові графіки для публікацій": "Generate high-quality scientific plots for publications",
+  "Детальний аналіз помилок": "Detailed Error Analysis",
+  "Аналіз помилок прогнозування з часовими паттернами": "Forecast error analysis with temporal patterns",
+  "Експорт результатів": "Export Results",
+  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність": "Export results to LaTeX for scientific publications and reproducibility report"
 }

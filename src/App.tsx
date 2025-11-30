@@ -27,6 +27,9 @@ const SimulationContent = lazy(() =>
 const AnalyticsContent = lazy(() =>
   import('./pages/AnalyticsContent.tsx').then((m) => ({ default: m.AnalyticsContent }))
 );
+const ScientificAnalysis = lazy(() =>
+  import('./pages/ScientificAnalysis.tsx').then((m) => ({ default: m.ScientificAnalysis }))
+);
 const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then((m) => ({ default: m.HelpContent })));
 
 function App() {
@@ -78,6 +81,8 @@ function App() {
         return <SimulationContent />;
       case 'analytics':
         return <AnalyticsContent />;
+      case 'scientific':
+        return <ScientificAnalysis />;
       case 'help':
         return <HelpContent />;
       default:
