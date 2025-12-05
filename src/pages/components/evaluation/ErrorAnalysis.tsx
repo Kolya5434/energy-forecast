@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CartesianGrid,
@@ -27,7 +28,7 @@ interface ErrorAnalysisProps {
   isLoading: boolean;
 }
 
-export const ErrorAnalysis = ({ selectedModelId, evaluation, isLoading }: ErrorAnalysisProps) => {
+export const ErrorAnalysis = memo(({ selectedModelId, evaluation, isLoading }: ErrorAnalysisProps) => {
   const { t } = useTranslation();
 
   if (!selectedModelId) {
@@ -150,4 +151,6 @@ export const ErrorAnalysis = ({ selectedModelId, evaluation, isLoading }: ErrorA
       </Box>
     </Stack>
   );
-};
+});
+
+ErrorAnalysis.displayName = 'ErrorAnalysis';

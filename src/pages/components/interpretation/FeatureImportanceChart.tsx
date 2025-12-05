@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bar,
@@ -33,7 +33,7 @@ interface FeatureImportanceChartProps {
   chartType: ChartType;
 }
 
-export const FeatureImportanceChart = ({ chartData, chartType }: FeatureImportanceChartProps) => {
+export const FeatureImportanceChart = memo(({ chartData, chartType }: FeatureImportanceChartProps) => {
   const { t } = useTranslation();
 
   const renderBarChart = useCallback(
@@ -127,4 +127,6 @@ export const FeatureImportanceChart = ({ chartData, chartType }: FeatureImportan
     default:
       return renderBarChart('horizontal');
   }
-};
+});
+
+FeatureImportanceChart.displayName = 'FeatureImportanceChart';

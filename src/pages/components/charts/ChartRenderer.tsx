@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Area,
@@ -37,7 +37,7 @@ interface ChartRendererProps {
   getModelColor: (modelId: string) => string;
 }
 
-export const ChartRenderer = ({ chartType, chartData, filteredPredictions, getModelColor }: ChartRendererProps) => {
+export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, getModelColor }: ChartRendererProps) => {
   const { t } = useTranslation();
 
   const heatmapData = useMemo(() => {
@@ -276,4 +276,6 @@ export const ChartRenderer = ({ chartType, chartData, filteredPredictions, getMo
   };
 
   return <>{renderChart()}</>;
-};
+});
+
+ChartRenderer.displayName = 'ChartRenderer';

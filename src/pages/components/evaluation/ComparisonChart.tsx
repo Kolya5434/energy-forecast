@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -20,7 +21,7 @@ interface ComparisonChartProps {
   isLoading: boolean;
 }
 
-export const ComparisonChart = ({ combinedMetricsData, chartType, metrics, isLoading }: ComparisonChartProps) => {
+export const ComparisonChart = memo(({ combinedMetricsData, chartType, metrics, isLoading }: ComparisonChartProps) => {
   const { t } = useTranslation();
 
   if (combinedMetricsData.length === 0) {
@@ -75,4 +76,6 @@ export const ComparisonChart = ({ combinedMetricsData, chartType, metrics, isLoa
       </ChartComponent>
     </ResponsiveContainer>
   );
-};
+});
+
+ComparisonChart.displayName = 'ComparisonChart';
