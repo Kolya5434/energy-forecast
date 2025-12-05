@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
+import { LoadingFallback } from '@/components/LoadingFallback';
 
 interface MetricConfig {
   key: string;

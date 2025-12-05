@@ -1,5 +1,5 @@
-import axiosInstance from '../../config/axios';
-import type { ModelDiagnosticsResponse } from '../../types/scientific';
+import axiosInstance from '@/config/axios';
+import type { ModelDiagnosticsResponse } from '@/types/scientific';
 
 export const fetchModelDiagnostics = async (
   modelId: string,

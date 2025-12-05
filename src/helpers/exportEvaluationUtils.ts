@@ -1,4 +1,4 @@
-import type { ExportTypes } from '../types/shared';
+import type { ExportTypes } from '@/types/shared';
 
 interface MetricData {
   modelId: string;

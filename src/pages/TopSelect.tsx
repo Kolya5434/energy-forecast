@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select, type SelectChangeEvent } from '@mui/material';
 
-import { DEFAULT_OPTIONS_SELECT } from '../shared/constans.ts';
-import type { ISelectOption } from '../types/shared.ts';
+import { DEFAULT_OPTIONS_SELECT } from '@/shared/constans.ts';
+import type { ISelectOption } from '@/types/shared.ts';
 import { useTranslation } from 'react-i18next';
 
 interface ITopSelectProps {

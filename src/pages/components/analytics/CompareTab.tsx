@@ -42,8 +42,8 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { useApi } from '../../../context/useApi';
-import type { IScenarioResult } from '../../../types/api';
+import { useApi } from '@/context/useApi';
+import type { IScenarioResult } from '@/types/api';
 
 interface ScenarioForm {
   name: string;

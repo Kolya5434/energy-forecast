@@ -20,8 +20,8 @@ import {
   YAxis
 } from 'recharts';
 
-import { CHART_MARGIN, TOOLTIP_STYLE } from '../../../shared/constans';
-import type { ChartType } from '../../../types/shared';
+import { CHART_MARGIN, TOOLTIP_STYLE } from '@/shared/constans';
+import type { ChartType } from '@/types/shared';
 
 interface ChartDataPoint {
   name: string;

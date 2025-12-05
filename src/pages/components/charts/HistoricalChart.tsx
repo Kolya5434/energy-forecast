@@ -25,8 +25,8 @@ import {
   Typography
 } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
 
 interface HistoricalChartProps {
   days?: number;

@@ -6,11 +6,11 @@ import HistoryIcon from '@mui/icons-material/History';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { Box, Paper, Tab, Tabs, Typography, type SelectChangeEvent } from '@mui/material';
 
-import { LoadingFallback } from '../components/LoadingFallback';
-import { useApi } from '../context/useApi.tsx';
-import { useConditionsForm } from '../hooks/useConditionsForm';
-import { COLORS } from '../shared/constans.ts';
-import type { ChartType, IChartDataPoint } from '../types/shared.ts';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import { useConditionsForm } from '@/hooks/useConditionsForm';
+import { COLORS } from '@/shared/constans';
+import type { ChartType, IChartDataPoint } from '@/types/shared';
 import { ChartControls } from './components/charts/ChartControls';
 import { ChartRenderer } from './components/charts/ChartRenderer';
 import { HistoricalChart } from './components/charts/HistoricalChart';

@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 
 import { FormControl, InputLabel, MenuItem, Select, type SelectChangeEvent } from '@mui/material';
 
-import { CHART_TYPES } from '../shared/constans.ts';
-import type { ChartType } from '../types/shared.ts';
+import { CHART_TYPES } from '@/shared/constans.ts';
+import type { ChartType } from '@/types/shared.ts';
 
 interface ChartTypeSelectorProps {
   value: ChartType;

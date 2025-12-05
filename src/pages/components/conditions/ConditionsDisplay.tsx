@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, Chip, Collapse, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
-import type { IExtendedConditions } from '../../../types/api';
+import type { IExtendedConditions } from '@/types/api';
 
 interface ConditionItem {
   label: string;

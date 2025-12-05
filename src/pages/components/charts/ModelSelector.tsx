@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Box, Chip, Stack, Typography } from '@mui/material';
 
-import type { IPredictionResponse } from '../../../types/api';
+import type { IPredictionResponse } from '@/types/api';
 
 interface ModelSelectorProps {
   predictions: IPredictionResponse[] | null;

@@ -24,9 +24,9 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
-import type { VisualizationType } from '../../../types/scientific';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import type { VisualizationType } from '@/types/scientific';
 
 const VISUALIZATION_TYPES: Array<{ value: VisualizationType; label: string; requiresModels: boolean }> = [
   { value: 'comparison', label: 'Порівняння моделей (Radar Chart)', requiresModels: true },

@@ -1,5 +1,5 @@
-import axiosInstance from '../../config/axios';
-import type { ReproducibilityReportRequest, ReproducibilityReportResponse } from '../../types/scientific';
+import axiosInstance from '@/config/axios';
+import type { ReproducibilityReportRequest, ReproducibilityReportResponse } from '@/types/scientific';
 
 export const postReproducibilityReport = async (
   data?: ReproducibilityReportRequest

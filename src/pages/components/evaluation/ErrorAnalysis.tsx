@@ -18,9 +18,9 @@ import {
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { CHART_MARGIN, TOOLTIP_STYLE_ERRORS } from '../../../shared/constans';
-import type { IEvaluationApiResponse } from '../../../types/api';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { CHART_MARGIN, TOOLTIP_STYLE_ERRORS } from '@/shared/constans';
+import type { IEvaluationApiResponse } from '@/types/api';
 
 interface ErrorAnalysisProps {
   selectedModelId: string;

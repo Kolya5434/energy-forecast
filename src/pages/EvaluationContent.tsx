@@ -6,15 +6,15 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import { Box, Chip, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 
-import { LoadingFallback } from '../components/LoadingFallback';
-import { useApi } from '../context/useApi.tsx';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi.tsx';
 import {
   exportEvaluationToDOCX,
   exportEvaluationToPDF_Quick,
   exportEvaluationToXLSX
-} from '../helpers/exportEvaluationUtils.ts';
-import type { IEvaluationApiResponse } from '../types/api.ts';
-import type { ChartType, ViewMode } from '../types/shared.ts';
+} from '@/helpers/exportEvaluationUtils.ts';
+import type { IEvaluationApiResponse } from '@/types/api.ts';
+import type { ChartType, ViewMode } from '@/types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 import { ComparisonChart } from './components/evaluation/ComparisonChart';
 import { ErrorAnalysis } from './components/evaluation/ErrorAnalysis';
@@ -126,19 +126,17 @@ export const EvaluationContent = () => {
     }
   };
 
-  const combinedMetricsData = useMemo(() => {
-    return selectedModels
-      .map((modelId) => {
-        const evaluation = evaluations[modelId];
-        if (!evaluation) return null;
-        return {
-          modelId,
-          ...evaluation.accuracy_metrics,
-          ...evaluation.performance_metrics
-        };
-      })
-      .filter((row): row is Exclude<typeof row, null> => row !== null);
-  }, [selectedModels, evaluations]);
+  const combinedMetricsData = selectedModels
+    .map((modelId) => {
+      const evaluation = evaluations[modelId];
+      if (!evaluation) return null;
+      return {
+        modelId,
+        ...evaluation.accuracy_metrics,
+        ...evaluation.performance_metrics
+      };
+    })
+    .filter((row): row is Exclude<typeof row, null> => row !== null);
 
   const sortedTableData = useMemo(() => {
     return combinedMetricsData.sort((a, b) => {

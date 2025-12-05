@@ -18,8 +18,8 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../components/LoadingFallback';
-import { useApi } from '../context/useApi.tsx';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi.tsx';
 
 export const ShapForcePlot = () => {
   const { t } = useTranslation();

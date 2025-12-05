@@ -8,7 +8,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Box, Paper, Tab, Tabs } from '@mui/material';
 
-import { LoadingFallback } from '../components/LoadingFallback';
+import { LoadingFallback } from '@/components/LoadingFallback';
 import classes from './MainContent.module.scss';
 
 // Lazy load analytics tabs

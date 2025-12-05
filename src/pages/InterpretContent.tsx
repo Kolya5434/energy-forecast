@@ -20,11 +20,11 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../components/LoadingFallback';
-import { useApi } from '../context/useApi.tsx';
-import { exportChartData } from '../helpers/exportToFile.ts';
-import { isFeatureImportanceResponse } from '../helpers/utils.ts';
-import type { ChartType, ViewMode } from '../types/shared.ts';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi.tsx';
+import { exportChartData } from '@/helpers/exportToFile.ts';
+import { isFeatureImportanceResponse } from '@/helpers/utils.ts';
+import type { ChartType, ViewMode } from '@/types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
 import { FeatureImportanceChart } from './components/interpretation/FeatureImportanceChart';
 import { FeatureImportanceTable } from './components/interpretation/FeatureImportanceTable';

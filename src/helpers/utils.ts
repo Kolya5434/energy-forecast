@@ -1,5 +1,5 @@
-import type { IInterpretationApiResponse, IShapInterpretationResponse } from '../types/api.ts';
-import type { ExportTypes } from '../types/shared.ts';
+import type { IInterpretationApiResponse, IShapInterpretationResponse } from '@/types/api.ts';
+import type { ExportTypes } from '@/types/shared.ts';
 
 export const getHeatmapColor = (value: number, min: number, max: number) => {
   const normalized = (value - min) / (max - min);

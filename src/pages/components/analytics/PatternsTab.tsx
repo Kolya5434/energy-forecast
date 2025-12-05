@@ -35,9 +35,9 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
-import type { PatternPeriod } from '../../../types/api';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import type { PatternPeriod } from '@/types/api';
 
 const PERIOD_LABELS: Record<PatternPeriod, string> = {
   hourly: 'Погодинний',

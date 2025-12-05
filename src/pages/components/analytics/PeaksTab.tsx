@@ -30,10 +30,10 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { LoadingFallback } from '../../../components/LoadingFallback';
+import { LoadingFallback } from '@/components/LoadingFallback';
 import { useState } from 'react';
 
-import { useApi } from '../../../context/useApi';
+import { useApi } from '@/context/useApi';
 
 export const PeaksTab = () => {
   const { t } = useTranslation();

@@ -20,9 +20,9 @@ import {
   useMediaQuery
 } from '@mui/material';
 
-import i18n from '../i18n';
-import type { ThemeMode } from '../App';
-import type { View } from '../types/shared';
+import i18n from '@/i18n';
+import type { ThemeMode } from '@/App';
+import type { View } from '@/types/shared';
 
 interface HeaderProps {
   toggleTheme: () => void;

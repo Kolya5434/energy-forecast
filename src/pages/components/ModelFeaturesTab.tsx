@@ -27,9 +27,9 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../../components/LoadingFallback';
-import { useApi } from '../../context/useApi';
-import type { IFeaturesResponse } from '../../types/api';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import type { IFeaturesResponse } from '@/types/api';
 
 // Feature descriptions for tooltips
 const FEATURE_DESCRIPTIONS: Record<string, string> = {

@@ -13,7 +13,7 @@ import {
   postCompare,
   postPredictions,
   postSimulation
-} from '../api';
+} from '@/api';
 import {
   fetchModelDiagnostics,
   postErrorAnalysis,
@@ -22,8 +22,8 @@ import {
   postResidualAnalysis,
   postStatisticalTests,
   postVisualization
-} from '../api/scientific';
-import { useApiState, useCachedApiState } from '../hooks/useApiState';
+} from '@/api/scientific';
+import { useApiState, useCachedApiState } from '@/hooks/useApiState';
 import type {
   IAnomaliesRequest,
   IAnomaliesResponse,
@@ -46,7 +46,7 @@ import type {
   IShapInterpretationResponse,
   ISimulationRequest,
   ModelsApiResponse
-} from '../types/api';
+} from '@/types/api';
 import type {
   ErrorAnalysisRequest,
   ErrorAnalysisResponse,
@@ -61,7 +61,7 @@ import type {
   StatisticalTestResponse,
   VisualizationRequest,
   VisualizationResponse
-} from '../types/scientific';
+} from '@/types/scientific';
 
 interface IApiContext {
   models: ModelsApiResponse | null;

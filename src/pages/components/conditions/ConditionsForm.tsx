@@ -14,7 +14,7 @@ import {
   Typography
 } from '@mui/material';
 
-import type { ConditionsFormState } from '../../../hooks/useConditionsForm';
+import type { ConditionsFormState } from '@/hooks/useConditionsForm';
 
 interface ConditionsFormProps {
   formState: ConditionsFormState;

@@ -25,10 +25,10 @@ import {
 
 import { Box, Typography } from '@mui/material';
 
-import { getHeatmapColor } from '../../../helpers/utils';
-import { CHART_MARGIN, TOOLTIP_STYLE } from '../../../shared/constans';
-import type { ChartType, IChartDataPoint } from '../../../types/shared';
-import type { IPredictionResponse } from '../../../types/api';
+import { getHeatmapColor } from '@/helpers/utils';
+import { CHART_MARGIN, TOOLTIP_STYLE } from '@/shared/constans';
+import type { ChartType, IChartDataPoint } from '@/types/shared';
+import type { IPredictionResponse } from '@/types/api';
 
 interface ChartRendererProps {
   chartType: ChartType;

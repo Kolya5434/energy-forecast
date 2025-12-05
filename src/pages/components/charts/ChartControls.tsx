@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { Box, Button, Typography } from '@mui/material';
 
-import type { ChartType } from '../../../types/shared';
-import { ChartTypeSelector } from '../../ChartTypeSelector';
+import type { ChartType } from '@/types/shared';
+import { ChartTypeSelector } from '@/pages/ChartTypeSelector';
 
 interface ChartControlsProps {
   chartType: ChartType;

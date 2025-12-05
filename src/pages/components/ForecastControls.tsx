@@ -17,7 +17,7 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import type { ModelsApiResponse } from '../../types/api';
+import type { ModelsApiResponse } from '@/types/api';
 
 interface ForecastControlsProps {
   models: ModelsApiResponse | null;

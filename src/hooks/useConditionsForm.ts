@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { clampValue } from '../helpers/conditionsValidation';
-import type { IExtendedConditions } from '../types/api';
+import { clampValue } from '@/helpers/conditionsValidation';
+import type { IExtendedConditions } from '@/types/api';
 
 export interface ConditionsFormState {
   temperature: string;

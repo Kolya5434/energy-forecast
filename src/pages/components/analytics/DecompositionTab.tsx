@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Brush,
@@ -28,8 +28,8 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
 
 const PERIOD_OPTIONS = [
   { value: 24, label: 'Добова (24 год)' },
@@ -52,19 +52,22 @@ export const DecompositionTab = () => {
     getDecomposition({ period });
   };
 
-  const getChartData = (component: 'trend' | 'seasonal' | 'residual') => {
-    if (!decompositionData) return [];
-    const data = decompositionData.components[component];
-    return Object.entries(data).map(([date, value]) => ({
-      date,
-      value,
-      formattedDate: new Date(date).toLocaleDateString()
-    }));
-  };
+  const getChartData = useCallback(
+    (component: 'trend' | 'seasonal' | 'residual') => {
+      if (!decompositionData) return [];
+      const data = decompositionData.components[component];
+      return Object.entries(data).map(([date, value]) => ({
+        date,
+        value,
+        formattedDate: new Date(date).toLocaleDateString()
+      }));
+    },
+    [decompositionData]
+  );
 
-  const trendData = useMemo(() => getChartData('trend'), [decompositionData]);
-  const seasonalData = useMemo(() => getChartData('seasonal'), [decompositionData]);
-  const residualData = useMemo(() => getChartData('residual'), [decompositionData]);
+  const trendData = useMemo(() => getChartData('trend'), [getChartData]);
+  const seasonalData = useMemo(() => getChartData('seasonal'), [getChartData]);
+  const residualData = useMemo(() => getChartData('residual'), [getChartData]);
 
   const renderChart = (data: { date: string; value: number; formattedDate: string }[], color: string) => (
     <ResponsiveContainer width="100%" height={250}>

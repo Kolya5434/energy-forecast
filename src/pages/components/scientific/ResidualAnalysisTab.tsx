@@ -27,8 +27,8 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
 
 export const ResidualAnalysisTab = () => {
   const { t } = useTranslation();

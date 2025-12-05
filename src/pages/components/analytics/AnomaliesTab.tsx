@@ -38,8 +38,8 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
 
 export const AnomaliesTab = () => {
   const { t } = useTranslation();

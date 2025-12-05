@@ -32,12 +32,11 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { LoadingFallback } from '../components/LoadingFallback';
-
-import { useApi } from '../context/useApi';
-import { clampValue } from '../helpers/conditionsValidation';
-import { COLORS, OPTIONS_SIMULATABLE_FEATURES } from '../shared/constans.ts';
-import type { IFeatureOverride, ISimulationRequest, SimulationChartData } from '../types/api';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import { clampValue } from '@/helpers/conditionsValidation';
+import { COLORS, OPTIONS_SIMULATABLE_FEATURES } from '@/shared/constans';
+import type { IFeatureOverride, ISimulationRequest, SimulationChartData } from '@/types/api';
 
 interface ISimulationFormInput {
   selectedModel: string;

@@ -28,9 +28,9 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { useApi } from '../../../context/useApi';
-import type { LaTeXExportType } from '../../../types/scientific';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { useApi } from '@/context/useApi';
+import type { LaTeXExportType } from '@/types/scientific';
 
 const LATEX_EXPORT_TYPES: Array<{ value: LaTeXExportType; label: string; description: string }> = [
   { value: 'metrics_table', label: 'Таблиця метрик', description: 'Лише таблиця порівняння метрик' },

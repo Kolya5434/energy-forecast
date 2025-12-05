@@ -4,9 +4,9 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart,
 
 import { Typography } from '@mui/material';
 
-import { LoadingFallback } from '../../../components/LoadingFallback';
-import { CHART_MARGIN, COLORS, TOOLTIP_STYLE_ERRORS } from '../../../shared/constans';
-import type { ChartType } from '../../../types/shared';
+import { LoadingFallback } from '@/components/LoadingFallback';
+import { CHART_MARGIN, COLORS, TOOLTIP_STYLE_ERRORS } from '@/shared/constans';
+import type { ChartType } from '@/types/shared';
 
 interface MetricConfig {
   key: string;
