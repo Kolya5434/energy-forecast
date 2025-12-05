@@ -11,7 +11,7 @@ import { Box, Paper, Tab, Tabs } from '@mui/material';
 import { LoadingFallback } from '../components/LoadingFallback';
 import classes from './MainContent.module.scss';
 
-// Lazy load analytics tabs to defer echarts loading
+// Lazy load analytics tabs
 const PeaksTab = lazy(() => import('./components/analytics/PeaksTab').then((m) => ({ default: m.PeaksTab })));
 const PatternsTab = lazy(() => import('./components/analytics/PatternsTab').then((m) => ({ default: m.PatternsTab })));
 const AnomaliesTab = lazy(() => import('./components/analytics/AnomaliesTab').then((m) => ({ default: m.AnomaliesTab })));

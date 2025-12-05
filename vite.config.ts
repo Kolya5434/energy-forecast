@@ -69,17 +69,9 @@ export default defineConfig({
               return 'react-vendor';
             }
 
-            // recharts - separate chunk for better caching (must come BEFORE echarts check)
+            // recharts - separate chunk for better caching
             if (id.includes('recharts')) {
               return 'recharts';
-            }
-
-            // Chart libraries - extract to separate chunks
-            if (id.includes('echarts') && !id.includes('echarts-for-react')) {
-              return 'echarts';
-            }
-            if (id.includes('echarts-for-react')) {
-              return 'echarts'; // Keep echarts-for-react with echarts
             }
 
             // HTTP

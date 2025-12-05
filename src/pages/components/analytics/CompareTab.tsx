@@ -1,5 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import AddIcon from '@mui/icons-material/Add';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
@@ -32,7 +42,6 @@ import {
   Typography,
   type SelectChangeEvent
 } from '@mui/material';
-import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 import type { IScenarioResult } from '../../../types/api';
 
@@ -99,63 +108,27 @@ export const CompareTab = () => {
     });
   };
 
-  const getChartOption = () => {
-    if (!compareResult) return {};
+  const chartData = useMemo(() => {
+    if (!compareResult) return [];
 
     const baselineDates = Object.keys(compareResult.baseline.forecast);
+    const baselineValues = Object.values(compareResult.baseline.forecast);
 
-    const series = [
-      {
-        name: `${compareResult.baseline.name} (${t('базовий')})`,
-        type: 'line',
-        data: Object.values(compareResult.baseline.forecast),
-        itemStyle: { color: '#757575' },
-        lineStyle: { type: 'dashed' }
-      },
-      ...compareResult.scenarios.map((scenario: IScenarioResult, index: number) => ({
-        name: scenario.name,
-        type: 'line',
-        data: Object.values(scenario.forecast),
-        itemStyle: { color: SCENARIO_COLORS[index % SCENARIO_COLORS.length] }
-      }))
-    ];
+    return baselineDates.map((date, index) => {
+      const dataPoint: Record<string, string | number> = {
+        date,
+        formattedDate: new Date(date).toLocaleDateString(),
+        baseline: baselineValues[index] ?? 0
+      };
 
-    return {
-      tooltip: {
-        trigger: 'axis',
-        formatter: (params: { seriesName: string; value: number; axisValue: string }[]) => {
-          const first = params?.[0];
-          if (!first) return '';
-          const date = new Date(first.axisValue).toLocaleDateString();
-          let result = `<strong>${date}</strong><br/>`;
-          for (const p of params) {
-            result += `${p.seriesName}: ${p.value.toFixed(2)} kW<br/>`;
-          }
-          return result;
-        }
-      },
-      legend: {
-        data: [
-          `${compareResult.baseline.name} (${t('базовий')})`,
-          ...compareResult.scenarios.map((s: IScenarioResult) => s.name)
-        ],
-        bottom: 0
-      },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: baselineDates,
-        axisLabel: {
-          formatter: (val: string) => {
-            const d = new Date(val);
-            return `${d.getMonth() + 1}/${d.getDate()}`;
-          }
-        }
-      },
-      yAxis: { type: 'value', name: 'kW' },
-      series
-    };
-  };
+      compareResult.scenarios.forEach((scenario: IScenarioResult) => {
+        const values = Object.values(scenario.forecast);
+        dataPoint[scenario.name] = values[index] ?? 0;
+      });
+
+      return dataPoint;
+    });
+  }, [compareResult]);
 
   return (
     <Box sx={{ p: 2 }}>
@@ -310,7 +283,49 @@ export const CompareTab = () => {
               <Typography variant="h6" gutterBottom>
                 {t('Порівняння прогнозів')}
               </Typography>
-              <OptimizedEChart option={getChartOption()} style={{ height: 400 }} />
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="formattedDate"
+                    tick={{ fontSize: 11 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                  />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <RechartsTooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                      border: 'none',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number, name: string) => [
+                      `${value.toFixed(2)} kW`,
+                      name === 'baseline' ? `${compareResult.baseline.name} (${t('базовий')})` : name
+                    ]}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="baseline"
+                    stroke="#757575"
+                    strokeDasharray="5 5"
+                    name={`${compareResult.baseline.name} (${t('базовий')})`}
+                    dot={false}
+                  />
+                  {compareResult.scenarios.map((scenario: IScenarioResult, index: number) => (
+                    <Line
+                      key={scenario.name}
+                      type="monotone"
+                      dataKey={scenario.name}
+                      stroke={SCENARIO_COLORS[index % SCENARIO_COLORS.length]}
+                      name={scenario.name}
+                      dot={false}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
             </Paper>
 
             {/* Summary Table */}

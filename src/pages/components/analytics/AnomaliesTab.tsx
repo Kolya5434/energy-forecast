@@ -1,5 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -30,7 +39,6 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 import { LoadingFallback } from '../../../components/LoadingFallback';
-import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 
 export const AnomaliesTab = () => {
@@ -48,64 +56,26 @@ export const AnomaliesTab = () => {
     getAnomalies({ threshold, days, include_details: true });
   };
 
-  const getHourlyChart = () => {
-    if (!anomaliesData) return {};
+  const hourlyChartData = useMemo(() => {
+    if (!anomaliesData) return [];
+    return Object.entries(anomaliesData.anomalies_by_hour)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(([hour, count]) => ({
+        hour: `${hour}:00`,
+        count
+      }));
+  }, [anomaliesData]);
 
-    const entries = Object.entries(anomaliesData.anomalies_by_hour).sort(
-      ([a], [b]) => Number(a) - Number(b)
-    );
-
-    return {
-      tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: entries.map(([hour]) => `${hour}:00`),
-        name: t('Година')
-      },
-      yAxis: {
-        type: 'value',
-        name: t('Кількість аномалій')
-      },
-      series: [
-        {
-          type: 'bar',
-          data: entries.map(([, count]) => count),
-          itemStyle: { color: '#ff9800' }
-        }
-      ]
-    };
-  };
-
-  const getDailyChart = () => {
-    if (!anomaliesData) return {};
-
+  const dailyChartData = useMemo(() => {
+    if (!anomaliesData) return [];
     const dayNames = [t('Пн'), t('Вт'), t('Ср'), t('Чт'), t('Пт'), t('Сб'), t('Нд')];
-    const entries = Object.entries(anomaliesData.anomalies_by_day).sort(
-      ([a], [b]) => Number(a) - Number(b)
-    );
-
-    return {
-      tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: entries.map(([day]) => dayNames[Number(day)] || day),
-        name: t('День тижня')
-      },
-      yAxis: {
-        type: 'value',
-        name: t('Кількість аномалій')
-      },
-      series: [
-        {
-          type: 'bar',
-          data: entries.map(([, count]) => count),
-          itemStyle: { color: '#e91e63' }
-        }
-      ]
-    };
-  };
+    return Object.entries(anomaliesData.anomalies_by_day)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(([day, count]) => ({
+        day: dayNames[Number(day)] || day,
+        count
+      }));
+  }, [anomaliesData, t]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -230,14 +200,44 @@ export const AnomaliesTab = () => {
               <Typography variant="h6" gutterBottom>
                 {t('Аномалії за годинами')}
               </Typography>
-              <OptimizedEChart option={getHourlyChart()} style={{ height: 300 }} />
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={hourlyChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="hour" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <RechartsTooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                      border: 'none',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number) => [value, t('Кількість')]}
+                  />
+                  <Bar dataKey="count" fill="#ff9800" />
+                </BarChart>
+              </ResponsiveContainer>
             </Paper>
 
             <Paper sx={{ flex: 1, p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 {t('Аномалії за днями тижня')}
               </Typography>
-              <OptimizedEChart option={getDailyChart()} style={{ height: 300 }} />
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dailyChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <RechartsTooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                      border: 'none',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number) => [value, t('Кількість')]}
+                  />
+                  <Bar dataKey="count" fill="#e91e63" />
+                </BarChart>
+              </ResponsiveContainer>
             </Paper>
           </Stack>
 

@@ -1,5 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Brush,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
@@ -19,7 +29,6 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 import { LoadingFallback } from '../../../components/LoadingFallback';
-import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 
 const PERIOD_OPTIONS = [
@@ -43,56 +52,53 @@ export const DecompositionTab = () => {
     getDecomposition({ period });
   };
 
-  const getChartOption = (component: 'trend' | 'seasonal' | 'residual', color: string, title: string) => {
-    if (!decompositionData) return {};
-
+  const getChartData = (component: 'trend' | 'seasonal' | 'residual') => {
+    if (!decompositionData) return [];
     const data = decompositionData.components[component];
-    const entries = Object.entries(data);
-    const dates = entries.map(([date]) => date);
-    const values = entries.map(([, val]) => val);
-
-    return {
-      title: {
-        text: title,
-        left: 'center',
-        textStyle: { fontSize: 14 }
-      },
-      tooltip: {
-        trigger: 'axis',
-        formatter: (params: { value: number; axisValue: string }[]) => {
-          const p = params?.[0];
-          if (!p) return '';
-          return `${new Date(p.axisValue).toLocaleString()}<br/>${p.value.toFixed(4)} kW`;
-        }
-      },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '15%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: dates,
-        axisLabel: {
-          formatter: (val: string) => {
-            const d = new Date(val);
-            return `${d.getMonth() + 1}/${d.getDate()}`;
-          },
-          rotate: 45
-        }
-      },
-      yAxis: { type: 'value', name: 'kW' },
-      dataZoom: [
-        { type: 'inside', start: 0, end: 100 },
-        { type: 'slider', start: 0, end: 100 }
-      ],
-      series: [
-        {
-          type: 'line',
-          data: values,
-          itemStyle: { color },
-          showSymbol: false,
-          lineStyle: { width: 1 }
-        }
-      ]
-    };
+    return Object.entries(data).map(([date, value]) => ({
+      date,
+      value,
+      formattedDate: new Date(date).toLocaleDateString()
+    }));
   };
+
+  const trendData = useMemo(() => getChartData('trend'), [decompositionData]);
+  const seasonalData = useMemo(() => getChartData('seasonal'), [decompositionData]);
+  const residualData = useMemo(() => getChartData('residual'), [decompositionData]);
+
+  const renderChart = (data: { date: string; value: number; formattedDate: string }[], color: string) => (
+    <ResponsiveContainer width="100%" height={250}>
+      <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="formattedDate"
+          tick={{ fontSize: 11 }}
+          angle={-45}
+          textAnchor="end"
+          height={60}
+          interval="preserveStartEnd"
+        />
+        <YAxis tick={{ fontSize: 12 }} />
+        <RechartsTooltip
+          contentStyle={{
+            backgroundColor: 'rgba(30, 30, 30, 0.9)',
+            border: 'none',
+            borderRadius: '8px'
+          }}
+          formatter={(value: number) => [`${value.toFixed(4)} kW`, 'Значення']}
+          labelFormatter={(label) => label}
+        />
+        <Line
+          type="monotone"
+          dataKey="value"
+          stroke={color}
+          strokeWidth={1.5}
+          dot={false}
+        />
+        <Brush dataKey="formattedDate" height={25} stroke={color} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
 
   if (isLoadingDecomposition) {
     return <LoadingFallback />;
@@ -193,30 +199,21 @@ export const DecompositionTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Тренд')}
             </Typography>
-            <OptimizedEChart
-              option={getChartOption('trend', '#1976d2', '')}
-              style={{ height: 250 }}
-            />
+            {renderChart(trendData, '#1976d2')}
           </Paper>
 
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               {t('Сезонна компонента')}
             </Typography>
-            <OptimizedEChart
-              option={getChartOption('seasonal', '#9c27b0', '')}
-              style={{ height: 250 }}
-            />
+            {renderChart(seasonalData, '#9c27b0')}
           </Paper>
 
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               {t('Залишки (шум)')}
             </Typography>
-            <OptimizedEChart
-              option={getChartOption('residual', '#ff9800', '')}
-              style={{ height: 250 }}
-            />
+            {renderChart(residualData, '#ff9800')}
           </Paper>
         </Stack>
       )}

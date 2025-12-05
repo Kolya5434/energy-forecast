@@ -1,5 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
@@ -25,7 +36,6 @@ import {
   type SelectChangeEvent
 } from '@mui/material';
 import { LoadingFallback } from '../../../components/LoadingFallback';
-import { OptimizedEChart } from '../../../components/OptimizedEChart';
 import { useApi } from '../../../context/useApi';
 import type { PatternPeriod } from '../../../types/api';
 
@@ -52,98 +62,31 @@ export const PatternsTab = () => {
   };
 
   // Check if pattern values are simple numbers or objects with stats
-  const isSimplePattern = (): boolean => {
+  const isSimplePattern = useMemo(() => {
     if (!patternsData?.pattern) return false;
     const firstValue = Object.values(patternsData.pattern)[0];
     return typeof firstValue === 'number' || firstValue === null;
-  };
+  }, [patternsData]);
 
-  const simplePattern = isSimplePattern();
-
-  const getChartOption = () => {
-    if (!patternsData?.pattern) return {};
+  const chartData = useMemo(() => {
+    if (!patternsData?.pattern) return [];
 
     const entries = Object.entries(patternsData.pattern);
-    const labels = entries.map(([key]) => key);
 
-    // Handle both formats: simple numbers or objects with stats
-    if (simplePattern) {
-      const values = entries.map(([, val]) => val as unknown as number);
-      return {
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-        grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: labels,
-          axisLabel: { rotate: labels.length > 10 ? 45 : 0 }
-        },
-        yAxis: { type: 'value', name: 'kW' },
-        series: [
-          {
-            name: t('Значення'),
-            type: 'bar',
-            data: values,
-            itemStyle: { color: '#1976d2' }
-          }
-        ]
-      };
+    if (isSimplePattern) {
+      return entries.map(([label, value]) => ({
+        label,
+        value: value as unknown as number
+      }));
     }
 
-    // Object format with stats
-    const means = entries.map(([, stats]) => (stats as { mean?: number })?.mean ?? 0);
-    const mins = entries.map(([, stats]) => (stats as { min?: number })?.min ?? 0);
-    const maxs = entries.map(([, stats]) => (stats as { max?: number })?.max ?? 0);
-
-    return {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' }
-      },
-      legend: {
-        data: [t('Середнє'), t('Мін'), t('Макс')],
-        bottom: 0
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '15%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: labels,
-        axisLabel: {
-          rotate: period === 'hourly' ? 0 : 45
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'kW'
-      },
-      series: [
-        {
-          name: t('Середнє'),
-          type: 'bar',
-          data: means,
-          itemStyle: { color: '#1976d2' }
-        },
-        {
-          name: t('Мін'),
-          type: 'line',
-          data: mins,
-          itemStyle: { color: '#4caf50' },
-          lineStyle: { type: 'dashed' }
-        },
-        {
-          name: t('Макс'),
-          type: 'line',
-          data: maxs,
-          itemStyle: { color: '#f44336' },
-          lineStyle: { type: 'dashed' }
-        }
-      ]
-    };
-  };
+    return entries.map(([label, stats]) => ({
+      label,
+      mean: (stats as { mean?: number })?.mean ?? 0,
+      min: (stats as { min?: number })?.min ?? 0,
+      max: (stats as { max?: number })?.max ?? 0
+    }));
+  }, [patternsData, isSimplePattern]);
 
   if (isLoadingPatterns) {
     return <LoadingFallback />;
@@ -230,7 +173,40 @@ export const PatternsTab = () => {
             <Typography variant="h6" gutterBottom>
               {t('Сезонний патерн')}: {t(PERIOD_LABELS[patternsData.period])}
             </Typography>
-            <OptimizedEChart option={getChartOption()} style={{ height: 400 }} />
+            <ResponsiveContainer width="100%" height={400}>
+              <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 11 }}
+                  angle={period === 'hourly' ? 0 : -45}
+                  textAnchor={period === 'hourly' ? 'middle' : 'end'}
+                  height={period === 'hourly' ? 30 : 60}
+                />
+                <YAxis tick={{ fontSize: 12 }} />
+                <RechartsTooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                    border: 'none',
+                    borderRadius: '8px'
+                  }}
+                  formatter={(value: number, name: string) => [
+                    `${value.toFixed(3)} kW`,
+                    name === 'value' ? t('Значення') : name === 'mean' ? t('Середнє') : name === 'min' ? t('Мін') : t('Макс')
+                  ]}
+                />
+                {isSimplePattern ? (
+                  <Bar dataKey="value" fill="#1976d2" name={t('Значення')} />
+                ) : (
+                  <>
+                    <Legend />
+                    <Bar dataKey="mean" fill="#1976d2" name={t('Середнє')} />
+                    <Line type="monotone" dataKey="min" stroke="#4caf50" strokeDasharray="5 5" name={t('Мін')} dot={false} />
+                    <Line type="monotone" dataKey="max" stroke="#f44336" strokeDasharray="5 5" name={t('Макс')} dot={false} />
+                  </>
+                )}
+              </ComposedChart>
+            </ResponsiveContainer>
           </Paper>
 
           {/* Data Table */}
@@ -243,7 +219,7 @@ export const PatternsTab = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>{t('Період')}</TableCell>
-                    {simplePattern ? (
+                    {isSimplePattern ? (
                       <TableCell align="right">{t('Значення')} (kW)</TableCell>
                     ) : (
                       <>
@@ -261,7 +237,7 @@ export const PatternsTab = () => {
                     return (
                       <TableRow key={key} hover>
                         <TableCell>{key}</TableCell>
-                        {simplePattern ? (
+                        {isSimplePattern ? (
                           <TableCell align="right">{(v as number).toFixed(3)}</TableCell>
                         ) : (
                           <>
