@@ -1,5 +1,4 @@
 import type { IInterpretationApiResponse, IShapInterpretationResponse } from '@/types/api.ts';
-import type { ExportTypes } from '@/types/shared.ts';
 
 export const getHeatmapColor = (value: number, min: number, max: number) => {
   const normalized = (value - min) / (max - min);
@@ -14,7 +13,3 @@ export function isFeatureImportanceResponse(
     !!data && typeof data === 'object' && 'feature_importance' in data && typeof data.feature_importance === 'object'
   );
 }
-
-export const handleExport = (format: ExportTypes) => {
-  alert(`Експорт у формат ${format} буде реалізовано.`);
-};

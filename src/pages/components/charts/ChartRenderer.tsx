@@ -65,7 +65,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
   const renderLineChart = (type: 'monotone' | 'step' | 'natural' = 'monotone') => (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={chartData} margin={CHART_MARGIN}>
+      <LineChart data={chartData} margin={CHART_MARGIN} role="img" aria-label={t('Лінійний графік прогнозу енергоспоживання')}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
@@ -89,7 +89,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData} margin={CHART_MARGIN} layout={isVertical ? 'vertical' : undefined}>
+        <BarChart data={chartData} margin={CHART_MARGIN} layout={isVertical ? 'vertical' : undefined} role="img" aria-label={t('Стовпчикова діаграма прогнозу енергоспоживання')}>
           <CartesianGrid strokeDasharray="3 3" />
           {isVertical ? (
             <>
@@ -119,7 +119,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
   const renderAreaChart = (stacked = false) => (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={chartData} margin={CHART_MARGIN}>
+      <AreaChart data={chartData} margin={CHART_MARGIN} role="img" aria-label={t('Графік з областями прогнозу енергоспоживання')}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
@@ -146,7 +146,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
   const renderComposedChart = () => (
     <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart data={chartData} margin={CHART_MARGIN}>
+      <ComposedChart data={chartData} margin={CHART_MARGIN} role="img" aria-label={t('Комбінований графік прогнозу енергоспоживання')}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
@@ -166,7 +166,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
   const renderScatterChart = () => (
     <ResponsiveContainer width="100%" height="100%">
-      <ScatterChart data={chartData} margin={CHART_MARGIN}>
+      <ScatterChart data={chartData} margin={CHART_MARGIN} role="img" aria-label={t('Точкова діаграма прогнозу енергоспоживання')}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
@@ -181,7 +181,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
   const renderRadarChart = () => (
     <ResponsiveContainer width="100%" height="100%">
-      <RadarChart data={chartData}>
+      <RadarChart data={chartData} role="img" aria-label={t('Радарний графік прогнозу енергоспоживання')}>
         <PolarGrid />
         <PolarAngleAxis dataKey="date" />
         <PolarRadiusAxis />
@@ -210,7 +210,7 @@ export const ChartRenderer = memo(({ chartType, chartData, filteredPredictions, 
 
     return (
       <Box sx={{ width: '100%', height: '100%', position: 'relative', overflowX: 'auto' }}>
-        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={t('Теплова карта прогнозу енергоспоживання')}>
           {modelIds.map((modelId, rowIndex) =>
             data.map((point, colIndex) => {
               const value = point[modelId];

@@ -54,6 +54,10 @@ export const MetricsTable = ({
                 align="right"
                 sx={{ fontWeight: 'bold', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
                 onClick={() => onSort(metric.key)}
+                onKeyDown={(e) => e.key === 'Enter' && onSort(metric.key)}
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortBy === metric.key ? sortOrder === 'asc' ? 'ascending' : 'descending' : undefined}
               >
                 {metric.label} {sortBy === metric.key && (sortOrder === 'asc' ? '↑' : '↓')}
               </TableCell>

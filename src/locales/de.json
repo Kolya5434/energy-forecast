@@ -345,5 +345,14 @@
   "Кількість моделей, що порівнюються в аналізі": "Anzahl der in der Analyse verglichenen Modelle",
   "Кількість спостережень у тестовому наборі даних": "Anzahl der Beobachtungen im Testdatensatz",
   "Модель з найменшою середньою помилкою в цьому порівнянні": "Modell mit dem niedrigsten durchschnittlichen Fehler in diesem Vergleich",
-  "latex export": "So kompilieren Sie dieses LaTeX-Dokument:\n1. Speichern Sie den LaTeX-Code in einer Datei (z. B. report.tex)\n2. Wenn eine Bibliographie vorhanden ist, speichern Sie diese unter references.bib\n3. Führen Sie aus: pdflatex report.tex\n4. Bei Verwendung einer Bibliographie: bibtex report && pdflatex report.tex && pdflatex report.tex"
+  "latex export": "So kompilieren Sie dieses LaTeX-Dokument:\n1. Speichern Sie den LaTeX-Code in einer Datei (z. B. report.tex)\n2. Wenn eine Bibliographie vorhanden ist, speichern Sie diese unter references.bib\n3. Führen Sie aus: pdflatex report.tex\n4. Bei Verwendung einer Bibliographie: bibtex report && pdflatex report.tex && pdflatex report.tex",
+  "Лінійний графік прогнозу енергоспоживання": "Liniendiagramm der Energieverbrauchsprognose",
+  "Стовпчикова діаграма прогнозу енергоспоживання": "Säulendiagramm der Energieverbrauchsprognose",
+  "Графік з областями прогнозу енергоспоживання": "Flächendiagramm der Energieverbrauchsprognose",
+  "Комбінований графік прогнозу енергоспоживання": "Kombiniertes Diagramm der Energieverbrauchsprognose",
+  "Точкова діаграма прогнозу енергоспоживання": "Streudiagramm der Energieverbrauchsprognose",
+  "Радарний графік прогнозу енергоспоживання": "Radardiagramm der Energieverbrauchsprognose",
+  "Теплова карта прогнозу енергоспоживання": "Heatmap der Energieverbrauchsprognose",
+  "Графік симуляції енергоспоживання": "Simulationsdiagramm des Energieverbrauchs",
+  "Графік історичного споживання енергії": "Diagramm des historischen Energieverbrauchs"
 }
