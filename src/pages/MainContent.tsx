@@ -192,18 +192,20 @@ export const MainContent = () => {
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
-          sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+          sx={{ mb: 2, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}
         >
           <Tab icon={<ShowChartIcon />} iconPosition="start" label={t('Прогноз')} />
           <Tab icon={<HistoryIcon />} iconPosition="start" label={t('Історичні дані')} />
           <Tab icon={<CategoryIcon />} iconPosition="start" label={t('Ознаки моделі')} />
         </Tabs>
 
-        {/* Tab 0: Forecast */}
-        {activeTab === 0 && (
-          <>
-            {/* Extended conditions - View or Edit mode */}
-            {isConditionsEditMode ? (
+        {/* Tab Content */}
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          {/* Tab 0: Forecast */}
+          {activeTab === 0 && (
+            <>
+              {/* Extended conditions - View or Edit mode */}
+              {isConditionsEditMode ? (
               <ConditionsForm
                 formState={formState}
                 onInputChange={handleInputChange}
@@ -242,13 +244,14 @@ export const MainContent = () => {
               )}
             </Box>
           </>
-        )}
+          )}
 
-        {/* Tab 1: Historical */}
-        {activeTab === 1 && <HistoricalChart days={historicalDays} onDaysChange={setHistoricalDays} />}
+          {/* Tab 1: Historical */}
+          {activeTab === 1 && <HistoricalChart days={historicalDays} onDaysChange={setHistoricalDays} />}
 
-        {/* Tab 2: Model Features */}
-        {activeTab === 2 && <ModelFeaturesTab />}
+          {/* Tab 2: Model Features */}
+          {activeTab === 2 && <ModelFeaturesTab />}
+        </Box>
       </Paper>
     </Box>
   );

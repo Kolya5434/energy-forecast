@@ -32,7 +32,7 @@ export const ScientificAnalysis = () => {
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
-          sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}
+          sx={{ borderBottom: 1, borderColor: 'divider', mb: 3, flexShrink: 0 }}
           variant="scrollable"
           scrollButtons="auto"
         >
@@ -43,40 +43,42 @@ export const ScientificAnalysis = () => {
           <Tab icon={<CodeIcon />} iconPosition="start" label={t('Експорт')} />
         </Tabs>
 
-        {/* Tab 0: Statistical Tests */}
-        {activeTab === 0 && (
-          <Box sx={{ py: 2 }}>
-            <StatisticalTestsTab />
-          </Box>
-        )}
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          {/* Tab 0: Statistical Tests */}
+          {activeTab === 0 && (
+            <Box sx={{ py: 2 }}>
+              <StatisticalTestsTab />
+            </Box>
+          )}
 
-        {/* Tab 1: Residual Analysis */}
-        {activeTab === 1 && (
-          <Box sx={{ py: 2 }}>
-            <ResidualAnalysisTab />
-          </Box>
-        )}
+          {/* Tab 1: Residual Analysis */}
+          {activeTab === 1 && (
+            <Box sx={{ py: 2 }}>
+              <ResidualAnalysisTab />
+            </Box>
+          )}
 
-        {/* Tab 2: Visualizations */}
-        {activeTab === 2 && (
-          <Box sx={{ py: 2 }}>
-            <VisualizationsTab />
-          </Box>
-        )}
+          {/* Tab 2: Visualizations */}
+          {activeTab === 2 && (
+            <Box sx={{ py: 2 }}>
+              <VisualizationsTab />
+            </Box>
+          )}
 
-        {/* Tab 3: Error Analysis */}
-        {activeTab === 3 && (
-          <Box sx={{ py: 2 }}>
-            <ErrorAnalysisTab />
-          </Box>
-        )}
+          {/* Tab 3: Error Analysis */}
+          {activeTab === 3 && (
+            <Box sx={{ py: 2 }}>
+              <ErrorAnalysisTab />
+            </Box>
+          )}
 
-        {/* Tab 4: Export */}
-        {activeTab === 4 && (
-          <Box sx={{ py: 2 }}>
-            <ExportTab />
-          </Box>
-        )}
+          {/* Tab 4: Export */}
+          {activeTab === 4 && (
+            <Box sx={{ py: 2 }}>
+              <ExportTab />
+            </Box>
+          )}
+        </Box>
       </Paper>
     </Box>
   );

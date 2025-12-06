@@ -64,7 +64,7 @@ export const AnalyticsContent = () => {
           onChange={(_, newValue) => setActiveTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}
+          sx={{ borderBottom: 1, borderColor: 'divider', mb: 2, flexShrink: 0 }}
         >
           {TAB_CONFIGS.map(({ id, label, icon, disabled }) => (
             <Tab
@@ -78,9 +78,11 @@ export const AnalyticsContent = () => {
           ))}
         </Tabs>
 
-        <Suspense fallback={<LoadingFallback />}>
-          {renderTabContent()}
-        </Suspense>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          <Suspense fallback={<LoadingFallback />}>
+            {renderTabContent()}
+          </Suspense>
+        </Box>
       </Paper>
     </Box>
   );

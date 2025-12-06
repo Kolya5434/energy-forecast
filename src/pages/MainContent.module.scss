@@ -18,6 +18,7 @@
   background-color: var(--background-paper);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   @media (max-width: 768px) {
     padding: 16px;
