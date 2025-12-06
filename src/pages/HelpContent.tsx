@@ -46,7 +46,7 @@ export const HelpContent = () => {
         </Typography>
 
         {/* Main Forecast Page */}
-        <Accordion defaultExpanded>
+        <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
               <ShowChartIcon color="primary" />
