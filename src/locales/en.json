@@ -354,5 +354,21 @@
   "Радарний графік прогнозу енергоспоживання": "Radar chart of energy consumption forecast",
   "Теплова карта прогнозу енергоспоживання": "Heatmap of energy consumption forecast",
   "Графік симуляції енергоспоживання": "Simulation chart of energy consumption",
-  "Графік історичного споживання енергії": "Historical energy consumption chart"
+  "Графік історичного споживання енергії": "Historical energy consumption chart",
+  "Вибір моделей, горизонту прогнозування та умов (погода, календар, час, енергетичні параметри). Інтерактивний графік з 12 типами візуалізації.": "Select models, forecast horizon and conditions (weather, calendar, time, energy parameters). Interactive chart with 12 visualization types.",
+  "Графік реального споживання за вибраний період (7-365 днів) зі статистикою: мін, макс, середнє, медіана, стандартне відхилення.": "Real consumption chart for selected period (7-365 days) with statistics: min, max, average, median, standard deviation.",
+  "Детальна інформація про кожну модель: тип, гранулярність, набір ознак та опис кожної ознаки з поясненням її впливу на прогноз.": "Detailed information about each model: type, granularity, feature set and description of each feature with explanation of its impact on forecast.",
+  "Розширена форма з умовами: погодні (температура, вологість, вітер), календарні (свята, вихідні), часові (година, день, місяць), енергетичні та споживання по зонах.": "Extended form with conditions: weather (temperature, humidity, wind), calendar (holidays, weekends), time (hour, day, month), energy and zone consumption.",
+  "Комплексний аналіз даних споживання енергії з різних точок зору для виявлення закономірностей та аномалій.": "Comprehensive analysis of energy consumption data from different perspectives to identify patterns and anomalies.",
+  "Аналіз ранкових та вечірніх піків споживання, мінімального навантаження. Топ пікових та мінімальних значень за обраний період.": "Analysis of morning and evening consumption peaks, off-peak load. Top peak and minimum values for selected period.",
+  "Візуалізація сезонності на різних рівнях гранулярності: погодинно, денно, тижнево, місячно, річно. Детальна статистика з графіками.": "Seasonality visualization at different granularity levels: hourly, daily, weekly, monthly, yearly. Detailed statistics with charts.",
+  "Виявлення нетипового споживання з налаштованим порогом. Розподіл аномалій за годинами та днями тижня.": "Detection of atypical consumption with adjustable threshold. Distribution of anomalies by hours and days of week.",
+  "Розкладання часового ряду на компоненти: тренд, сезонність, залишки. Метрики сили тренду та сезонності.": "Time series decomposition into components: trend, seasonality, residuals. Trend and seasonality strength metrics.",
+  "Створення та порівняння кількох сценаріїв прогнозування з різними умовами (тепла/холодна погода, свята тощо). Підсумкова таблиця з різницею від базового.": "Create and compare multiple forecast scenarios with different conditions (warm/cold weather, holidays, etc.). Summary table with difference from baseline.",
+  "Детальний науковий аналіз моделей прогнозування для публікацій та звітів.": "Detailed scientific analysis of forecasting models for publications and reports.",
+  "Порівняння моделей за допомогою статистичних тестів значущості: t-test, Wilcoxon, Mann-Whitney для визначення найкращої моделі.": "Compare models using statistical significance tests: t-test, Wilcoxon, Mann-Whitney to determine the best model.",
+  "Валідація припущень моделі: розподіл залишків, Q-Q plot, тест на нормальність, автокореляція.": "Model assumption validation: residual distribution, Q-Q plot, normality test, autocorrelation.",
+  "Генерація високоякісних наукових графіків для публікацій: порівняння моделей, розподіл помилок, correlation matrix.": "Generate high-quality scientific plots for publications: model comparison, error distribution, correlation matrix.",
+  "Детальний аналіз помилок прогнозування з часовими паттернами: по годинах, днях тижня, місяцях.": "Detailed forecast error analysis with temporal patterns: by hours, days of week, months.",
+  "Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність з повним описом методології.": "Export results to LaTeX for scientific publications and reproducibility report with full methodology description."
 }

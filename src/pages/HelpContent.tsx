@@ -1,11 +1,20 @@
 import { useTranslation } from 'react-i18next';
 
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
+import CategoryIcon from '@mui/icons-material/Category';
+import CodeIcon from '@mui/icons-material/Code';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HistoryIcon from '@mui/icons-material/History';
 import HubIcon from '@mui/icons-material/Hub';
 import ScienceIcon from '@mui/icons-material/Science';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+import TimelineIcon from '@mui/icons-material/Timeline';
 import TocIcon from '@mui/icons-material/Toc';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
   Accordion,
   AccordionDetails,
@@ -36,6 +45,7 @@ export const HelpContent = () => {
           )}
         </Typography>
 
+        {/* Main Forecast Page */}
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -50,34 +60,34 @@ export const HelpContent = () => {
             <List dense>
               <ListItem>
                 <ListItemIcon sx={{ minWidth: 32 }}>
-                  <TocIcon fontSize="small" />
+                  <ShowChartIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={t('Панель керування (зліва)')}
+                  primary={t('Прогноз')}
                   secondary={t(
-                    "Дозволяє вибрати одну або декілька моделей зі списку (напр., 'XGBoost_Tuned', 'SARIMA'), вказати горизонт прогнозування та запустити розрахунок кнопкою 'Сформувати прогноз'."
+                    'Вибір моделей, горизонту прогнозування та умов (погода, календар, час, енергетичні параметри). Інтерактивний графік з 12 типами візуалізації.'
                   )}
                 />
               </ListItem>
               <ListItem>
                 <ListItemIcon sx={{ minWidth: 32 }}>
-                  <BarChartIcon fontSize="small" />
+                  <HistoryIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={t('Основна область (центр)')}
+                  primary={t('Історичні дані')}
                   secondary={t(
-                    'Відображає інтерактивний графік, де кожна лінія відповідає прогнозу обраної моделі. Дозволяє візуально оцінити різницю між моделями.'
+                    'Графік реального споживання за вибраний період (7-365 днів) зі статистикою: мін, макс, середнє, медіана, стандартне відхилення.'
                   )}
                 />
               </ListItem>
               <ListItem>
                 <ListItemIcon sx={{ minWidth: 32 }}>
-                  <BarChartIcon fontSize="small" />
+                  <CategoryIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={t('Вибір типу графіка (справа)')}
+                  primary={t('Ознаки моделі')}
                   secondary={t(
-                    "Дозволяє миттєво перемикати візуалізацію між різними типами графіків, такими як 'Лінійна', 'Стовпчаста' або 'Area'."
+                    'Детальна інформація про кожну модель: тип, гранулярність, набір ознак та опис кожної ознаки з поясненням її впливу на прогноз.'
                   )}
                 />
               </ListItem>
@@ -85,6 +95,7 @@ export const HelpContent = () => {
           </AccordionDetails>
         </Accordion>
 
+        {/* Evaluation */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -136,6 +147,7 @@ export const HelpContent = () => {
           </AccordionDetails>
         </Accordion>
 
+        {/* Feature Importance */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -176,6 +188,7 @@ export const HelpContent = () => {
           </AccordionDetails>
         </Accordion>
 
+        {/* Simulation */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -197,7 +210,7 @@ export const HelpContent = () => {
                 <ListItemText
                   primary={t('Форма керування')}
                   secondary={t(
-                    "Дозволяє вибрати модель, горизонт прогнозування та вручну змінити одну з ознак для конкретної дати (напр., змінити 'day_of_week' на '6' для симуляції свята)."
+                    'Розширена форма з умовами: погодні (температура, вологість, вітер), календарні (свята, вихідні), часові (година, день, місяць), енергетичні та споживання по зонах.'
                   )}
                 />
               </ListItem>
@@ -216,6 +229,7 @@ export const HelpContent = () => {
           </AccordionDetails>
         </Accordion>
 
+        {/* SHAP Force Plot */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Stack direction="row" spacing={1} alignItems="center">
@@ -255,6 +269,150 @@ export const HelpContent = () => {
                 <ListItemText
                   primary={t('Фінальний прогноз (Prediction)')}
                   secondary={t('Результат, що дорівнює сумі базового значення та всіх внесків.')}
+                />
+              </ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
+
+        {/* Analytics */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <AnalyticsIcon color="primary" />
+              <Typography variant="h6">{t('Аналітика')}</Typography>
+            </Stack>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography sx={{ mb: 2 }}>
+              {t('Комплексний аналіз даних споживання енергії з різних точок зору для виявлення закономірностей та аномалій.')}
+            </Typography>
+            <List dense>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <BarChartIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Пікові періоди')}
+                  secondary={t(
+                    'Аналіз ранкових та вечірніх піків споживання, мінімального навантаження. Топ пікових та мінімальних значень за обраний період.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <TimelineIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Сезонні патерни')}
+                  secondary={t(
+                    'Візуалізація сезонності на різних рівнях гранулярності: погодинно, денно, тижнево, місячно, річно. Детальна статистика з графіками.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <WarningAmberIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Аномалії')}
+                  secondary={t(
+                    'Виявлення нетипового споживання з налаштованим порогом. Розподіл аномалій за годинами та днями тижня.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <ShowChartIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Декомпозиція')}
+                  secondary={t(
+                    'Розкладання часового ряду на компоненти: тренд, сезонність, залишки. Метрики сили тренду та сезонності.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <CompareArrowsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Порівняння сценаріїв')}
+                  secondary={t(
+                    'Створення та порівняння кількох сценаріїв прогнозування з різними умовами (тепла/холодна погода, свята тощо). Підсумкова таблиця з різницею від базового.'
+                  )}
+                />
+              </ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
+
+        {/* Scientific Analysis */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <AssessmentIcon color="primary" />
+              <Typography variant="h6">{t('Scientific Analysis')}</Typography>
+            </Stack>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography sx={{ mb: 2 }}>
+              {t('Детальний науковий аналіз моделей прогнозування для публікацій та звітів.')}
+            </Typography>
+            <List dense>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <AssessmentIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Статистичні тести')}
+                  secondary={t(
+                    'Порівняння моделей за допомогою статистичних тестів значущості: t-test, Wilcoxon, Mann-Whitney для визначення найкращої моделі.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <TimelineIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Аналіз залишків')}
+                  secondary={t(
+                    'Валідація припущень моделі: розподіл залишків, Q-Q plot, тест на нормальність, автокореляція.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <BubbleChartIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Візуалізації')}
+                  secondary={t(
+                    'Генерація високоякісних наукових графіків для публікацій: порівняння моделей, розподіл помилок, correlation matrix.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <BarChartIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Аналіз помилок')}
+                  secondary={t(
+                    'Детальний аналіз помилок прогнозування з часовими паттернами: по годинах, днях тижня, місяцях.'
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <CodeIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('Експорт')}
+                  secondary={t(
+                    'Експорт результатів у LaTeX для наукових публікацій та звіт про відтворюваність з повним описом методології.'
+                  )}
                 />
               </ListItem>
             </List>
