@@ -1,3 +1,5 @@
+import type { IEvaluationApiResponse } from './api';
+
 // Scientific Analysis API Types
 
 // Statistical Tests
@@ -128,14 +130,14 @@ export interface VisualizationRequest {
   visualization_type: VisualizationType;
   model_ids?: string[];
   test_size_days: number;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
 }
 
 export interface VisualizationResponse {
   visualization_type: string;
   image_base64: string;
   format: 'png';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // LaTeX Export
@@ -173,15 +175,15 @@ export interface ReproducibilityReportResponse {
   system_information: {
     platform: Record<string, string>;
     python: Record<string, string>;
-    hardware: Record<string, any>;
+    hardware: Record<string, string | number>;
   };
   software_environment: {
     package_versions: Record<string, string>;
-    git_information?: Record<string, any>;
+    git_information?: Record<string, string>;
   };
   reproducibility_instructions: Record<string, string>;
   markdown_report?: string;
-  json_report?: any;
+  json_report?: Record<string, unknown>;
 }
 
 // Model Diagnostics
@@ -190,5 +192,5 @@ export interface ModelDiagnosticsResponse {
   test_size_days: number;
   residual_analysis: ResidualAnalysisResponse;
   error_analysis: ErrorAnalysisResponse;
-  evaluation: any; // Using existing evaluation type
+  evaluation: IEvaluationApiResponse;
 }

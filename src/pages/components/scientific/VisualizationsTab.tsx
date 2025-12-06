@@ -26,7 +26,7 @@ import {
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi';
-import type { VisualizationType } from '@/types/scientific';
+import type { VisualizationRequest, VisualizationType } from '@/types/scientific';
 
 const VISUALIZATION_TYPES: Array<{ value: VisualizationType; label: string; requiresModels: boolean }> = [
   { value: 'comparison', label: 'Порівняння моделей (Radar Chart)', requiresModels: true },
@@ -66,14 +66,11 @@ export const VisualizationsTab = () => {
   };
 
   const handleGenerate = () => {
-    const request: any = {
+    const request: VisualizationRequest = {
       visualization_type: visualizationType,
-      test_size_days: testDays
+      test_size_days: testDays,
+      model_ids: currentVizConfig?.requiresModels && selectedModels.length > 0 ? selectedModels : undefined
     };
-
-    if (currentVizConfig?.requiresModels && selectedModels.length > 0) {
-      request.model_ids = selectedModels;
-    }
 
     generateVisualization(request);
   };
