@@ -200,7 +200,7 @@ export const MainContent = () => {
         </Tabs>
 
         {/* Tab Content */}
-        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Tab 0: Forecast */}
           {activeTab === 0 && (
             <>
