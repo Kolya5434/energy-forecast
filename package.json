@@ -66,5 +66,10 @@
     "vite": "^7.2.7",
     "vite-plugin-compression": "^0.5.1",
     "vitest": "^4.0.15"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "8.0.0-beta.0"
+    }
   }
 }
