@@ -1,22 +1,22 @@
 import { useCallback, useState } from 'react';
 
-export interface ApiState<T> {
+interface ApiState<T> {
   data: T | null;
   isLoading: boolean;
   error: string | null;
 }
 
-export type ExecuteFn<TParams> = TParams extends void
+type ExecuteFn<TParams> = TParams extends void
   ? () => Promise<void>
   : (params: TParams) => Promise<void>;
 
-export interface ApiStateActions<T, TParams = void> {
+interface ApiStateActions<T, TParams = void> {
   execute: ExecuteFn<TParams>;
   setData: (data: T | null) => void;
   reset: () => void;
 }
 
-export type UseApiStateReturn<T, TParams = void> = ApiState<T> & ApiStateActions<T, TParams>;
+type UseApiStateReturn<T, TParams = void> = ApiState<T> & ApiStateActions<T, TParams>;
 
 /**
  * Generic hook for API state management
@@ -65,19 +65,19 @@ export function useApiState<T, TParams = void>(
 /**
  * Hook for cached API state (keyed by ID)
  */
-export interface CachedApiState<T> {
+interface CachedApiState<T> {
   cache: Record<string, T>;
   isLoading: boolean;
   error: string | null;
 }
 
-export interface CachedApiStateActions<T> {
+interface CachedApiStateActions<T> {
   get: (key: string) => Promise<T | null>;
   getFromCache: (key: string) => T | undefined;
   reset: () => void;
 }
 
-export type UseCachedApiStateReturn<T> = CachedApiState<T> & CachedApiStateActions<T>;
+type UseCachedApiStateReturn<T> = CachedApiState<T> & CachedApiStateActions<T>;
 
 export function useCachedApiState<T>(
   apiFn: (key: string) => Promise<T>,

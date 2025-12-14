@@ -6,7 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { LoadingFallback } from './components/LoadingFallback';
 import { darkTheme, lightTheme } from '../theme';
-import { ApiProvider } from './context/ApiContext.tsx';
+import { AppProviders } from './context';
 import { Header } from './pages/Header.tsx';
 import type { View } from './types/shared.ts';
 
@@ -98,7 +98,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
-        <ApiProvider>
+        <AppProviders>
           <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               <Header
@@ -116,7 +116,7 @@ function App() {
             <Analytics />
             <SpeedInsights />
           </Suspense>
-        </ApiProvider>
+        </AppProviders>
       </LocalizationProvider>
     </ThemeProvider>
   );

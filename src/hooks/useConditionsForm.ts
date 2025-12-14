@@ -49,7 +49,7 @@ export const INITIAL_CONDITIONS_FORM_STATE: ConditionsFormState = {
   is_anomaly: false
 };
 
-export interface UseConditionsFormReturn {
+interface UseConditionsFormReturn {
   formState: ConditionsFormState;
   setFormState: React.Dispatch<React.SetStateAction<ConditionsFormState>>;
   expandedPanels: string[];

@@ -1,4 +1,4 @@
-export interface IModelInfo {
+interface IModelInfo {
   type: 'classical' | 'ml' | 'dl' | 'ensemble';
   granularity: 'daily' | 'hourly';
   feature_set: 'none' | 'simple' | 'full' | 'base_scaled';
@@ -12,18 +12,18 @@ export interface IModelInfo {
 export type ModelsApiResponse = Record<string, IModelInfo>;
 
 // Condition interfaces (shared between prediction and simulation)
-export interface IWeatherConditions {
+interface IWeatherConditions {
   temperature?: number;      // °C
   humidity?: number;         // 0-100
   wind_speed?: number;       // м/с, ≥0
 }
 
-export interface ICalendarConditions {
+interface ICalendarConditions {
   is_holiday?: boolean;
   is_weekend?: boolean;
 }
 
-export interface ITimeScenario {
+interface ITimeScenario {
   hour?: number;             // 0-23
   day_of_week?: number;      // 0-6 (0=Пн)
   day_of_month?: number;     // 1-31
@@ -34,20 +34,20 @@ export interface ITimeScenario {
   quarter?: number;          // 1-4
 }
 
-export interface IEnergyConditions {
+interface IEnergyConditions {
   voltage?: number;                // V, ≥0
   global_reactive_power?: number;  // ≥0
   global_intensity?: number;       // A, ≥0
 }
 
-export interface IZoneConsumption {
+interface IZoneConsumption {
   sub_metering_1?: number;   // Кухня (Wh), ≥0
   sub_metering_2?: number;   // Пральня (Wh), ≥0
   sub_metering_3?: number;   // Клімат (Wh), ≥0
 }
 
 // Lag overrides for prediction/simulation
-export interface ILagOverrides {
+interface ILagOverrides {
   lag_1?: number;     // Споживання 1 год тому (kW)
   lag_2?: number;     // Споживання 2 год тому
   lag_3?: number;     // Споживання 3 год тому
@@ -57,7 +57,7 @@ export interface ILagOverrides {
 }
 
 // Volatility scenario for prediction/simulation
-export interface IVolatilityScenario {
+interface IVolatilityScenario {
   roll_mean_3?: number;    // Середнє за 3 год
   roll_std_3?: number;     // Волатильність за 3 год
   roll_mean_24?: number;   // Середнє за добу
@@ -85,7 +85,7 @@ export interface IPredictionRequest extends IExtendedConditions {
   include_patterns?: boolean;    // для майбутнього
 }
 
-export interface IConditionsApplied extends IExtendedConditions {
+interface IConditionsApplied extends IExtendedConditions {
   feature_overrides?: IFeatureOverride[];
 }
 
@@ -214,7 +214,7 @@ export interface IHistoricalResponse {
 }
 
 // Features API types
-export interface IAvailableConditions {
+interface IAvailableConditions {
   weather?: string[];
   calendar?: string[];
   time?: string[];
@@ -244,7 +244,7 @@ export interface IPatternsRequest {
   period?: PatternPeriod;
 }
 
-export interface IPatternStats {
+interface IPatternStats {
   mean: number;
   std: number;
   min: number;
@@ -268,7 +268,7 @@ export interface IAnomaliesRequest {
   include_details?: boolean; // default true
 }
 
-export interface IAnomalyGroup {
+interface IAnomalyGroup {
   count: number;
   dates: string[];
   max_value?: number;
@@ -293,24 +293,24 @@ export interface IPeaksRequest {
   granularity?: 'hourly' | 'daily';
 }
 
-export interface IPeakValue {
+interface IPeakValue {
   date: string;
   value: number;
 }
 
-export interface IPeakConsumption {
+interface IPeakConsumption {
   top_peaks: IPeakValue[];
   max_value: number;
   max_date: string;
 }
 
-export interface ILowConsumption {
+interface ILowConsumption {
   top_lows: IPeakValue[];
   min_value: number;
   min_date: string;
 }
 
-export interface IPeakHours {
+interface IPeakHours {
   morning_peak: number;
   evening_peak: number;
   off_peak: number;
@@ -330,7 +330,7 @@ export interface IDecompositionRequest {
   period?: number;  // 24 (добова), 168 (тижнева), 12, 48
 }
 
-export interface IDecompositionSummary {
+interface IDecompositionSummary {
   trend_strength: number;
   seasonal_strength: number;
   residual_std: number;
@@ -351,7 +351,7 @@ export interface IDecompositionResponse {
 // ============================================
 // Compare Scenarios API types
 // ============================================
-export interface IScenarioDefinition {
+interface IScenarioDefinition {
   name: string;
   weather?: IWeatherConditions;
   calendar?: ICalendarConditions;

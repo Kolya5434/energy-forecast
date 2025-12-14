@@ -2,7 +2,7 @@
 // Based on new scientific endpoints
 
 // Common metrics interface
-export interface ModelMetrics {
+interface ModelMetrics {
   mae: number;
   mse: number;
   rmse: number;
@@ -21,7 +21,7 @@ export interface UncertaintyRequest {
   method?: 'bootstrap' | 'conformal' | 'bayesian'; // default: "bootstrap"
 }
 
-export interface UncertaintyModelResult {
+interface UncertaintyModelResult {
   point_forecast: number[];
   residual_std: number;
   residual_mean: number;
@@ -99,7 +99,7 @@ export interface DriftAnalysisRequest {
   sensitivity?: number; // default: 0.01, range: 0.001-0.1
 }
 
-export interface DriftPoint {
+interface DriftPoint {
   index: number;
   timestamp: string | null;
   severity: number;

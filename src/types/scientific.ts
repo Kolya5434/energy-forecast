@@ -8,7 +8,7 @@ export interface StatisticalTestRequest {
   test_size_days: number;
 }
 
-export interface PairwiseTest {
+interface PairwiseTest {
   t_test: {
     statistic: number;
     p_value: number;

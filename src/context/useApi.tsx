@@ -1,10 +1,29 @@
-import { useContext } from 'react';
-import { ApiContext } from './ApiContext';
+import { useAnalytics } from './AnalyticsContext';
+import { useForecast } from './ForecastContext';
+import { useModels } from './ModelsContext';
+import { useScientific } from './ScientificContext';
 
+/**
+ * Legacy hook that combines all contexts for backward compatibility
+ * For new code, prefer using specific hooks: useModels, useForecast, useAnalytics, useScientific
+ */
 export const useApi = () => {
-  const context = useContext(ApiContext);
-  if (context === undefined) {
-    throw new Error('useApi must be used within an ApiProvider');
-  }
-  return context;
+  const models = useModels();
+  const forecast = useForecast();
+  const analytics = useAnalytics();
+  const scientific = useScientific();
+
+  return {
+    // Models context
+    ...models,
+
+    // Forecast context
+    ...forecast,
+
+    // Analytics context
+    ...analytics,
+
+    // Scientific context
+    ...scientific
+  };
 };
