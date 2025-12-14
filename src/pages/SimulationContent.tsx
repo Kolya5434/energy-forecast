@@ -414,20 +414,6 @@ export const SimulationContent = () => {
                 </AccordionDetails>
               </Accordion>
 
-              {/* Zone consumption */}
-              <Accordion expanded={expandedPanels.includes('zone')} onChange={handlePanelChange('zone')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>{t('Споживання по зонах')}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-                    <NumberField name="sub_metering_1" label={t('Кухня (Wh)')} placeholder="≥0" min={0} control={control} />
-                    <NumberField name="sub_metering_2" label={t('Пральня (Wh)')} placeholder="≥0" min={0} control={control} />
-                    <NumberField name="sub_metering_3" label={t('Клімат-контроль (Wh)')} placeholder="≥0" width={180} min={0} control={control} />
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
-
               {/* Legacy feature override */}
               <Accordion expanded={expandedPanels.includes('legacy')} onChange={handlePanelChange('legacy')}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
