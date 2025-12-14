@@ -23,6 +23,7 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi.tsx';
 import { exportChartData } from '@/helpers/exportToFile.ts';
+import { preloadDocx, preloadJspdf, preloadXlsx } from '@/helpers/preloadExportLibs';
 import { isFeatureImportanceResponse } from '@/helpers/utils.ts';
 import type { ChartType, ViewMode } from '@/types/shared.ts';
 import { ChartTypeSelector } from './ChartTypeSelector.tsx';
@@ -110,6 +111,8 @@ export const InterpretContent = () => {
             <Button
               startIcon={<DownloadIcon />}
               onClick={() => exportChartData('xlsx', chartData, selectedModel)}
+              onMouseEnter={preloadXlsx}
+              onFocus={preloadXlsx}
               disabled={chartData.length === 0}
             >
               Excel
@@ -117,6 +120,8 @@ export const InterpretContent = () => {
             <Button
               startIcon={<DownloadIcon />}
               onClick={() => exportChartData('docx', chartData, selectedModel)}
+              onMouseEnter={preloadDocx}
+              onFocus={preloadDocx}
               disabled={chartData.length === 0}
             >
               Word
@@ -124,6 +129,8 @@ export const InterpretContent = () => {
             <Button
               startIcon={<DownloadIcon />}
               onClick={() => exportChartData('pdf', chartData, selectedModel)}
+              onMouseEnter={preloadJspdf}
+              onFocus={preloadJspdf}
               disabled={chartData.length === 0}
             >
               PDF
