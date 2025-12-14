@@ -212,7 +212,7 @@ const exportToWord = async (options: ExportOptions) => {
 /**
  * Main export function
  */
-export const handleExport = async (format: ExportTypes, data: ExportDataRow[], modelName?: string) => {
+const handleExport = async (format: ExportTypes, data: ExportDataRow[], modelName?: string) => {
   if (!data || data.length === 0) {
     alert('Немає даних для експорту');
     return;

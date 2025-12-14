@@ -296,7 +296,7 @@ const exportEvaluationToWord = async (options: EvaluationExportOptions) => {
 /**
  * Main export function for evaluation metrics
  */
-export const exportEvaluationMetrics = async (
+const exportEvaluationMetrics = async (
   format: ExportTypes,
   data: MetricData[],
   includePerformance: boolean = true

@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
@@ -11,8 +12,13 @@ interface FeatureImportanceTableProps {
   chartData: ChartDataPoint[];
 }
 
-export const FeatureImportanceTable = ({ chartData }: FeatureImportanceTableProps) => {
+export const FeatureImportanceTable = memo(({ chartData }: FeatureImportanceTableProps) => {
   const { t } = useTranslation();
+
+  const totalValue = useMemo(() =>
+    chartData.reduce((sum, item) => sum + item.value, 0),
+    [chartData]
+  );
 
   return (
     <TableContainer sx={{ maxHeight: 500 }}>
@@ -31,7 +37,6 @@ export const FeatureImportanceTable = ({ chartData }: FeatureImportanceTableProp
         </TableHead>
         <TableBody>
           {chartData.map((row, index) => {
-            const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
             const percentage = ((row.value / totalValue) * 100).toFixed(2);
 
             return (
@@ -47,4 +52,6 @@ export const FeatureImportanceTable = ({ chartData }: FeatureImportanceTableProp
       </Table>
     </TableContainer>
   );
-};
+});
+
+FeatureImportanceTable.displayName = 'FeatureImportanceTable';

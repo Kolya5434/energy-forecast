@@ -7,21 +7,16 @@ import {
   fetchLiveMetrics,
   fetchPartialDependence,
   getMetricsStreamUrl,
-  postAblationStudy,
   postDriftAnalysis,
   postEnsembleAnalysis,
   postExplainability,
   postFeatureAnalysis,
-  postForecastingStrategy,
   postHorizonAnalysis,
   postProbabilisticForecast,
   postScalabilityTest,
-  postTransferAnalysis,
   postUncertainty
 } from '@/api/scientificV2';
 import type {
-  AblationStudyRequest,
-  AblationStudyResponse,
   BenchmarkResponse,
   DriftAnalysisRequest,
   DriftAnalysisResponse,
@@ -33,8 +28,6 @@ import type {
   FeatureAnalysisRequest,
   FeatureAnalysisResponse,
   FeatureSelectionResponse,
-  ForecastingStrategyRequest,
-  ForecastingStrategyResponse,
   HorizonAnalysisRequest,
   HorizonAnalysisResponse,
   LiveMetricsResponse,
@@ -44,8 +37,6 @@ import type {
   ProbabilisticForecastResponse,
   ScalabilityTestRequest,
   ScalabilityTestResponse,
-  TransferAnalysisRequest,
-  TransferAnalysisResponse,
   UncertaintyRequest,
   UncertaintyResponse
 } from '@/types/scientificV2';
@@ -177,15 +168,7 @@ export function useHorizonAnalysis() {
   );
 }
 
-// 6. Forecasting Strategy
-export function useForecastingStrategy() {
-  return useApiCall<ForecastingStrategyRequest, ForecastingStrategyResponse>(
-    postForecastingStrategy,
-    'Помилка аналізу стратегії прогнозування'
-  );
-}
-
-// 7. Feature Analysis
+// 6. Feature Analysis
 export function useFeatureAnalysis() {
   return useApiCall<FeatureAnalysisRequest, FeatureAnalysisResponse>(
     postFeatureAnalysis,
@@ -217,7 +200,7 @@ export function useFeatureSelection() {
   return { data, isLoading, error, execute, reset: () => setData(null) };
 }
 
-// 8. Benchmark
+// 7. Benchmark
 export function useBenchmark() {
   return useApiGet<BenchmarkResponse>(fetchBenchmark, 'Помилка отримання бенчмарку');
 }
@@ -229,7 +212,7 @@ export function useScalabilityTest() {
   );
 }
 
-// 9. Probabilistic Forecast
+// 8. Probabilistic Forecast
 export function useProbabilisticForecast() {
   return useApiCall<ProbabilisticForecastRequest, ProbabilisticForecastResponse>(
     postProbabilisticForecast,
@@ -237,20 +220,7 @@ export function useProbabilisticForecast() {
   );
 }
 
-// 10. Transfer Analysis
-export function useTransferAnalysis() {
-  return useApiCall<TransferAnalysisRequest, TransferAnalysisResponse>(
-    postTransferAnalysis,
-    'Помилка трансферного аналізу'
-  );
-}
-
-// 11. Ablation Study
-export function useAblationStudy() {
-  return useApiCall<AblationStudyRequest, AblationStudyResponse>(postAblationStudy, 'Помилка абляційного аналізу');
-}
-
-// 12. Live Metrics
+// 9. Live Metrics
 export function useLiveMetrics() {
   return useApiGet<LiveMetricsResponse>(fetchLiveMetrics, 'Помилка отримання метрик');
 }

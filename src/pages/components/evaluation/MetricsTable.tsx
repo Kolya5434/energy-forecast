@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
@@ -20,7 +21,7 @@ interface MetricsTableProps {
   isLoading: boolean;
 }
 
-export const MetricsTable = ({
+export const MetricsTable = memo(({
   sortedTableData,
   metrics,
   sortBy,
@@ -109,4 +110,6 @@ export const MetricsTable = ({
       </Table>
     </TableContainer>
   );
-};
+});
+
+MetricsTable.displayName = 'MetricsTable';
