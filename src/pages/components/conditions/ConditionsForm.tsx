@@ -226,47 +226,6 @@ export const ConditionsForm = memo(
             </Stack>
           </AccordionDetails>
         </Accordion>
-
-        {/* Zone consumption */}
-        <Accordion expanded={expandedPanels.includes('zone')} onChange={onPanelChange('zone')}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{t('Споживання по зонах')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-              <TextField
-                value={formState.sub_metering_1}
-                onChange={onInputChange('sub_metering_1')}
-                label={t('Кухня (Wh)')}
-                type="number"
-                size="small"
-                sx={{ width: 150 }}
-                placeholder="≥0"
-                slotProps={{ htmlInput: { min: 0 } }}
-              />
-              <TextField
-                value={formState.sub_metering_2}
-                onChange={onInputChange('sub_metering_2')}
-                label={t('Пральня (Wh)')}
-                type="number"
-                size="small"
-                sx={{ width: 150 }}
-                placeholder="≥0"
-                slotProps={{ htmlInput: { min: 0 } }}
-              />
-              <TextField
-                value={formState.sub_metering_3}
-                onChange={onInputChange('sub_metering_3')}
-                label={t('Клімат-контроль (Wh)')}
-                type="number"
-                size="small"
-                sx={{ width: 180 }}
-                placeholder="≥0"
-                slotProps={{ htmlInput: { min: 0 } }}
-              />
-            </Stack>
-          </AccordionDetails>
-        </Accordion>
       </Box>
     );
   }
