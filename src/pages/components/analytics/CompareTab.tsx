@@ -300,8 +300,8 @@ export const CompareTab = () => {
                       border: 'none',
                       borderRadius: '8px'
                     }}
-                    formatter={(value: number, name: string) => [
-                      `${value.toFixed(2)} kW`,
+                    formatter={(value, name) => [
+                      `${((value as number) ?? 0).toFixed(2)} kW`,
                       name === 'baseline' ? `${compareResult.baseline.name} (${t('базовий')})` : name
                     ]}
                   />

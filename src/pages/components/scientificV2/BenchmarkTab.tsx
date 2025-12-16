@@ -181,8 +181,8 @@ export const BenchmarkTab = () => {
                 <ZAxis type="category" dataKey="model_id" name={t('Модель')} />
                 <Tooltip
                   cursor={{ strokeDasharray: '3 3' }}
-                  formatter={(value: number, name: string) => [
-                    typeof value === 'number' ? value.toFixed(4) : value,
+                  formatter={(value, name) => [
+                    typeof value === 'number' ? value.toFixed(4) : String(value ?? ''),
                     name
                   ]}
                 />

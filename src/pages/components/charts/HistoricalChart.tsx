@@ -123,7 +123,7 @@ export const HistoricalChart = ({ days = 30, onDaysChange }: HistoricalChartProp
                     border: 'none',
                     borderRadius: '8px'
                   }}
-                  formatter={(value: number) => [value.toFixed(2) + ' kWh', t('Споживання')]}
+                  formatter={(value) => [((value as number) ?? 0).toFixed(2) + ' kWh', t('Споживання')]}
                 />
                 <Area
                   type="monotone"

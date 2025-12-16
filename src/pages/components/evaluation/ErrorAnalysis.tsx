@@ -129,7 +129,7 @@ export const ErrorAnalysis = memo(({ selectedModelId, evaluation, isLoading }: E
             <Tooltip
               contentStyle={TOOLTIP_STYLE_ERRORS}
               cursor={{ strokeDasharray: '3 3' }}
-              formatter={(value: number) => value.toFixed(2)}
+              formatter={(value) => ((value as number) ?? 0).toFixed(2)}
             />
             <Legend verticalAlign="top" height={36} wrapperStyle={{ paddingBottom: '10px' }} />
             <Scatter name={t('Точки даних')} data={scatter_data} fill="#8884d8" fillOpacity={0.6} shape="circle" />

@@ -88,7 +88,7 @@ export const DecompositionTab = () => {
             border: 'none',
             borderRadius: '8px'
           }}
-          formatter={(value: number) => [`${value.toFixed(4)} kW`, 'Значення']}
+          formatter={(value) => [`${((value as number) ?? 0).toFixed(4)} kW`, 'Значення']}
           labelFormatter={(label) => label}
         />
         <Line

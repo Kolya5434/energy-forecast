@@ -239,7 +239,7 @@ export const EnsembleTab = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type="number" domain={[0, 100]} unit="%" />
                       <YAxis type="category" dataKey="model" width={120} />
-                      <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+                      <Tooltip formatter={(value) => `${(value as number ?? 0).toFixed(1)}%`} />
                       <Bar dataKey="weight" name={t('Вага')}>
                         {weightsData.map((_, index) => (
                           <Cell key={index} fill={CHART_COLORS[index % CHART_COLORS.length]} />

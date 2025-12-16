@@ -211,7 +211,7 @@ export const AnomaliesTab = () => {
                       border: 'none',
                       borderRadius: '8px'
                     }}
-                    formatter={(value: number) => [value, t('Кількість')]}
+                    formatter={(value) => [value ?? 0, t('Кількість')]}
                   />
                   <Bar dataKey="count" fill="#ff9800" />
                 </BarChart>
@@ -233,7 +233,7 @@ export const AnomaliesTab = () => {
                       border: 'none',
                       borderRadius: '8px'
                     }}
-                    formatter={(value: number) => [value, t('Кількість')]}
+                    formatter={(value) => [value ?? 0, t('Кількість')]}
                   />
                   <Bar dataKey="count" fill="#e91e63" />
                 </BarChart>

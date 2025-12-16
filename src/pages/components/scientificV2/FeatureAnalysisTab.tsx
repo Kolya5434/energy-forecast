@@ -259,7 +259,7 @@ export const FeatureAnalysisTab = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="feature" width={150} />
-                  <Tooltip formatter={(value: number) => (value ?? 0).toFixed(4)} />
+                  <Tooltip formatter={(value) => ((value as number) ?? 0).toFixed(4)} />
                   <Legend />
                   <Bar dataKey="score" name={t('MI Score')}>
                     {mutualInfoData.map((_, index) => (
@@ -285,7 +285,7 @@ export const FeatureAnalysisTab = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="feature" width={150} />
-                  <Tooltip formatter={(value: number) => (value ?? 0).toFixed(4)} />
+                  <Tooltip formatter={(value) => ((value as number) ?? 0).toFixed(4)} />
                   <Legend />
                   <Bar dataKey="importance" name={t('Importance')} fill="#82ca9d" />
                 </BarChart>

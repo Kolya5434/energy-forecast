@@ -190,8 +190,8 @@ export const PatternsTab = () => {
                     border: 'none',
                     borderRadius: '8px'
                   }}
-                  formatter={(value: number, name: string) => [
-                    `${value.toFixed(3)} kW`,
+                  formatter={(value, name) => [
+                    `${((value as number) ?? 0).toFixed(3)} kW`,
                     name === 'value' ? t('Значення') : name === 'mean' ? t('Середнє') : name === 'min' ? t('Мін') : t('Макс')
                   ]}
                 />
