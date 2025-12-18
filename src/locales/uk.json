@@ -606,5 +606,25 @@
   "Увімкніть для отримання метрик в реальному часі": "Увімкніть для отримання метрик в реальному часі",
   "спостережень": "спостережень",
   "Натисніть \"Оновити\" для завантаження метрик": "Натисніть \"Оновити\" для завантаження метрик",
-  "beta tabs": "Просунуті аналітичні таби"
+  "beta tabs": "Просунуті аналітичні таби",
+
+  "errors.models_fetch_failed": "Не вдалося завантажити список моделей",
+  "errors.features_fetch_failed": "Не вдалося отримати ознаки для моделі",
+  "errors.evaluation_fetch_failed": "Не вдалося отримати оцінку для моделі {{modelId}}",
+  "errors.interpretation_fetch_failed": "Не вдалося отримати інтерпретацію для моделі {{modelId}}",
+  "errors.predictions_fetch_failed": "Не вдалося отримати прогнози",
+  "errors.simulation_failed": "Не вдалося запустити симуляцію",
+  "errors.historical_fetch_failed": "Не вдалося завантажити історичні дані",
+  "errors.patterns_fetch_failed": "Не вдалося завантажити патерни",
+  "errors.anomalies_fetch_failed": "Не вдалося завантажити аномалії",
+  "errors.peaks_fetch_failed": "Не вдалося завантажити пікові періоди",
+  "errors.decomposition_fetch_failed": "Не вдалося завантажити декомпозицію",
+  "errors.compare_failed": "Не вдалося порівняти сценарії",
+  "errors.statistical_tests_failed": "Не вдалося виконати статистичні тести",
+  "errors.residual_analysis_failed": "Не вдалося виконати аналіз залишків",
+  "errors.error_analysis_failed": "Не вдалося виконати аналіз помилок",
+  "errors.visualization_failed": "Не вдалося згенерувати візуалізацію",
+  "errors.latex_export_failed": "Не вдалося експортувати в LaTeX",
+  "errors.reproducibility_report_failed": "Не вдалося отримати звіт про відтворюваність",
+  "errors.model_diagnostics_failed": "Не вдалося отримати діагностику моделі"
 }

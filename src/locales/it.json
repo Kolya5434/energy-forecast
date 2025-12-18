@@ -606,5 +606,25 @@
   "Увімкніть для отримання метрик в реальному часі": "Attiva per ricevere metriche in tempo reale",
   "спостережень": "osservazioni",
   "Натисніть \"Оновити\" для завантаження метрик": "Clicca \"Aggiorna\" per caricare le metriche",
-  "beta tabs": "Tab analisi avanzate"
+  "beta tabs": "Tab analisi avanzate",
+
+  "errors.models_fetch_failed": "Impossibile caricare l'elenco dei modelli",
+  "errors.features_fetch_failed": "Impossibile ottenere le caratteristiche del modello",
+  "errors.evaluation_fetch_failed": "Impossibile ottenere la valutazione per il modello {{modelId}}",
+  "errors.interpretation_fetch_failed": "Impossibile ottenere l'interpretazione per il modello {{modelId}}",
+  "errors.predictions_fetch_failed": "Impossibile ottenere le previsioni",
+  "errors.simulation_failed": "Impossibile eseguire la simulazione",
+  "errors.historical_fetch_failed": "Impossibile caricare i dati storici",
+  "errors.patterns_fetch_failed": "Impossibile caricare i pattern",
+  "errors.anomalies_fetch_failed": "Impossibile caricare le anomalie",
+  "errors.peaks_fetch_failed": "Impossibile caricare i periodi di picco",
+  "errors.decomposition_fetch_failed": "Impossibile caricare la decomposizione",
+  "errors.compare_failed": "Impossibile confrontare gli scenari",
+  "errors.statistical_tests_failed": "Impossibile eseguire i test statistici",
+  "errors.residual_analysis_failed": "Impossibile eseguire l'analisi dei residui",
+  "errors.error_analysis_failed": "Impossibile eseguire l'analisi degli errori",
+  "errors.visualization_failed": "Impossibile generare la visualizzazione",
+  "errors.latex_export_failed": "Impossibile esportare in LaTeX",
+  "errors.reproducibility_report_failed": "Impossibile ottenere il report di riproducibilità",
+  "errors.model_diagnostics_failed": "Impossibile ottenere la diagnostica del modello"
 }

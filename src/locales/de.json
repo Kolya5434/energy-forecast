@@ -606,5 +606,25 @@
   "Увімкніть для отримання метрик в реальному часі": "Aktivieren Sie für Echtzeit-Metriken",
   "спостережень": "Beobachtungen",
   "Натисніть \"Оновити\" для завантаження метрик": "Klicken Sie auf \"Aktualisieren\", um Metriken zu laden",
-  "beta tabs": "Erweiterte Analyse-Tabs"
+  "beta tabs": "Erweiterte Analyse-Tabs",
+
+  "errors.models_fetch_failed": "Modellliste konnte nicht geladen werden",
+  "errors.features_fetch_failed": "Modellmerkmale konnten nicht abgerufen werden",
+  "errors.evaluation_fetch_failed": "Bewertung für Modell {{modelId}} konnte nicht abgerufen werden",
+  "errors.interpretation_fetch_failed": "Interpretation für Modell {{modelId}} konnte nicht abgerufen werden",
+  "errors.predictions_fetch_failed": "Prognosen konnten nicht abgerufen werden",
+  "errors.simulation_failed": "Simulation konnte nicht ausgeführt werden",
+  "errors.historical_fetch_failed": "Historische Daten konnten nicht geladen werden",
+  "errors.patterns_fetch_failed": "Muster konnten nicht geladen werden",
+  "errors.anomalies_fetch_failed": "Anomalien konnten nicht geladen werden",
+  "errors.peaks_fetch_failed": "Spitzenperioden konnten nicht geladen werden",
+  "errors.decomposition_fetch_failed": "Zerlegung konnte nicht geladen werden",
+  "errors.compare_failed": "Szenarien konnten nicht verglichen werden",
+  "errors.statistical_tests_failed": "Statistische Tests konnten nicht ausgeführt werden",
+  "errors.residual_analysis_failed": "Residualanalyse konnte nicht ausgeführt werden",
+  "errors.error_analysis_failed": "Fehleranalyse konnte nicht ausgeführt werden",
+  "errors.visualization_failed": "Visualisierung konnte nicht generiert werden",
+  "errors.latex_export_failed": "Export nach LaTeX fehlgeschlagen",
+  "errors.reproducibility_report_failed": "Reproduzierbarkeitsbericht konnte nicht abgerufen werden",
+  "errors.model_diagnostics_failed": "Modelldiagnose konnte nicht abgerufen werden"
 }

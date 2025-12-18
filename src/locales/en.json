@@ -606,5 +606,25 @@
   "Увімкніть для отримання метрик в реальному часі": "Enable to receive real-time metrics",
   "спостережень": "observations",
   "Натисніть \"Оновити\" для завантаження метрик": "Click \"Refresh\" to load metrics",
-  "beta tabs": "Advanced analytics tabs"
+  "beta tabs": "Advanced analytics tabs",
+
+  "errors.models_fetch_failed": "Failed to load models list",
+  "errors.features_fetch_failed": "Failed to get model features",
+  "errors.evaluation_fetch_failed": "Failed to get evaluation for model {{modelId}}",
+  "errors.interpretation_fetch_failed": "Failed to get interpretation for model {{modelId}}",
+  "errors.predictions_fetch_failed": "Failed to get predictions",
+  "errors.simulation_failed": "Failed to run simulation",
+  "errors.historical_fetch_failed": "Failed to load historical data",
+  "errors.patterns_fetch_failed": "Failed to load patterns",
+  "errors.anomalies_fetch_failed": "Failed to load anomalies",
+  "errors.peaks_fetch_failed": "Failed to load peak periods",
+  "errors.decomposition_fetch_failed": "Failed to load decomposition",
+  "errors.compare_failed": "Failed to compare scenarios",
+  "errors.statistical_tests_failed": "Failed to run statistical tests",
+  "errors.residual_analysis_failed": "Failed to run residual analysis",
+  "errors.error_analysis_failed": "Failed to run error analysis",
+  "errors.visualization_failed": "Failed to generate visualization",
+  "errors.latex_export_failed": "Failed to export to LaTeX",
+  "errors.reproducibility_report_failed": "Failed to get reproducibility report",
+  "errors.model_diagnostics_failed": "Failed to get model diagnostics"
 }
