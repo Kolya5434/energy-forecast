@@ -1,8 +1,7 @@
 import path from 'path';
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import viteCompression from 'vite-plugin-compression';
+import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,32 +12,14 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    // Visualizer for bundle analysis (only generates stats.html)
     visualizer({
       filename: 'dist/stats.html',
       open: false,
-      gzipSize: true,
-      brotliSize: true
-    }),
-    // Brotli compression (best compression, modern browsers)
-    viteCompression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
-      threshold: 1024, // Only compress files > 1KB
-      deleteOriginFile: false,
-      compressionOptions: {
-        level: 11 // Maximum compression
-      }
-    }),
-    // Gzip compression (fallback for older browsers)
-    viteCompression({
-      algorithm: 'gzip',
-      ext: '.gz',
-      threshold: 1024,
-      deleteOriginFile: false,
-      compressionOptions: {
-        level: 9 // Maximum compression
-      }
+      gzipSize: false,
+      brotliSize: false
     })
+    // Note: Compression removed - Vercel handles brotli/gzip automatically
   ],
   build: {
     rollupOptions: {
@@ -118,22 +99,8 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 600,
     cssCodeSplit: true,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-        passes: 2,
-        ecma: 2020
-      },
-      mangle: {
-        safari10: true
-      },
-      format: {
-        comments: false
-      }
-    },
+    // Use esbuild for minification (much faster than terser)
+    minify: 'esbuild',
     reportCompressedSize: false,
     sourcemap: false,
     // Target modern browsers for smaller output
