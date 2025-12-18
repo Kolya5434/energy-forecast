@@ -20,8 +20,8 @@ import {
   useMediaQuery
 } from '@mui/material';
 
-import i18n from '@/i18n';
 import type { ThemeMode } from '@/App';
+import i18n, { loadLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n';
 import type { View } from '@/types/shared';
 
 interface HeaderProps {
@@ -68,11 +68,10 @@ const HeaderComponent = ({ toggleTheme, setActiveView, activeView, themeMode }: 
   };
 
   const handleLanguageToggle = () => {
-    const supported = ['uk', 'en', 'de', 'it'];
-    const index = supported.indexOf(currentLang);
-    const nextLang = supported[(index + 1) % supported.length];
+    const index = SUPPORTED_LANGUAGES.indexOf(currentLang as SupportedLanguage);
+    const nextLang = SUPPORTED_LANGUAGES[(index + 1) % SUPPORTED_LANGUAGES.length];
 
-    i18n.changeLanguage(nextLang).catch((err) => {
+    loadLanguage(nextLang).catch((err) => {
       console.error('Language change failed:', err);
     });
   };
