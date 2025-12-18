@@ -1,16 +1,6 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  Legend,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Area, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
@@ -42,12 +32,11 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useUncertainty } from '@/hooks/useScientificV2';
 import type { UncertaintyResponse } from '@/types/scientificV2';
-
 import { ModelSelector } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
 
-export const UncertaintyTab = () => {
+export const UncertaintyTab = memo(function UncertaintyTab() {
   const { t } = useTranslation();
   const { data, isLoading, error, execute } = useUncertainty();
 
@@ -220,7 +209,9 @@ export const UncertaintyTab = () => {
                 <Chip label={`${t('Метод')}: ${data.metadata.method}`} color="primary" />
                 <Chip label={`${t('Горизонт')}: ${data.metadata.forecast_horizon} ${t('днів')}`} />
                 <Chip label={`Bootstrap: ${data.metadata.n_bootstrap}`} />
-                <Chip label={`${t('Рівні')}: ${data.metadata.confidence_levels.map((l) => `${l * 100}%`).join(', ')}`} />
+                <Chip
+                  label={`${t('Рівні')}: ${data.metadata.confidence_levels.map((l) => `${l * 100}%`).join(', ')}`}
+                />
               </Stack>
             </CardContent>
           </Card>
@@ -258,20 +249,22 @@ export const UncertaintyTab = () => {
                   <Legend />
 
                   {/* Render areas for each confidence level */}
-                  {confidenceLevels.sort((a, b) => b - a).map((level, idx) => {
-                    const levelKey = `${Math.round(level * 100)}%`;
-                    return (
-                      <Area
-                        key={levelKey}
-                        type="monotone"
-                        dataKey={`range_${levelKey}`}
-                        name={`${levelKey} ${t('інтервал')}`}
-                        fill={CHART_COLORS[idx % CHART_COLORS.length]}
-                        fillOpacity={0.2}
-                        stroke="none"
-                      />
-                    );
-                  })}
+                  {confidenceLevels
+                    .sort((a, b) => b - a)
+                    .map((level, idx) => {
+                      const levelKey = `${Math.round(level * 100)}%`;
+                      return (
+                        <Area
+                          key={levelKey}
+                          type="monotone"
+                          dataKey={`range_${levelKey}`}
+                          name={`${levelKey} ${t('інтервал')}`}
+                          fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                          fillOpacity={0.2}
+                          stroke="none"
+                        />
+                      );
+                    })}
 
                   <Line
                     type="monotone"
@@ -294,7 +287,9 @@ export const UncertaintyTab = () => {
               if (!metrics) {
                 return (
                   <Grid size={{ xs: 12, sm: 6, md: 4 }} key={modelId}>
-                    <Alert severity="error">{modelId}: {'error' in result ? result.error : 'Error'}</Alert>
+                    <Alert severity="error">
+                      {modelId}: {'error' in result ? result.error : 'Error'}
+                    </Alert>
                   </Grid>
                 );
               }
@@ -307,19 +302,27 @@ export const UncertaintyTab = () => {
                       </Typography>
                       <Stack spacing={1}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">MAE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            MAE:
+                          </Typography>
                           <Typography variant="body2">{metrics.mae.toFixed(4)}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">RMSE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            RMSE:
+                          </Typography>
                           <Typography variant="body2">{metrics.rmse.toFixed(4)}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">R²:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            R²:
+                          </Typography>
                           <Typography variant="body2">{metrics.r2.toFixed(4)}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">MAPE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            MAPE:
+                          </Typography>
                           <Typography variant="body2">{metrics.mape.toFixed(2)}%</Typography>
                         </Box>
                       </Stack>
@@ -366,7 +369,10 @@ export const UncertaintyTab = () => {
           {/* Info */}
           <Alert severity="info">
             <Typography variant="body2">
-              <strong>{t('Інтерпретація')}:</strong> {t('Інтервали показують діапазон можливих значень прогнозу. Чим ширший інтервал, тим більша невизначеність.')}
+              <strong>{t('Інтерпретація')}:</strong>{' '}
+              {t(
+                'Інтервали показують діапазон можливих значень прогнозу. Чим ширший інтервал, тим більша невизначеність.'
+              )}
             </Typography>
           </Alert>
         </Stack>
@@ -382,4 +388,4 @@ export const UncertaintyTab = () => {
       )}
     </Box>
   );
-};
+});

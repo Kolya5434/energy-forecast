@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -39,7 +39,7 @@ const LATEX_EXPORT_TYPES: Array<{ value: LaTeXExportType; label: string; descrip
   { value: 'full_document', label: 'Повний документ', description: 'Повний LaTeX документ з усіма розділами' }
 ];
 
-export const ExportTab = () => {
+export const ExportTab = memo(function ExportTab() {
   const { t } = useTranslation();
   const {
     models,
@@ -270,7 +270,9 @@ export const ExportTab = () => {
                   </Box>
 
                   <Alert severity="info" sx={{ mt: 2 }}>
-                    <Typography variant="caption" whiteSpace='pre-line'>{t('latex export')}</Typography>
+                    <Typography variant="caption" whiteSpace="pre-line">
+                      {t('latex export')}
+                    </Typography>
                   </Alert>
                 </CardContent>
               </Card>
@@ -369,4 +371,4 @@ export const ExportTab = () => {
       </Stack>
     </Box>
   );
-};
+});

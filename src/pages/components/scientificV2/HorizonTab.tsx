@@ -1,15 +1,6 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -37,12 +28,11 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useHorizonAnalysis } from '@/hooks/useScientificV2';
 import type { HorizonAnalysisResponse, HorizonModelResult } from '@/types/scientificV2';
-
 import { Base64Image, MetricCard, ModelSelector } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
 
-export const HorizonTab = () => {
+export const HorizonTab = memo(function HorizonTab() {
   const { t } = useTranslation();
   const { data, isLoading, error, execute } = useHorizonAnalysis();
 
@@ -222,10 +212,7 @@ export const HorizonTab = () => {
             <ResponsiveContainer width="100%" height={350}>
               <LineChart data={maeChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="horizon"
-                  label={{ value: t('Горизонт (днів)'), position: 'bottom' }}
-                />
+                <XAxis dataKey="horizon" label={{ value: t('Горизонт (днів)'), position: 'bottom' }} />
                 <YAxis label={{ value: 'MAE', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -252,10 +239,7 @@ export const HorizonTab = () => {
             <ResponsiveContainer width="100%" height={350}>
               <LineChart data={rmseChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="horizon"
-                  label={{ value: t('Горизонт (днів)'), position: 'bottom' }}
-                />
+                <XAxis dataKey="horizon" label={{ value: t('Горизонт (днів)'), position: 'bottom' }} />
                 <YAxis label={{ value: 'RMSE', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -335,7 +319,9 @@ export const HorizonTab = () => {
                 </Table>
               </TableContainer>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {t('Skill Score показує наскільки модель краща за просту персистентну модель (вчорашнє значення). Позитивний score означає покращення.')}
+                {t(
+                  'Skill Score показує наскільки модель краща за просту персистентну модель (вчорашнє значення). Позитивний score означає покращення.'
+                )}
               </Typography>
             </Paper>
           )}
@@ -375,7 +361,9 @@ export const HorizonTab = () => {
                       <TableBody>
                         {result.horizon_metrics.slice(0, 10).map((metrics) => (
                           <TableRow key={metrics.horizon}>
-                            <TableCell>{metrics.horizon} {t('днів')}</TableCell>
+                            <TableCell>
+                              {metrics.horizon} {t('днів')}
+                            </TableCell>
                             <TableCell align="right">{metrics.mae.toFixed(4)}</TableCell>
                             <TableCell align="right">{metrics.rmse.toFixed(4)}</TableCell>
                             <TableCell align="right">{metrics.r2.toFixed(4)}</TableCell>
@@ -422,7 +410,9 @@ export const HorizonTab = () => {
           <Alert severity="info">
             <Typography variant="body2">
               <strong>{t('Інтерпретація')}:</strong>{' '}
-              {t('Оптимальний горизонт - це максимальний горизонт, при якому якість прогнозу ще прийнятна. Швидкість деградації показує наскільки швидко погіршується точність.')}
+              {t(
+                'Оптимальний горизонт - це максимальний горизонт, при якому якість прогнозу ще прийнятна. Швидкість деградації показує наскільки швидко погіршується точність.'
+              )}
             </Typography>
           </Alert>
         </Stack>
@@ -438,4 +428,4 @@ export const HorizonTab = () => {
       )}
     </Box>
   );
-};
+});

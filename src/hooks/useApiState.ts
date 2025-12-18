@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 interface ApiState<T> {
   data: T | null;
@@ -6,9 +6,7 @@ interface ApiState<T> {
   error: string | null;
 }
 
-type ExecuteFn<TParams> = TParams extends void
-  ? () => Promise<void>
-  : (params: TParams) => Promise<void>;
+type ExecuteFn<TParams> = TParams extends void ? () => Promise<void> : (params: TParams) => Promise<void>;
 
 interface ApiStateActions<T, TParams = void> {
   execute: ExecuteFn<TParams>;
@@ -21,6 +19,7 @@ type UseApiStateReturn<T, TParams = void> = ApiState<T> & ApiStateActions<T, TPa
 /**
  * Generic hook for API state management
  * Reduces boilerplate for data/loading/error pattern
+ * Includes request deduplication to prevent duplicate in-flight requests
  */
 export function useApiState<T, TParams = void>(
   apiFn: TParams extends void ? () => Promise<T> : (params: TParams) => Promise<T>,
@@ -30,17 +29,30 @@ export function useApiState<T, TParams = void>(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Track in-flight request to prevent duplicates
+  const inFlightRef = useRef<Promise<T> | null>(null);
+
   const execute = useCallback(
     async (params?: TParams) => {
+      // If there's already an in-flight request, skip
+      if (inFlightRef.current) {
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError(null);
-        const result = await (apiFn as (params?: TParams) => Promise<T>)(params);
+
+        const promise = (apiFn as (params?: TParams) => Promise<T>)(params);
+        inFlightRef.current = promise;
+
+        const result = await promise;
         setData(result);
       } catch (err) {
         setError(errorMessage);
         console.error(errorMessage, err);
       } finally {
+        inFlightRef.current = null;
         setIsLoading(false);
       }
     },
@@ -110,10 +122,7 @@ export function useCachedApiState<T>(
     [apiFn, cache, errorMessage]
   );
 
-  const getFromCache = useCallback(
-    (key: string): T | undefined => cache[key],
-    [cache]
-  );
+  const getFromCache = useCallback((key: string): T | undefined => cache[key], [cache]);
 
   const reset = useCallback(() => {
     setCache({});

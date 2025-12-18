@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -28,7 +28,7 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi';
 
-export const ErrorAnalysisTab = () => {
+export const ErrorAnalysisTab = memo(function ErrorAnalysisTab() {
   const { t } = useTranslation();
   const { models, isLoadingModels, errorAnalysisResult, isLoadingErrorAnalysis, errorAnalysisError, runErrorAnalysis } =
     useApi();
@@ -374,8 +374,7 @@ export const ErrorAnalysisTab = () => {
             </Typography>
             <Typography variant="caption" component="div">
               • {t('Часові паттерни показують, як помилки змінюються протягом дня, тижня та місяця')}
-              <br />
-              • {t('Розподіл помилок допомагає зрозуміти варіативність прогнозів')}
+              <br />• {t('Розподіл помилок допомагає зрозуміти варіативність прогнозів')}
               <br />• {t('Найбільші помилки вказують на випадки, які потребують особливої уваги')}
             </Typography>
           </Alert>
@@ -385,9 +384,11 @@ export const ErrorAnalysisTab = () => {
       {/* Empty State */}
       {!errorAnalysisResult && !isLoadingErrorAnalysis && !errorAnalysisError && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">{t('Виберіть модель і запустіть аналіз для перегляду результатів')}</Typography>
+          <Typography color="text.secondary">
+            {t('Виберіть модель і запустіть аналіз для перегляду результатів')}
+          </Typography>
         </Paper>
       )}
     </Box>
   );
-};
+});

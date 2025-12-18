@@ -1,15 +1,6 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PsychologyIcon from '@mui/icons-material/Psychology';
@@ -37,12 +28,11 @@ import {
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useExplainability, usePartialDependence } from '@/hooks/useScientificV2';
-
 import { Base64Image, ModelSelector } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
 
-export const ExplainabilityTab = () => {
+export const ExplainabilityTab = memo(function ExplainabilityTab() {
   const { t } = useTranslation();
   const explainability = useExplainability();
   const partialDependence = usePartialDependence();
@@ -153,7 +143,9 @@ export const ExplainabilityTab = () => {
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography gutterBottom>{t('Кількість семплів')}: {nSamples}</Typography>
+            <Typography gutterBottom>
+              {t('Кількість семплів')}: {nSamples}
+            </Typography>
             <Slider
               value={nSamples}
               onChange={(_, v) => setNSamples(v as number)}
@@ -251,37 +243,40 @@ export const ExplainabilityTab = () => {
               </Paper>
 
               {/* PDP Chart */}
-              {analysisTypes.includes('pdp') && activeResultTab === 0 && explainability.data.pdp_results?.[selectedFeature] && (
-                <Paper sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Partial Dependence Plot - {selectedFeature}
-                  </Typography>
-                  <ResponsiveContainer width="100%" height={350}>
-                    <LineChart data={getPdpChartData(selectedFeature)}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="featureValue" label={{ value: selectedFeature, position: 'bottom' }} />
-                      <YAxis label={{ value: t('Середній прогноз'), angle: -90, position: 'insideLeft' }} />
-                      <Tooltip />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="pdp"
-                        stroke="#1976d2"
-                        strokeWidth={2}
-                        dot={{ r: 3 }}
-                        name={t('Partial Dependence')}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    {t('PDP показує середній вплив ознаки на прогноз, усереднений по всіх інших ознаках.')}
-                  </Typography>
-                </Paper>
-              )}
+              {analysisTypes.includes('pdp') &&
+                activeResultTab === 0 &&
+                explainability.data.pdp_results?.[selectedFeature] && (
+                  <Paper sx={{ p: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                      Partial Dependence Plot - {selectedFeature}
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={350}>
+                      <LineChart data={getPdpChartData(selectedFeature)}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="featureValue" label={{ value: selectedFeature, position: 'bottom' }} />
+                        <YAxis label={{ value: t('Середній прогноз'), angle: -90, position: 'insideLeft' }} />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="pdp"
+                          stroke="#1976d2"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          name={t('Partial Dependence')}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {t('PDP показує середній вплив ознаки на прогноз, усереднений по всіх інших ознаках.')}
+                    </Typography>
+                  </Paper>
+                )}
 
               {/* ICE Chart */}
               {analysisTypes.includes('ice') &&
-                ((analysisTypes.includes('pdp') && activeResultTab === 1) || (!analysisTypes.includes('pdp') && activeResultTab === 0)) &&
+                ((analysisTypes.includes('pdp') && activeResultTab === 1) ||
+                  (!analysisTypes.includes('pdp') && activeResultTab === 0)) &&
                 explainability.data.ice_results?.[selectedFeature] && (
                   <Paper sx={{ p: 2 }}>
                     <Typography variant="h6" gutterBottom>
@@ -347,33 +342,38 @@ export const ExplainabilityTab = () => {
           )}
 
           {/* Feature Interactions */}
-          {explainability.data.feature_interactions && Object.keys(explainability.data.feature_interactions).length > 0 && (
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                {t('Взаємодії між ознаками')}
-              </Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1}>
-                {Object.entries(explainability.data.feature_interactions).map(([pair, interaction]) => (
-                  <Chip
-                    key={pair}
-                    label={`${pair}: ${interaction.correlation.toFixed(2)} (${interaction.interaction_strength})`}
-                    size="small"
-                    color={
-                      interaction.interaction_strength === 'high'
-                        ? 'error'
-                        : interaction.interaction_strength === 'medium'
-                          ? 'warning'
-                          : 'success'
-                    }
-                  />
-                ))}
-              </Stack>
-            </Paper>
-          )}
+          {explainability.data.feature_interactions &&
+            Object.keys(explainability.data.feature_interactions).length > 0 && (
+              <Paper sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  {t('Взаємодії між ознаками')}
+                </Typography>
+                <Stack direction="row" flexWrap="wrap" gap={1}>
+                  {Object.entries(explainability.data.feature_interactions).map(([pair, interaction]) => (
+                    <Chip
+                      key={pair}
+                      label={`${pair}: ${interaction.correlation.toFixed(2)} (${interaction.interaction_strength})`}
+                      size="small"
+                      color={
+                        interaction.interaction_strength === 'high'
+                          ? 'error'
+                          : interaction.interaction_strength === 'medium'
+                            ? 'warning'
+                            : 'success'
+                      }
+                    />
+                  ))}
+                </Stack>
+              </Paper>
+            )}
 
           {/* Base64 Plot */}
           {explainability.data.plots?.pdp && (
-            <Base64Image data={explainability.data.plots.pdp} alt="PDP Plot" title={t('Partial Dependence Plot (всі ознаки)')} />
+            <Base64Image
+              data={explainability.data.plots.pdp}
+              alt="PDP Plot"
+              title={t('Partial Dependence Plot (всі ознаки)')}
+            />
           )}
 
           {/* Quick Feature Analysis */}
@@ -422,20 +422,36 @@ export const ExplainabilityTab = () => {
                         </Typography>
                         <Stack spacing={1}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">Min:</Typography>
-                            <Typography variant="body2">{partialDependence.data.feature_stats.min.toFixed(4)}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Min:
+                            </Typography>
+                            <Typography variant="body2">
+                              {partialDependence.data.feature_stats.min.toFixed(4)}
+                            </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">Max:</Typography>
-                            <Typography variant="body2">{partialDependence.data.feature_stats.max.toFixed(4)}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Max:
+                            </Typography>
+                            <Typography variant="body2">
+                              {partialDependence.data.feature_stats.max.toFixed(4)}
+                            </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">Mean:</Typography>
-                            <Typography variant="body2">{partialDependence.data.feature_stats.mean.toFixed(4)}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Mean:
+                            </Typography>
+                            <Typography variant="body2">
+                              {partialDependence.data.feature_stats.mean.toFixed(4)}
+                            </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">Std:</Typography>
-                            <Typography variant="body2">{partialDependence.data.feature_stats.std.toFixed(4)}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Std:
+                            </Typography>
+                            <Typography variant="body2">
+                              {partialDependence.data.feature_stats.std.toFixed(4)}
+                            </Typography>
                           </Box>
                         </Stack>
                       </CardContent>
@@ -449,9 +465,9 @@ export const ExplainabilityTab = () => {
           {/* Info */}
           <Alert severity="info">
             <Typography variant="body2">
-              <strong>PDP</strong>: {t('Показує середній ефект ознаки на прогноз')} |{' '}
-              <strong>ICE</strong>: {t('Показує ефект для кожного спостереження')} |{' '}
-              <strong>ALE</strong>: {t('Враховує кореляції між ознаками')}
+              <strong>PDP</strong>: {t('Показує середній ефект ознаки на прогноз')} | <strong>ICE</strong>:{' '}
+              {t('Показує ефект для кожного спостереження')} | <strong>ALE</strong>:{' '}
+              {t('Враховує кореляції між ознаками')}
             </Typography>
           </Alert>
         </Stack>
@@ -467,4 +483,4 @@ export const ExplainabilityTab = () => {
       )}
     </Box>
   );
-};
+});

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Area,
@@ -47,7 +47,6 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useDriftAnalysis, useDriftStatus } from '@/hooks/useScientificV2';
 import type { DriftStatusResponse } from '@/types/scientificV2';
-
 import { MetricCard, ModelSelector } from './shared';
 
 const getStatusIcon = (status: 'ok' | 'warning' | 'info' | 'critical') => {
@@ -76,7 +75,7 @@ const getStatusColor = (status: 'ok' | 'warning' | 'info' | 'critical'): 'succes
   }
 };
 
-export const DriftTab = () => {
+export const DriftTab = memo(function DriftTab() {
   const { t } = useTranslation();
   const driftStatus = useDriftStatus();
   const driftAnalysis = useDriftAnalysis();
@@ -139,11 +138,7 @@ export const DriftTab = () => {
       <Paper sx={{ p: 3, mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">{t('Швидкий огляд дрейфу моделей')}</Typography>
-          <Button
-            startIcon={<RefreshIcon />}
-            onClick={() => driftStatus.execute()}
-            disabled={driftStatus.isLoading}
-          >
+          <Button startIcon={<RefreshIcon />} onClick={() => driftStatus.execute()} disabled={driftStatus.isLoading}>
             {t('Оновити')}
           </Button>
         </Box>
@@ -339,7 +334,11 @@ export const DriftTab = () => {
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <MetricCard
                 title={t('Тренд')}
-                value={driftAnalysis.data.performance_over_time.overall_trend === 'degrading' ? t('Погіршення') : t('Стабільний')}
+                value={
+                  driftAnalysis.data.performance_over_time.overall_trend === 'degrading'
+                    ? t('Погіршення')
+                    : t('Стабільний')
+                }
                 icon={
                   driftAnalysis.data.performance_over_time.overall_trend === 'degrading' ? (
                     <TrendingUpIcon />
@@ -363,10 +362,22 @@ export const DriftTab = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="window" label={{ value: t('Вікно'), position: 'bottom' }} />
                   <YAxis yAxisId="left" label={{ value: 'MAE/RMSE', angle: -90, position: 'insideLeft' }} />
-                  <YAxis yAxisId="right" orientation="right" label={{ value: 'R²', angle: 90, position: 'insideRight' }} />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    label={{ value: 'R²', angle: 90, position: 'insideRight' }}
+                  />
                   <Tooltip />
                   <Legend />
-                  <Area yAxisId="left" type="monotone" dataKey="mae" fill="#8884d8" fillOpacity={0.3} stroke="#8884d8" name="MAE" />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="mae"
+                    fill="#8884d8"
+                    fillOpacity={0.3}
+                    stroke="#8884d8"
+                    name="MAE"
+                  />
                   <Line yAxisId="left" type="monotone" dataKey="rmse" stroke="#82ca9d" strokeWidth={2} name="RMSE" />
                   <Line yAxisId="right" type="monotone" dataKey="r2" stroke="#ffc658" strokeWidth={2} name="R²" />
                 </ComposedChart>
@@ -442,9 +453,11 @@ export const DriftTab = () => {
           {/* Method Info */}
           <Alert severity="info">
             <Typography variant="body2">
-              <strong>{t('Метод')}: {driftAnalysis.data.metadata.method}</strong> |{' '}
-              {t('Розмір вікна')}: {driftAnalysis.data.metadata.window_size} |{' '}
-              {t('Чутливість')}: {driftAnalysis.data.metadata.sensitivity}
+              <strong>
+                {t('Метод')}: {driftAnalysis.data.metadata.method}
+              </strong>{' '}
+              | {t('Розмір вікна')}: {driftAnalysis.data.metadata.window_size} | {t('Чутливість')}:{' '}
+              {driftAnalysis.data.metadata.sensitivity}
             </Typography>
           </Alert>
         </Stack>
@@ -460,4 +473,4 @@ export const DriftTab = () => {
       )}
     </Box>
   );
-};
+});

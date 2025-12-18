@@ -1,16 +1,6 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  Legend,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Area, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
@@ -42,10 +32,9 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useProbabilisticForecast } from '@/hooks/useScientificV2';
 import type { ProbabilisticForecastResponse } from '@/types/scientificV2';
-
 import { Base64Image, MetricCard, ModelSelector } from './shared';
 
-export const ProbabilisticTab = () => {
+export const ProbabilisticTab = memo(function ProbabilisticTab() {
   const { t } = useTranslation();
   const { data, isLoading, error, execute } = useProbabilisticForecast();
 
@@ -229,14 +218,21 @@ export const ProbabilisticTab = () => {
                   <MetricCard
                     title={t('Найкращий CRPS')}
                     value={Object.entries(data.crps_scores).sort(([, a], [, b]) => a - b)[0]?.[0] || '-'}
-                    subtitle={`CRPS: ${Object.entries(data.crps_scores).sort(([, a], [, b]) => a - b)[0]?.[1].toFixed(4) || '-'}`}
+                    subtitle={`CRPS: ${
+                      Object.entries(data.crps_scores)
+                        .sort(([, a], [, b]) => a - b)[0]?.[1]
+                        .toFixed(4) || '-'
+                    }`}
                     color="success"
                   />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <MetricCard
                     title={t('Середній CRPS')}
-                    value={(Object.values(data.crps_scores).reduce((a, b) => a + b, 0) / Object.values(data.crps_scores).length).toFixed(4)}
+                    value={(
+                      Object.values(data.crps_scores).reduce((a, b) => a + b, 0) /
+                      Object.values(data.crps_scores).length
+                    ).toFixed(4)}
                     subtitle={t('по всіх моделях')}
                   />
                 </Grid>
@@ -424,7 +420,10 @@ export const ProbabilisticTab = () => {
                           {Object.entries(calibration).map(([quantile, values]) => {
                             const diff = Math.abs(values.observed - values.expected) * 100;
                             return (
-                              <Box key={quantile} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <Box
+                                key={quantile}
+                                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              >
                                 <Typography variant="body2">{(parseFloat(quantile) * 100).toFixed(0)}%:</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                   <Typography variant="body2">
@@ -476,15 +475,21 @@ export const ProbabilisticTab = () => {
                         </Typography>
                         <Stack spacing={0.5}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">MAE:</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              MAE:
+                            </Typography>
                             <Typography variant="body2">{modelResult.metrics.mae.toFixed(4)}</Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">RMSE:</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              RMSE:
+                            </Typography>
                             <Typography variant="body2">{modelResult.metrics.rmse.toFixed(4)}</Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="body2" color="text.secondary">R²:</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              R²:
+                            </Typography>
                             <Typography variant="body2">{modelResult.metrics.r2.toFixed(4)}</Typography>
                           </Box>
                         </Stack>
@@ -522,4 +527,4 @@ export const ProbabilisticTab = () => {
       )}
     </Box>
   );
-};
+});

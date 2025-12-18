@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CartesianGrid,
@@ -39,10 +39,9 @@ import {
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useBenchmark, useScalabilityTest } from '@/hooks/useScientificV2';
-
 import { Base64Image, MetricCard, ModelSelector } from './shared';
 
-export const BenchmarkTab = () => {
+export const BenchmarkTab = memo(function BenchmarkTab() {
   const { t } = useTranslation();
   const benchmark = useBenchmark();
   const scalabilityTest = useScalabilityTest();
@@ -89,7 +88,9 @@ export const BenchmarkTab = () => {
   const scalabilityData = useMemo(() => {
     if (!scalabilityTest.data) return [];
 
-    const sizes = Object.keys(scalabilityTest.data.inference_times).map(Number).sort((a, b) => a - b);
+    const sizes = Object.keys(scalabilityTest.data.inference_times)
+      .map(Number)
+      .sort((a, b) => a - b);
 
     return sizes.map((size) => ({
       size,
@@ -144,15 +145,17 @@ export const BenchmarkTab = () => {
                   Object.entries(benchmark.data.inference_times).sort(([, a], [, b]) => a.avg_ms - b.avg_ms)[0]?.[0] ||
                   '-'
                 }
-                subtitle={`${Object.entries(benchmark.data.inference_times).sort(([, a], [, b]) => a.avg_ms - b.avg_ms)[0]?.[1].avg_ms.toFixed(1) || '-'} ms`}
+                subtitle={`${
+                  Object.entries(benchmark.data.inference_times)
+                    .sort(([, a], [, b]) => a.avg_ms - b.avg_ms)[0]?.[1]
+                    .avg_ms.toFixed(1) || '-'
+                } ms`}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <MetricCard
                 title={t('Найточніша модель')}
-                value={
-                  benchmark.data.pareto_frontier.sort((a, b) => a.mae - b.mae)[0]?.model_id || '-'
-                }
+                value={benchmark.data.pareto_frontier.sort((a, b) => a.mae - b.mae)[0]?.model_id || '-'}
                 subtitle={`MAE: ${benchmark.data.pareto_frontier.sort((a, b) => a.mae - b.mae)[0]?.mae.toFixed(4) || '-'}`}
               />
             </Grid>
@@ -193,11 +196,7 @@ export const BenchmarkTab = () => {
                   fill="#82ca9d"
                   shape="star"
                 />
-                <Scatter
-                  name={t('Інші моделі')}
-                  data={paretoData.filter((d) => !d.is_pareto_optimal)}
-                  fill="#8884d8"
-                />
+                <Scatter name={t('Інші моделі')} data={paretoData.filter((d) => !d.is_pareto_optimal)} fill="#8884d8" />
               </ScatterChart>
             </ResponsiveContainer>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -360,9 +359,7 @@ export const BenchmarkTab = () => {
                 <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
                   <Chip label={`${t('Модель')}: ${scalabilityTest.data.model_id}`} color="primary" />
                   <Chip label={`${t('Складність')}: ${scalabilityTest.data.complexity_estimate}`} />
-                  <Chip
-                    label={`${t('Розміри')}: ${scalabilityTest.data.metadata.data_sizes_tested.join(', ')}`}
-                  />
+                  <Chip label={`${t('Розміри')}: ${scalabilityTest.data.metadata.data_sizes_tested.join(', ')}`} />
                 </Stack>
               </CardContent>
             </Card>
@@ -422,10 +419,11 @@ export const BenchmarkTab = () => {
       {/* Info */}
       <Alert severity="info" sx={{ mt: 3 }}>
         <Typography variant="body2">
-          <strong>{t('Pareto Frontier')}</strong>: {t('Моделі, що пропонують найкращий компроміс між швидкістю та точністю')} |{' '}
+          <strong>{t('Pareto Frontier')}</strong>:{' '}
+          {t('Моделі, що пропонують найкращий компроміс між швидкістю та точністю')} |{' '}
           <strong>{t('Складність')}</strong>: O(n) - {t('лінійна')}, O(n²) - {t('квадратична')}
         </Typography>
       </Alert>
     </Box>
   );
-};
+});

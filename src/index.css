@@ -4,20 +4,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fix non-composited animations in MUI components */
+/* GPU acceleration for MUI components with animations */
 .MuiSelect-select,
 .MuiInputBase-root,
 .MuiOutlinedInput-root {
-  will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
-/* Fix CircularProgress animation performance */
+/* GPU acceleration for CircularProgress animation */
 .MuiCircularProgress-root,
 .MuiCircularProgress-svg,
 .MuiCircularProgress-circle {
-  will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
@@ -49,9 +47,4 @@ body {
 /* Performance optimization for images */
 img {
   content-visibility: auto;
-}
-
-/* Optimize font loading to prevent layout shifts */
-@font-face {
-  font-display: swap;
 }

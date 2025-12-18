@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -30,10 +30,16 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi';
 
-export const ResidualAnalysisTab = () => {
+export const ResidualAnalysisTab = memo(function ResidualAnalysisTab() {
   const { t } = useTranslation();
-  const { models, isLoadingModels, residualAnalysisResult, isLoadingResidualAnalysis, residualAnalysisError, runResidualAnalysis } =
-    useApi();
+  const {
+    models,
+    isLoadingModels,
+    residualAnalysisResult,
+    isLoadingResidualAnalysis,
+    residualAnalysisError,
+    runResidualAnalysis
+  } = useApi();
 
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [testDays, setTestDays] = useState<number>(30);
@@ -291,9 +297,7 @@ export const ResidualAnalysisTab = () => {
                   {Object.entries(residualAnalysisResult.autocorrelation).map(([lag, corr]) => (
                     <TableRow key={lag} hover>
                       <TableCell>{lag}</TableCell>
-                      <TableCell align="center">
-                        {corr !== null ? corr.toFixed(4) : 'N/A'}
-                      </TableCell>
+                      <TableCell align="center">{corr !== null ? corr.toFixed(4) : 'N/A'}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -331,8 +335,7 @@ export const ResidualAnalysisTab = () => {
             </Typography>
             <Typography variant="caption" component="div">
               • {t('Середнє близьке до 0 вказує на відсутність систематичного зсуву')}
-              <br />
-              • {t('Тести нормальності: p-value > 0.05 вказує на нормальний розподіл')}
+              <br />• {t('Тести нормальності: p-value > 0.05 вказує на нормальний розподіл')}
               <br />• {t('Автокореляція: значення близькі до 0 вказують на незалежність залишків')}
             </Typography>
           </Alert>
@@ -342,9 +345,11 @@ export const ResidualAnalysisTab = () => {
       {/* Empty State */}
       {!residualAnalysisResult && !isLoadingResidualAnalysis && !residualAnalysisError && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">{t('Виберіть модель і запустіть аналіз для перегляду результатів')}</Typography>
+          <Typography color="text.secondary">
+            {t('Виберіть модель і запустіть аналіз для перегляду результатів')}
+          </Typography>
         </Paper>
       )}
     </Box>
   );
-};
+});

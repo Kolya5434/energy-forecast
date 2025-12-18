@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DownloadIcon from '@mui/icons-material/Download';
@@ -38,10 +38,16 @@ const VISUALIZATION_TYPES: Array<{ value: VisualizationType; label: string; requ
   { value: 'correlation', label: 'Кореляційна матриця (Heatmap)', requiresModels: true }
 ];
 
-export const VisualizationsTab = () => {
+export const VisualizationsTab = memo(function VisualizationsTab() {
   const { t } = useTranslation();
-  const { models, isLoadingModels, visualizationResult, isLoadingVisualization, visualizationError, generateVisualization } =
-    useApi();
+  const {
+    models,
+    isLoadingModels,
+    visualizationResult,
+    isLoadingVisualization,
+    visualizationError,
+    generateVisualization
+  } = useApi();
 
   const [visualizationType, setVisualizationType] = useState<VisualizationType>('comparison');
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
@@ -244,4 +250,4 @@ export const VisualizationsTab = () => {
       )}
     </Box>
   );
-};
+});

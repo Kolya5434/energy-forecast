@@ -1,15 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -41,7 +32,6 @@ import {
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useLiveMetrics, useMetricsStream } from '@/hooks/useScientificV2';
-
 import { MetricCard } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
@@ -68,13 +58,15 @@ const getAlertColor = (severity: 'info' | 'warning' | 'critical'): 'info' | 'war
   }
 };
 
-export const MonitoringTab = () => {
+export const MonitoringTab = memo(function MonitoringTab() {
   const { t } = useTranslation();
   const liveMetrics = useLiveMetrics();
   const [wsEnabled, setWsEnabled] = useState(false);
   const metricsStream = useMetricsStream(wsEnabled);
 
-  const [metricsHistory, setMetricsHistory] = useState<Array<{ timestamp: string; [key: string]: number | string }>>([]);
+  const [metricsHistory, setMetricsHistory] = useState<Array<{ timestamp: string; [key: string]: number | string }>>(
+    []
+  );
 
   // Load initial metrics
   useEffect(() => {
@@ -168,11 +160,7 @@ export const MonitoringTab = () => {
               )}
             </Box>
 
-            <Button
-              startIcon={<RefreshIcon />}
-              onClick={() => liveMetrics.execute()}
-              disabled={liveMetrics.isLoading}
-            >
+            <Button startIcon={<RefreshIcon />} onClick={() => liveMetrics.execute()} disabled={liveMetrics.isLoading}>
               {t('Оновити')}
             </Button>
           </Box>
@@ -260,7 +248,9 @@ export const MonitoringTab = () => {
                       <TableCell align="center">
                         <Chip
                           icon={<CheckCircleIcon />}
-                          label={metrics.r2 > 0.8 ? t('Добре') : metrics.r2 > 0.5 ? t('Прийнятно') : t('Потребує уваги')}
+                          label={
+                            metrics.r2 > 0.8 ? t('Добре') : metrics.r2 > 0.5 ? t('Прийнятно') : t('Потребує уваги')
+                          }
                           size="small"
                           color={metrics.r2 > 0.8 ? 'success' : metrics.r2 > 0.5 ? 'warning' : 'error'}
                         />
@@ -309,9 +299,7 @@ export const MonitoringTab = () => {
             <Paper sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Typography variant="h6">{t('Real-time Metrics')}</Typography>
-                {metricsStream.isConnected && (
-                  <Chip icon={<WifiIcon />} label="LIVE" color="success" size="small" />
-                )}
+                {metricsStream.isConnected && <Chip icon={<WifiIcon />} label="LIVE" color="success" size="small" />}
               </Box>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={metricsHistory}>
@@ -396,7 +384,9 @@ export const MonitoringTab = () => {
                       </Box>
                       <Stack spacing={1}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">MAE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            MAE:
+                          </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Typography variant="body2">{metrics.mae.toFixed(4)}</Typography>
                             {trend !== 0 && (
@@ -409,15 +399,21 @@ export const MonitoringTab = () => {
                           </Box>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">RMSE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            RMSE:
+                          </Typography>
                           <Typography variant="body2">{metrics.rmse.toFixed(4)}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">R²:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            R²:
+                          </Typography>
                           <Typography variant="body2">{metrics.r2.toFixed(4)}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2" color="text.secondary">MAPE:</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            MAPE:
+                          </Typography>
                           <Typography variant="body2">{metrics.mape.toFixed(2)}%</Typography>
                         </Box>
                       </Stack>
@@ -441,11 +437,9 @@ export const MonitoringTab = () => {
       {/* Empty State */}
       {!liveMetrics.data && !liveMetrics.isLoading && !liveMetrics.error && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            {t('Натисніть "Оновити" для завантаження метрик')}
-          </Typography>
+          <Typography color="text.secondary">{t('Натисніть "Оновити" для завантаження метрик')}</Typography>
         </Paper>
       )}
     </Box>
   );
-};
+});

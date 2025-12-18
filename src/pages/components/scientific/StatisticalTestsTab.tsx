@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -34,10 +34,16 @@ import {
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi';
 
-export const StatisticalTestsTab = () => {
+export const StatisticalTestsTab = memo(function StatisticalTestsTab() {
   const { t } = useTranslation();
-  const { models, isLoadingModels, statisticalTestsResult, isLoadingStatisticalTests, statisticalTestsError, runStatisticalTests } =
-    useApi();
+  const {
+    models,
+    isLoadingModels,
+    statisticalTestsResult,
+    isLoadingStatisticalTests,
+    statisticalTestsError,
+    runStatisticalTests
+  } = useApi();
 
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [testDays, setTestDays] = useState<number>(30);
@@ -113,7 +119,9 @@ export const StatisticalTestsTab = () => {
 
           {/* Test Days Slider */}
           <Box>
-            <Typography gutterBottom>{t('Тестовий період (днів)')}: {testDays}</Typography>
+            <Typography gutterBottom>
+              {t('Тестовий період (днів)')}: {testDays}
+            </Typography>
             <Slider
               value={testDays}
               onChange={(_, newValue) => setTestDays(newValue as number)}
@@ -294,8 +302,7 @@ export const StatisticalTestsTab = () => {
             </Typography>
             <Typography variant="caption" component="div">
               • p-value &lt; 0.05 вказує на статистично значущу різницю
-              <br />
-              • {t('Розмір ефекту')}: negligible (дуже малий), small (малий), medium (середній), large (великий)
+              <br />• {t('Розмір ефекту')}: negligible (дуже малий), small (малий), medium (середній), large (великий)
               <br />• {t('Зелений колір означає статистично значущу різницю')}
             </Typography>
           </Alert>
@@ -305,9 +312,11 @@ export const StatisticalTestsTab = () => {
       {/* Empty State */}
       {!statisticalTestsResult && !isLoadingStatisticalTests && !statisticalTestsError && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">{t('Виберіть моделі та запустіть тести для перегляду результатів')}</Typography>
+          <Typography color="text.secondary">
+            {t('Виберіть моделі та запустіть тести для перегляду результатів')}
+          </Typography>
         </Paper>
       )}
     </Box>
   );
-};
+});

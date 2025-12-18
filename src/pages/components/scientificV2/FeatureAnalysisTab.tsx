@@ -1,16 +1,6 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import CategoryIcon from '@mui/icons-material/Category';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -22,6 +12,7 @@ import {
   CardContent,
   Chip,
   Grid,
+  Tooltip as MuiTooltip,
   Paper,
   Slider,
   Stack,
@@ -33,28 +24,24 @@ import {
   TableRow,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip as MuiTooltip,
   Typography
 } from '@mui/material';
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useFeatureAnalysis, useFeatureSelection } from '@/hooks/useScientificV2';
-
 import { Base64Image, ModelSelector } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
 
-export const FeatureAnalysisTab = () => {
+export const FeatureAnalysisTab = memo(function FeatureAnalysisTab() {
   const { t } = useTranslation();
   const featureAnalysis = useFeatureAnalysis();
   const featureSelection = useFeatureSelection();
 
   const [selectedModel, setSelectedModel] = useState<string>('');
-  const [analysisTypes, setAnalysisTypes] = useState<('rfe' | 'mutual_info' | 'permutation' | 'correlation' | 'vif')[]>([
-    'mutual_info',
-    'permutation',
-    'correlation'
-  ]);
+  const [analysisTypes, setAnalysisTypes] = useState<('rfe' | 'mutual_info' | 'permutation' | 'correlation' | 'vif')[]>(
+    ['mutual_info', 'permutation', 'correlation']
+  );
   const [nFeatures, setNFeatures] = useState<number>(15);
 
   const handleRun = () => {
@@ -106,7 +93,7 @@ export const FeatureAnalysisTab = () => {
       .map(([feature, vif]) => ({
         feature,
         vif,
-        status: vif > 10 ? 'high' : vif > 5 ? 'medium' : 'low' as const
+        status: vif > 10 ? 'high' : vif > 5 ? 'medium' : ('low' as const)
       }));
   }, [featureAnalysis.data]);
 
@@ -242,8 +229,8 @@ export const FeatureAnalysisTab = () => {
                 ))}
               </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {t('Всього ознак')}: {featureAnalysis.data.metadata.n_features_total} |{' '}
-                {t('Вибрано')}: {featureAnalysis.data.metadata.n_features_selected}
+                {t('Всього ознак')}: {featureAnalysis.data.metadata.n_features_total} | {t('Вибрано')}:{' '}
+                {featureAnalysis.data.metadata.n_features_selected}
               </Typography>
             </CardContent>
           </Card>
@@ -426,7 +413,8 @@ export const FeatureAnalysisTab = () => {
                 </Table>
               </TableContainer>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                VIF &gt; 10: {t('серйозна мультиколінеарність')} | VIF &gt; 5: {t('помірна мультиколінеарність')} | VIF &lt; 5: {t('прийнятно')}
+                VIF &gt; 10: {t('серйозна мультиколінеарність')} | VIF &gt; 5: {t('помірна мультиколінеарність')} | VIF
+                &lt; 5: {t('прийнятно')}
               </Typography>
             </Paper>
           )}
@@ -483,10 +471,9 @@ export const FeatureAnalysisTab = () => {
           {/* Info */}
           <Alert severity="info">
             <Typography variant="body2">
-              <strong>Mutual Info</strong>: {t('Нелінійна залежність')} |{' '}
-              <strong>Permutation</strong>: {t('Вплив на якість моделі')} |{' '}
-              <strong>VIF</strong>: {t('Мультиколінеарність')} |{' '}
-              <strong>RFE</strong>: {t('Рекурсивний вибір')}
+              <strong>Mutual Info</strong>: {t('Нелінійна залежність')} | <strong>Permutation</strong>:{' '}
+              {t('Вплив на якість моделі')} | <strong>VIF</strong>: {t('Мультиколінеарність')} | <strong>RFE</strong>:{' '}
+              {t('Рекурсивний вибір')}
             </Typography>
           </Alert>
         </Stack>
@@ -502,4 +489,4 @@ export const FeatureAnalysisTab = () => {
       )}
     </Box>
   );
-};
+});

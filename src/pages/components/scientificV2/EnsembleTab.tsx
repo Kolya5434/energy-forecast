@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bar,
@@ -45,7 +45,7 @@ import { MetricCard, ModelSelector } from './shared';
 
 const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d084d0'];
 
-export const EnsembleTab = () => {
+export const EnsembleTab = memo(function EnsembleTab() {
   const { t } = useTranslation();
   const { data, isLoading, error, execute } = useEnsembleAnalysis();
 
@@ -239,7 +239,7 @@ export const EnsembleTab = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type="number" domain={[0, 100]} unit="%" />
                       <YAxis type="category" dataKey="model" width={120} />
-                      <Tooltip formatter={(value) => `${(value as number ?? 0).toFixed(1)}%`} />
+                      <Tooltip formatter={(value) => `${((value as number) ?? 0).toFixed(1)}%`} />
                       <Bar dataKey="weight" name={t('Вага')}>
                         {weightsData.map((_, index) => (
                           <Cell key={index} fill={CHART_COLORS[index % CHART_COLORS.length]} />
@@ -444,4 +444,4 @@ export const EnsembleTab = () => {
       )}
     </Box>
   );
-};
+});
