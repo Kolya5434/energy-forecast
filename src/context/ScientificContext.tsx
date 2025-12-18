@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 import {
   fetchModelDiagnostics,
@@ -115,42 +115,74 @@ export const ScientificProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const value: IScientificContext = {
-    statisticalTestsResult: statisticalTests.data,
-    isLoadingStatisticalTests: statisticalTests.isLoading,
-    statisticalTestsError: statisticalTests.error,
-    runStatisticalTests: statisticalTests.execute,
+  const value: IScientificContext = useMemo(
+    () => ({
+      statisticalTestsResult: statisticalTests.data,
+      isLoadingStatisticalTests: statisticalTests.isLoading,
+      statisticalTestsError: statisticalTests.error,
+      runStatisticalTests: statisticalTests.execute,
 
-    residualAnalysisResult: residualAnalysis.data,
-    isLoadingResidualAnalysis: residualAnalysis.isLoading,
-    residualAnalysisError: residualAnalysis.error,
-    runResidualAnalysis: residualAnalysis.execute,
+      residualAnalysisResult: residualAnalysis.data,
+      isLoadingResidualAnalysis: residualAnalysis.isLoading,
+      residualAnalysisError: residualAnalysis.error,
+      runResidualAnalysis: residualAnalysis.execute,
 
-    errorAnalysisResult: errorAnalysis.data,
-    isLoadingErrorAnalysis: errorAnalysis.isLoading,
-    errorAnalysisError: errorAnalysis.error,
-    runErrorAnalysis: errorAnalysis.execute,
+      errorAnalysisResult: errorAnalysis.data,
+      isLoadingErrorAnalysis: errorAnalysis.isLoading,
+      errorAnalysisError: errorAnalysis.error,
+      runErrorAnalysis: errorAnalysis.execute,
 
-    visualizationResult: visualization.data,
-    isLoadingVisualization: visualization.isLoading,
-    visualizationError: visualization.error,
-    generateVisualization: visualization.execute,
+      visualizationResult: visualization.data,
+      isLoadingVisualization: visualization.isLoading,
+      visualizationError: visualization.error,
+      generateVisualization: visualization.execute,
 
-    latexExportResult: latexExport.data,
-    isLoadingLatexExport: latexExport.isLoading,
-    latexExportError: latexExport.error,
-    exportLatex: latexExport.execute,
+      latexExportResult: latexExport.data,
+      isLoadingLatexExport: latexExport.isLoading,
+      latexExportError: latexExport.error,
+      exportLatex: latexExport.execute,
 
-    reproducibilityReportResult: reproducibilityReport.data,
-    isLoadingReproducibilityReport: reproducibilityReport.isLoading,
-    reproducibilityReportError: reproducibilityReport.error,
-    getReproducibilityReport: reproducibilityReport.execute,
+      reproducibilityReportResult: reproducibilityReport.data,
+      isLoadingReproducibilityReport: reproducibilityReport.isLoading,
+      reproducibilityReportError: reproducibilityReport.error,
+      getReproducibilityReport: reproducibilityReport.execute,
 
-    modelDiagnosticsResult,
-    isLoadingModelDiagnostics,
-    modelDiagnosticsError,
-    getModelDiagnostics
-  };
+      modelDiagnosticsResult,
+      isLoadingModelDiagnostics,
+      modelDiagnosticsError,
+      getModelDiagnostics
+    }),
+    [
+      statisticalTests.data,
+      statisticalTests.isLoading,
+      statisticalTests.error,
+      statisticalTests.execute,
+      residualAnalysis.data,
+      residualAnalysis.isLoading,
+      residualAnalysis.error,
+      residualAnalysis.execute,
+      errorAnalysis.data,
+      errorAnalysis.isLoading,
+      errorAnalysis.error,
+      errorAnalysis.execute,
+      visualization.data,
+      visualization.isLoading,
+      visualization.error,
+      visualization.execute,
+      latexExport.data,
+      latexExport.isLoading,
+      latexExport.error,
+      latexExport.execute,
+      reproducibilityReport.data,
+      reproducibilityReport.isLoading,
+      reproducibilityReport.error,
+      reproducibilityReport.execute,
+      modelDiagnosticsResult,
+      isLoadingModelDiagnostics,
+      modelDiagnosticsError,
+      getModelDiagnostics
+    ]
+  );
 
   return <ScientificContext.Provider value={value}>{children}</ScientificContext.Provider>;
 };

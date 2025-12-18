@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 import { fetchAnomalies, fetchDecomposition, fetchPatterns, fetchPeaks, postCompare } from '@/api';
 import { useApiState } from '@/hooks/useApiState';
@@ -71,33 +71,58 @@ export const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     'Не вдалося порівняти сценарії'
   );
 
-  const value: IAnalyticsContext = {
-    patternsData: patterns.data,
-    isLoadingPatterns: patterns.isLoading,
-    patternsError: patterns.error,
-    getPatterns: patterns.execute,
+  const value: IAnalyticsContext = useMemo(
+    () => ({
+      patternsData: patterns.data,
+      isLoadingPatterns: patterns.isLoading,
+      patternsError: patterns.error,
+      getPatterns: patterns.execute,
 
-    anomaliesData: anomalies.data,
-    isLoadingAnomalies: anomalies.isLoading,
-    anomaliesError: anomalies.error,
-    getAnomalies: anomalies.execute,
+      anomaliesData: anomalies.data,
+      isLoadingAnomalies: anomalies.isLoading,
+      anomaliesError: anomalies.error,
+      getAnomalies: anomalies.execute,
 
-    peaksData: peaks.data,
-    isLoadingPeaks: peaks.isLoading,
-    peaksError: peaks.error,
-    getPeaks: peaks.execute,
+      peaksData: peaks.data,
+      isLoadingPeaks: peaks.isLoading,
+      peaksError: peaks.error,
+      getPeaks: peaks.execute,
 
-    decompositionData: decomposition.data,
-    isLoadingDecomposition: decomposition.isLoading,
-    decompositionError: decomposition.error,
-    getDecomposition: decomposition.execute,
+      decompositionData: decomposition.data,
+      isLoadingDecomposition: decomposition.isLoading,
+      decompositionError: decomposition.error,
+      getDecomposition: decomposition.execute,
 
-    compareResult: compare.data,
-    isLoadingCompare: compare.isLoading,
-    compareError: compare.error,
-    compareScenarios: compare.execute,
-    clearCompare: compare.reset
-  };
+      compareResult: compare.data,
+      isLoadingCompare: compare.isLoading,
+      compareError: compare.error,
+      compareScenarios: compare.execute,
+      clearCompare: compare.reset
+    }),
+    [
+      patterns.data,
+      patterns.isLoading,
+      patterns.error,
+      patterns.execute,
+      anomalies.data,
+      anomalies.isLoading,
+      anomalies.error,
+      anomalies.execute,
+      peaks.data,
+      peaks.isLoading,
+      peaks.error,
+      peaks.execute,
+      decomposition.data,
+      decomposition.isLoading,
+      decomposition.error,
+      decomposition.execute,
+      compare.data,
+      compare.isLoading,
+      compare.error,
+      compare.execute,
+      compare.reset
+    ]
+  );
 
   return <AnalyticsContext.Provider value={value}>{children}</AnalyticsContext.Provider>;
 };

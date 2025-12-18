@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 import { fetchHistorical, postPredictions, postSimulation } from '@/api';
 import { useApiState } from '@/hooks/useApiState';
@@ -79,30 +79,53 @@ export const ForecastProvider = ({ children }: { children: ReactNode }) => {
     predictions.setData(null);
   }, [predictions]);
 
-  const value: IForecastContext = {
-    predictions: predictions.data,
-    isLoadingPredictions: predictions.isLoading,
-    predictionsError: predictions.error,
-    getPredictions: predictions.execute,
-    clearPredictions,
+  const value: IForecastContext = useMemo(
+    () => ({
+      predictions: predictions.data,
+      isLoadingPredictions: predictions.isLoading,
+      predictionsError: predictions.error,
+      getPredictions: predictions.execute,
+      clearPredictions,
 
-    extendedConditions,
-    setExtendedConditions,
-    clearExtendedConditions,
-    isConditionsEditMode,
-    setConditionsEditMode,
+      extendedConditions,
+      setExtendedConditions,
+      clearExtendedConditions,
+      isConditionsEditMode,
+      setConditionsEditMode,
 
-    simulationResult: simulation.data,
-    isLoadingSimulation: simulation.isLoading,
-    simulationError: simulation.error,
-    runSimulation: simulation.execute,
-    clearSimulation: simulation.reset,
+      simulationResult: simulation.data,
+      isLoadingSimulation: simulation.isLoading,
+      simulationError: simulation.error,
+      runSimulation: simulation.execute,
+      clearSimulation: simulation.reset,
 
-    historicalData: historical.data,
-    isLoadingHistorical: historical.isLoading,
-    historicalError: historical.error,
-    getHistorical: historical.execute
-  };
+      historicalData: historical.data,
+      isLoadingHistorical: historical.isLoading,
+      historicalError: historical.error,
+      getHistorical: historical.execute
+    }),
+    [
+      predictions.data,
+      predictions.isLoading,
+      predictions.error,
+      predictions.execute,
+      clearPredictions,
+      extendedConditions,
+      setExtendedConditions,
+      clearExtendedConditions,
+      isConditionsEditMode,
+      setConditionsEditMode,
+      simulation.data,
+      simulation.isLoading,
+      simulation.error,
+      simulation.execute,
+      simulation.reset,
+      historical.data,
+      historical.isLoading,
+      historical.error,
+      historical.execute
+    ]
+  );
 
   return <ForecastContext.Provider value={value}>{children}</ForecastContext.Provider>;
 };

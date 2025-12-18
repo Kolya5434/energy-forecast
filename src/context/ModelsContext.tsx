@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { fetchEvaluation, fetchFeatures, fetchInterpretation, fetchModels } from '@/api';
 import { useCachedApiState } from '@/hooks/useApiState';
@@ -120,26 +120,45 @@ export const ModelsProvider = ({ children }: { children: ReactNode }) => {
     [interpretations]
   );
 
-  const value: IModelsContext = {
-    models,
-    isLoadingModels,
-    modelsError,
+  const value: IModelsContext = useMemo(
+    () => ({
+      models,
+      isLoadingModels,
+      modelsError,
 
-    evaluations,
-    isLoadingEvaluation,
-    evaluationError,
-    getEvaluation,
+      evaluations,
+      isLoadingEvaluation,
+      evaluationError,
+      getEvaluation,
 
-    interpretations,
-    isLoadingInterpretation,
-    interpretationError,
-    getInterpretation,
+      interpretations,
+      isLoadingInterpretation,
+      interpretationError,
+      getInterpretation,
 
-    featuresCache: features.cache,
-    isLoadingFeatures: features.isLoading,
-    featuresError: features.error,
-    getFeatures: features.get
-  };
+      featuresCache: features.cache,
+      isLoadingFeatures: features.isLoading,
+      featuresError: features.error,
+      getFeatures: features.get
+    }),
+    [
+      models,
+      isLoadingModels,
+      modelsError,
+      evaluations,
+      isLoadingEvaluation,
+      evaluationError,
+      getEvaluation,
+      interpretations,
+      isLoadingInterpretation,
+      interpretationError,
+      getInterpretation,
+      features.cache,
+      features.isLoading,
+      features.error,
+      features.get
+    ]
+  );
 
   return <ModelsContext.Provider value={value}>{children}</ModelsContext.Provider>;
 };
