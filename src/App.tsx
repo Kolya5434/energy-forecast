@@ -4,9 +4,9 @@ import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+import { darkTheme, lightTheme } from '../theme';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingFallback } from './components/LoadingFallback';
-import { darkTheme, lightTheme } from '../theme';
 import { AppProviders } from './context';
 import { Header } from './pages/Header.tsx';
 import type { View } from './types/shared.ts';
@@ -33,15 +33,24 @@ const ScientificAnalysis = lazy(() =>
 );
 const HelpContent = lazy(() => import('./pages/HelpContent.tsx').then((m) => ({ default: m.HelpContent })));
 
+// Prefetch likely next pages after idle
+const prefetchPages = () => {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      import('./pages/EvaluationContent.tsx');
+      import('./pages/InterpretContent.tsx');
+      import('./pages/AnalyticsContent.tsx');
+    });
+  }
+};
+
 // Lazy load analytics components (not critical for initial load)
 const Analytics = lazy(() => import('@vercel/analytics/react').then((m) => ({ default: m.Analytics })));
 const SpeedInsights = lazy(() => import('@vercel/speed-insights/react').then((m) => ({ default: m.SpeedInsights })));
 
 function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
-  const [systemPrefersDark, setSystemPrefersDark] = useState(
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  );
+  const [systemPrefersDark, setSystemPrefersDark] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [activeView, setActiveView] = useState<View>('forecast');
 
   useEffect(() => {
@@ -52,6 +61,11 @@ function App() {
 
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  // Prefetch other pages after initial load
+  useEffect(() => {
+    prefetchPages();
   }, []);
 
   const isDarkMode = useMemo(() => {
@@ -109,9 +123,7 @@ function App() {
                   setActiveView={handleSetActiveView}
                   themeMode={themeMode}
                 />
-                <Suspense fallback={<LoadingFallback />}>
-                  {renderContent()}
-                </Suspense>
+                <Suspense fallback={<LoadingFallback />}>{renderContent()}</Suspense>
               </Box>
             </Box>
             <Suspense fallback={null}>
