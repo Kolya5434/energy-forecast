@@ -4,6 +4,7 @@ import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingFallback } from './components/LoadingFallback';
 import { darkTheme, lightTheme } from '../theme';
 import { AppProviders } from './context';
@@ -95,30 +96,32 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <CssBaseline />
-        <AppProviders>
-          <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <Header
-                toggleTheme={toggleTheme}
-                activeView={activeView}
-                setActiveView={handleSetActiveView}
-                themeMode={themeMode}
-              />
-              <Suspense fallback={<LoadingFallback />}>
-                {renderContent()}
-              </Suspense>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <CssBaseline />
+          <AppProviders>
+            <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
+              <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <Header
+                  toggleTheme={toggleTheme}
+                  activeView={activeView}
+                  setActiveView={handleSetActiveView}
+                  themeMode={themeMode}
+                />
+                <Suspense fallback={<LoadingFallback />}>
+                  {renderContent()}
+                </Suspense>
+              </Box>
             </Box>
-          </Box>
-          <Suspense fallback={null}>
-            <Analytics />
-            <SpeedInsights />
-          </Suspense>
-        </AppProviders>
-      </LocalizationProvider>
-    </ThemeProvider>
+            <Suspense fallback={null}>
+              <Analytics />
+              <SpeedInsights />
+            </Suspense>
+          </AppProviders>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
