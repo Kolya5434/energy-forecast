@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AnalyticsIcon from '@mui/icons-material/Analytics';
@@ -15,27 +15,47 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import SpeedIcon from '@mui/icons-material/Speed';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { Box, FormControlLabel, Paper, Switch, Tab, Tabs, Typography } from '@mui/material';
+import { Box, CircularProgress, FormControlLabel, Paper, Switch, Tab, Tabs, Typography } from '@mui/material';
 
-// Legacy tabs
-import { ErrorAnalysisTab } from './components/scientific/ErrorAnalysisTab';
-import { ExportTab } from './components/scientific/ExportTab';
-import { ResidualAnalysisTab } from './components/scientific/ResidualAnalysisTab';
-import { StatisticalTestsTab } from './components/scientific/StatisticalTestsTab';
-import { VisualizationsTab } from './components/scientific/VisualizationsTab';
+// Lazy load legacy tabs
+const ErrorAnalysisTab = lazy(() =>
+  import('./components/scientific/ErrorAnalysisTab').then((m) => ({ default: m.ErrorAnalysisTab }))
+);
+const ExportTab = lazy(() => import('./components/scientific/ExportTab').then((m) => ({ default: m.ExportTab })));
+const ResidualAnalysisTab = lazy(() =>
+  import('./components/scientific/ResidualAnalysisTab').then((m) => ({ default: m.ResidualAnalysisTab }))
+);
+const StatisticalTestsTab = lazy(() =>
+  import('./components/scientific/StatisticalTestsTab').then((m) => ({ default: m.StatisticalTestsTab }))
+);
+const VisualizationsTab = lazy(() =>
+  import('./components/scientific/VisualizationsTab').then((m) => ({ default: m.VisualizationsTab }))
+);
 
-// New V2 tabs
-import {
-  BenchmarkTab,
-  DriftTab,
-  EnsembleTab,
-  ExplainabilityTab,
-  FeatureAnalysisTab,
-  HorizonTab,
-  MonitoringTab,
-  ProbabilisticTab,
-  UncertaintyTab
-} from './components/scientificV2';
+// Lazy load V2 tabs
+const BenchmarkTab = lazy(() =>
+  import('./components/scientificV2/BenchmarkTab').then((m) => ({ default: m.BenchmarkTab }))
+);
+const DriftTab = lazy(() => import('./components/scientificV2/DriftTab').then((m) => ({ default: m.DriftTab })));
+const EnsembleTab = lazy(() =>
+  import('./components/scientificV2/EnsembleTab').then((m) => ({ default: m.EnsembleTab }))
+);
+const ExplainabilityTab = lazy(() =>
+  import('./components/scientificV2/ExplainabilityTab').then((m) => ({ default: m.ExplainabilityTab }))
+);
+const FeatureAnalysisTab = lazy(() =>
+  import('./components/scientificV2/FeatureAnalysisTab').then((m) => ({ default: m.FeatureAnalysisTab }))
+);
+const HorizonTab = lazy(() => import('./components/scientificV2/HorizonTab').then((m) => ({ default: m.HorizonTab })));
+const MonitoringTab = lazy(() =>
+  import('./components/scientificV2/MonitoringTab').then((m) => ({ default: m.MonitoringTab }))
+);
+const ProbabilisticTab = lazy(() =>
+  import('./components/scientificV2/ProbabilisticTab').then((m) => ({ default: m.ProbabilisticTab }))
+);
+const UncertaintyTab = lazy(() =>
+  import('./components/scientificV2/UncertaintyTab').then((m) => ({ default: m.UncertaintyTab }))
+);
 
 // Feature flag for V2 tabs (set to true to show new tabs)
 const SHOW_V2_TABS = false;
@@ -109,18 +129,27 @@ export const ScientificAnalysis = () => {
               sx={{
                 minHeight: 48,
                 // Add visual separator before legacy tabs when V2 tabs are shown
-                ...(showV2Tabs && index === v2TabsCount && {
-                  borderLeft: 2,
-                  borderColor: 'divider',
-                  ml: 1
-                })
+                ...(showV2Tabs &&
+                  index === v2TabsCount && {
+                    borderLeft: 2,
+                    borderColor: 'divider',
+                    ml: 1
+                  })
               }}
             />
           ))}
         </Tabs>
 
         <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-          <Box sx={{ py: 2 }}>{tabs[activeTab]?.component}</Box>
+          <Suspense
+            fallback={
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            }
+          >
+            <Box sx={{ py: 2 }}>{tabs[activeTab]?.component}</Box>
+          </Suspense>
         </Box>
       </Paper>
     </Box>
