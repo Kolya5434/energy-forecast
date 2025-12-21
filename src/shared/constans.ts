@@ -5,7 +5,8 @@ export const CHART_MARGIN = { top: 5, right: 30, left: 20, bottom: 5 };
 export const TOOLTIP_STYLE = {
   backgroundColor: 'rgba(30, 30, 30, 0.8)',
   border: 'none',
-  borderRadius: '8px'
+  borderRadius: '8px',
+  color: '#fff'
 };
 
 export const CHART_TYPES = [
@@ -39,7 +40,7 @@ export const TOOLTIP_STYLE_ERRORS = {
   color: '#000',
   fontSize: 12,
   boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-}
+};
 
 export const OPTIONS_SIMULATABLE_FEATURES = [
   { value: 'day_of_week', label: 'День тижня' },
