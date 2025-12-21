@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { Box, Chip, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { Box, Card, CardContent, Chip, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 
 import { LoadingFallback } from '@/components/LoadingFallback';
 import { useApi } from '@/context/useApi.tsx';
@@ -59,21 +59,24 @@ export const EvaluationContent = () => {
     });
   }, [selectedModels, getEvaluation, evaluations]);
 
-  const handleViewModeChange = useCallback((_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
-    if (newMode !== null) {
-      const oldMode = viewMode;
-      setViewMode(newMode);
+  const handleViewModeChange = useCallback(
+    (_event: React.MouseEvent<HTMLElement>, newMode: ViewMode | null) => {
+      if (newMode !== null) {
+        const oldMode = viewMode;
+        setViewMode(newMode);
 
-      // Handle selection cache when switching between modes
-      if (newMode === 'errors' && selectedModels.length > 1) {
-        setSelectionCache(selectedModels);
-        setSelectedModels([selectedModels[0] || '']);
-      } else if (oldMode === 'errors' && newMode !== 'errors' && selectionCache.length > 0) {
-        setSelectedModels(selectionCache);
-        setSelectionCache([]);
+        // Handle selection cache when switching between modes
+        if (newMode === 'errors' && selectedModels.length > 1) {
+          setSelectionCache(selectedModels);
+          setSelectedModels([selectedModels[0] || '']);
+        } else if (oldMode === 'errors' && newMode !== 'errors' && selectionCache.length > 0) {
+          setSelectedModels(selectionCache);
+          setSelectionCache([]);
+        }
       }
-    }
-  }, [viewMode, selectedModels, selectionCache]);
+    },
+    [viewMode, selectedModels, selectionCache]
+  );
 
   const prepareExportData = () => {
     return combinedMetricsData.map((row) => ({
@@ -121,7 +124,9 @@ export const EvaluationContent = () => {
 
   const handleSelectAll = () => {
     if (models) {
-      const allModels = Object.keys(models).filter((id) => models[id]?.type === 'ml' || models[id]?.type === 'ensemble');
+      const allModels = Object.keys(models).filter(
+        (id) => models[id]?.type === 'ml' || models[id]?.type === 'ensemble'
+      );
       setSelectedModels(allModels);
     }
   };
@@ -150,7 +155,9 @@ export const EvaluationContent = () => {
     (metric: string) => {
       if (combinedMetricsData.length === 0) return { best: null, worst: null };
 
-      const values = combinedMetricsData.map((row) => row[metric as SortableMetricKey]).filter((v): v is number => v !== null && v !== undefined);
+      const values = combinedMetricsData
+        .map((row) => row[metric as SortableMetricKey])
+        .filter((v): v is number => v !== null && v !== undefined);
       if (values.length === 0) return { best: null, worst: null };
 
       if (metric === 'R2') {
@@ -251,19 +258,21 @@ export const EvaluationContent = () => {
                   <Chip label={t('Всі (ML/Ensemble)')} size="small" onClick={handleSelectAll} variant="outlined" />
                 ) : null}
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {Object.keys(models).map((modelId) => {
-                    const isSelected = selectedModels.includes(modelId);
-                    return (
-                      <Chip
-                        key={modelId}
-                        label={modelId}
-                        onClick={() => handleModelToggle(modelId)}
-                        color={isSelected ? 'primary' : 'default'}
-                        variant={isSelected ? 'filled' : 'outlined'}
-                        size="small"
-                      />
-                    );
-                  })}
+                  {Object.keys(models)
+                    .filter((id) => models[id]?.type !== 'dl')
+                    .map((modelId) => {
+                      const isSelected = selectedModels.includes(modelId);
+                      return (
+                        <Chip
+                          key={modelId}
+                          label={modelId}
+                          onClick={() => handleModelToggle(modelId)}
+                          color={isSelected ? 'primary' : 'default'}
+                          variant={isSelected ? 'filled' : 'outlined'}
+                          size="small"
+                        />
+                      );
+                    })}
                 </Stack>
               </Box>
             </Box>
@@ -306,7 +315,9 @@ export const EvaluationContent = () => {
           )}
         </Stack>
 
-        {renderContent()}
+        <Card variant="outlined" sx={{ borderRadius: 2 }}>
+          <CardContent>{renderContent()}</CardContent>
+        </Card>
       </Paper>
     </Box>
   );
