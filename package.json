@@ -65,7 +65,7 @@
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.52.0",
-    "vite": "8.0.0-beta.6",
+    "vite": "8.0.0-beta.7",
     "vitest": "^4.0.16"
   },
   "lint-staged": {
@@ -79,7 +79,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "8.0.0-beta.6"
+      "vite": "8.0.0-beta.7"
     },
     "ignoredBuiltDependencies": [
       "@vercel/speed-insights",
