@@ -84,7 +84,9 @@
     "ignoredBuiltDependencies": [
       "@parcel/watcher",
       "@vercel/speed-insights",
-      "core-js"
+      "core-js",
+      "esbuild",
+      "msw"
     ]
   }
 }
