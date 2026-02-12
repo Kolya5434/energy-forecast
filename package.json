@@ -66,7 +66,7 @@
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.55.0",
-    "vite": "8.0.0-beta.13",
+    "vite": "8.0.0-beta.14",
     "vitest": "^4.0.18"
   },
   "lint-staged": {
@@ -80,7 +80,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "8.0.0-beta.13"
+      "vite": "8.0.0-beta.14"
     },
     "ignoredBuiltDependencies": [
       "@parcel/watcher",
